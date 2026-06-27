@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodbdata:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redisdata:/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ../infra/docker/Dockerfile.backend
+    ports:
+      - "8080:8080"
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017
+      - REDIS_URL=redis:6379
+      - JWT_SECRET=dev_secret_change_in_prod
+      - ENV=development
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    command: air  # hot reload
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../infra/docker/Dockerfile.frontend.dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:8080/v1
+
+volumes:
+  mongodbdata:
+  redisdata:

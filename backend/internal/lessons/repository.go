@@ -2,7 +2,7 @@ package lessons
 
 import (
 	"context"
-	"github.com/yourorg/vedicpath/internal/domain"
+	"vedicpath/internal/domain"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )

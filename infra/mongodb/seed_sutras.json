@@ -1,0 +1,26 @@
+// VedicPath MongoDB Schema Definition & Seed Data
+// Use this with mongosh or for import: mongoimport --db vedicpath --collection sutras --file sutras.json --jsonArray
+
+[
+  {
+    "_id": { "$oid": "60d5ec49f1f0a8001f3b1e01" },
+    "name": "Ekadhikena Purvena",
+    "slug": "ekadhikena-purvena",
+    "meaning": "By one more than the previous",
+    "description": "Squaring numbers ending in 5",
+    "topic": "Multiplication",
+    "category": "Multiplication",
+    "order_index": 1
+  },
+  {
+    "_id": { "$oid": "60d5ec49f1f0a8001f3b1e02" },
+    "name": "Nikhilam Navatashcaramam",
+    "slug": "nikhilam-navatashcaramam",
+    "meaning": "All from 9 and the last from 10",
+    "description": "Multiplication near base numbers (10, 100…)",
+    "topic": "Multiplication",
+    "category": "Multiplication",
+    "order_index": 2,
+    "prerequisite_id": { "$oid": "60d5ec49f1f0a8001f3b1e01" }
+  }
+]

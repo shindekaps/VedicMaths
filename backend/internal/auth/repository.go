@@ -2,7 +2,7 @@ package auth
 
 import (
     "context"
-    "github.com/yourorg/vedicpath/internal/domain"
+    "vedicpath/internal/domain"
     "go.mongodb.org/mongo-driver/mongo"
 )
 

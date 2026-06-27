@@ -2,7 +2,7 @@ package lessons
 
 import (
 	"context"
-	"github.com/yourorg/vedicpath/internal/domain"
+	"vedicpath/internal/domain"
 )
 
 // Service defines the interface for the learning engine

@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/yourorg/vedicpath/internal/domain"
 )
 
 // Handler interface defines the API contract for authentication operations

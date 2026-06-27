@@ -1,0 +1,32 @@
+export const theme = {
+  colors: {
+    bg: "#FBF7EE",
+    surface: "#FFFDF7",
+    card: "#FFFFFF",
+    deep: "#1A1208",
+    ink: "#2D2010",
+    muted: "#8B7355",
+    border: "#E8DEC8",
+    borderDark: "#C8B898",
+    saffron: "#E8650A",
+    saffronLight: "#FFF0E6",
+    saffronDark: "#C04E00",
+    gold: "#D4A017",
+    goldLight: "#FFF8E6",
+    goldDark: "#A07800",
+    teal: "#0D8A7A",
+    tealLight: "#E6F7F5",
+    tealDark: "#075E53",
+    indigo: "#3D2B8F",
+    indigoLight: "#EEE9FF",
+    ruby: "#C0272D",
+    rubyLight: "#FFE9EA",
+    lotus: "#D4547A",
+    lotusLight: "#FFE9F0",
+    green: "#2A7A3B",
+    greenLight: "#E8F5EB",
+  },
+  typography: {
+    fontFamily: "'Helvetica', sans-serif",
+  }
+};

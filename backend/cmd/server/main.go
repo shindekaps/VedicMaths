@@ -2,12 +2,13 @@ package main
 
 import (
     "log"
-    "github.com/yourorg/vedicpath/internal/infrastructure/config"
-    "github.com/yourorg/vedicpath/internal/infrastructure/database"
-    "github.com/yourorg/vedicpath/internal/infrastructure/cache"
+    "vedicpath/internal/infrastructure/config"
+    "vedicpath/internal/infrastructure/database"
+    "vedicpath/internal/infrastructure/cache"
     "github.com/gin-gonic/gin"
-    "github.com/yourorg/vedicpath/internal/auth"
-    "github.com/yourorg/vedicpath/internal/lessons"
+    "vedicpath/internal/auth"
+    "vedicpath/internal/lessons"
+    "vedicpath/internal/practice"
 )
 
 func main() {
@@ -31,6 +32,11 @@ func main() {
     lessonsService := lessons.NewService(lessonsRepo)
     lessonsHandler := lessons.NewHandler(lessonsService)
 
+    // Setup Practice Module
+    practiceRepo := practice.NewRepository(db)
+    practiceService := practice.NewService(practiceRepo)
+    practiceHandler := practice.NewHandler(practiceService)
+
     // Register routes
     v1 := r.Group("/v1")
     {
@@ -44,6 +50,11 @@ func main() {
         {
             lessonsGroup.GET("/sutras", lessonsHandler.ListSutras)
             lessonsGroup.GET("/sutras/:sutraID/lessons", lessonsHandler.GetLessons)
+        }
+
+        practiceGroup := v1.Group("/practice")
+        {
+            practiceGroup.POST("/sutras/:sutraID/start", practiceHandler.StartSession)
         }
     }
 
