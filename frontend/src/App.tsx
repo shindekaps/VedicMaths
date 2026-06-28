@@ -4,6 +4,11 @@ import { NavBar } from './components/NavBar';
 import LandingView from './pages/LandingView';
 import { CurriculumView } from './pages/CurriculumView';
 import { LeaderboardView } from './pages/LeaderboardView';
+import { DashboardView } from './pages/DashboardView';
+import { QuizView } from './pages/QuizView';
+import { GamesView } from './pages/GamesView';
+import { LessonView } from './pages/LessonView';
+import { PracticeView } from './pages/PracticeView';
 
 // Create a client for React Query
 const queryClient = new QueryClient();
@@ -20,6 +25,11 @@ function App() {
           {view === 'landing' && <LandingView setActive={setView} />}
           {view === 'curriculum' && <CurriculumView setActive={setView} />}
           {view === 'leaderboard' && <LeaderboardView />}
+          {view === 'dashboard' && <DashboardView setActive={setView} />}
+          {view === 'quiz' && <QuizView />}
+          {view === 'games' && <GamesView />}
+          {view === 'lesson' && <LessonView setActive={setView} />}
+          {view === 'practice' && <PracticeView sutraID="1" />}
         </div>
       </div>
     </QueryClientProvider>

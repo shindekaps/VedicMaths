@@ -1,36 +1,61 @@
-import { useState } from "react";
-import { theme } from "@/theme";
 import { MandalaDecor } from "@/components/MandalaDecor";
 
 interface LandingViewProps {
   setActive: (id: string) => void;
 }
 
-const LandingView = ({ setActive }: LandingViewProps) => {
+export const LandingView = ({ setActive }: LandingViewProps) => {
   return (
-    <div className="bg-background min-h-screen overflow-hidden">
-      {/* Hero: Saffron gradient background */}
-      <div className="bg-gradient-to-br from-primary to-orange-800 p-16 relative overflow-hidden text-white">
-        <div className="absolute top-[-20px] right-[-20px] pointer-events-none">
-          <MandalaDecor size={300} opacity={0.2} color="white" />
+    <div className="bg-bg min-h-screen">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-saffron to-yellow-100 py-24 px-4 text-center text-white relative">
+        <h1 className="text-5xl font-bold mb-4">Master Vedic Math</h1>
+        <p className="text-xl mb-8">Learn Ancient Techniques, Modern Way</p>
+        <div className="flex justify-center gap-4">
+          <button onClick={() => setActive("curriculum")} className="bg-white text-saffron px-8 py-3 rounded-lg font-bold hover:shadow-lg">
+            Get Started
+          </button>
+          <button onClick={() => setActive("lesson")} className="border-2 border-white text-white px-8 py-3 rounded-lg font-bold hover:bg-white hover:text-saffron">
+            Learn More
+          </button>
         </div>
-        
-        <div className="relative max-w-3xl">
-          <h1 className="font-sans text-6xl font-bold leading-tight mb-6 tracking-tighter">
-            Master Vedic<br />
-            Mathematics
-          </h1>
-          <p className="text-white/90 text-lg leading-relaxed mb-8 max-w-lg">
-            The world's fastest mental math system, distilled into interactive lessons, games, and adaptive practice.
-          </p>
-          
-          <div className="flex gap-3 flex-wrap">
-            <button onClick={() => setActive("curriculum")} className="bg-white text-primary rounded-[8px] px-7 py-4 text-sm font-bold hover:bg-lightGray">
-              Start Learning Free →
-            </button>
-            <button onClick={() => setActive("lesson")} className="bg-transparent text-white border border-white rounded-[8px] px-6 py-4 text-sm font-bold hover:bg-white/10">
-              Watch Demo Lesson
-            </button>
+      </div>
+
+      {/* Stats Row */}
+      <div className="bg-white py-6 px-4 text-center border-b border-border">
+        <div className="max-w-6xl mx-auto flex justify-around">
+          <div>
+            <div className="text-3xl font-bold text-saffron">16</div>
+            <div className="text-gray-600 text-sm">Vedic Sutras</div>
+          </div>
+          <div>
+            <div className="text-3xl font-bold text-saffron">50K+</div>
+            <div className="text-gray-600 text-sm">Students</div>
+          </div>
+          <div>
+            <div className="text-3xl font-bold text-saffron">98%</div>
+            <div className="text-gray-600 text-sm">Mastery Rate</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Features Cards */}
+      <div className="bg-cream py-12 px-4">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-card border-l-4 border-gold rounded-lg p-6 shadow-md hover:shadow-lg">
+            <div className="text-3xl mb-4">📚</div>
+            <h3 className="text-lg font-bold text-primary mb-2">Lessons</h3>
+            <p className="text-sm text-ink">Animated step-by-step explanations</p>
+          </div>
+          <div className="bg-card border-l-4 border-gold rounded-lg p-6 shadow-md hover:shadow-lg">
+            <div className="text-3xl mb-4">⚡</div>
+            <h3 className="text-lg font-bold text-primary mb-2">Practice</h3>
+            <p className="text-sm text-ink">Adaptive difficulty system</p>
+          </div>
+          <div className="bg-card border-l-4 border-gold rounded-lg p-6 shadow-md hover:shadow-lg">
+            <div className="text-3xl mb-4">🏆</div>
+            <h3 className="text-lg font-bold text-primary mb-2">Compete</h3>
+            <p className="text-sm text-ink">Global leaderboards</p>
           </div>
         </div>
       </div>

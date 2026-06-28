@@ -1,32 +1,27 @@
-@import "tailwindcss";
-
-@theme {
-  --color-bg: #FBF7EE;
-  --color-surface: #FFFDF7;
-  --color-card: #FFFFFF;
-  --color-deep: #1A1208;
-  --color-ink: #2D2010;
-  --color-muted: #8B7355;
-  --color-border: #E8DEC8;
-  --color-saffron: #E8650A;
-  --color-saffronLight: #FFF0E6;
-  --color-gold: #D4A017;
-  --color-goldLight: #FFF8E6;
-  --color-teal: #0D8A7A;
-  --color-tealLight: #E6F7F5;
-  --color-indigo: #3D2B8F;
-  --color-ruby: #C0272D;
-  --color-rubyLight: #FFE9EA;
-  --color-lotus: #D4547A;
-  --color-green: #2A7A3B;
-  --color-greenLight: #E8F5EB;
-  
-  --font-sans: Helvetica, sans-serif;
-  --font-serif: Georgia, serif;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @layer base {
   body {
     @apply bg-bg text-ink font-sans;
   }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes popup {
+  0% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-60px); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.animate-popup {
+  animation: popup 1.5s ease-out forwards;
 }
