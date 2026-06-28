@@ -1,32 +1,51 @@
-import { useState } from "react";
-import { theme } from "@/theme";
+import { useState, useEffect } from "react";
+import { startPracticeSession, getNextProblem, submitAnswer, type Problem } from "@/api/practice";
+import { useAuthStore } from "@/stores/authStore";
 
 interface PracticeViewProps {
   sutraID: string;
 }
 
-// PracticeView handles the interactive practice session
 export const PracticeView = ({ sutraID }: PracticeViewProps) => {
+  const [sessionID, setSessionID] = useState<string | null>(null);
+  const [problem, setProblem] = useState<Problem | null>(null);
   const [ans, setAns] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [correct, setCorrect] = useState<boolean | null>(null);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const user = useAuthStore((state) => state.user);
 
-  // In a real app, this would be fetched from the backend via React Query
-  const currentProblem = { question: "95 * 95", answer: "9025" };
+  useEffect(() => {
+    const initSession = async () => {
+      const { sessionID } = await startPracticeSession(sutraID);
+      setSessionID(sessionID);
+      const prob = await getNextProblem(sutraID);
+      setProblem(prob);
+    };
+    initSession();
+  }, [sutraID]);
 
   const submit = async () => {
-    // Production logic: Send answer to backend
-    // const result = await api.post(`/practice/${sessionID}/answer`, { answer: ans });
-    const isCorrect = ans === currentProblem.answer;
-    setCorrect(isCorrect);
+    if (!sessionID || !problem || !user) return;
+    
+    const result = await submitAnswer({
+      user_id: user.id, // Assuming user ID is in store
+      sutra_id: sutraID,
+      session_id: sessionID,
+      user_answer: ans,
+      correct_answer: problem.answer,
+    });
+    
+    setIsCorrect(result.correct);
     setSubmitted(true);
   };
+
+  if (!problem) return <div>Loading...</div>;
 
   return (
     <div className="bg-[#FBF7EE] min-h-screen flex flex-col items-center justify-center p-10">
       <div className="bg-white border border-[#E8DEC8] rounded-2xl p-12 text-center shadow-sm max-w-md w-full">
         <h2 className="text-sm text-[#0D8A7A] font-mono font-bold uppercase tracking-widest mb-3">Practice Session</h2>
-        <div className="font-serif text-5xl font-bold text-[#1A1208] mb-8">{currentProblem.question}</div>
+        <div className="font-serif text-5xl font-bold text-[#1A1208] mb-8">{problem.question}</div>
         
         {!submitted ? (
           <div className="flex flex-col gap-4">
@@ -44,8 +63,8 @@ export const PracticeView = ({ sutraID }: PracticeViewProps) => {
             </button>
           </div>
         ) : (
-          <div className={`p-4 rounded-lg font-bold ${correct ? 'bg-[#E8F5EB] text-[#2A7A3B]' : 'bg-[#FFE9EA] text-[#C0272D]'}`}>
-            {correct ? "Correct! +20 XP" : `Incorrect. Answer was ${currentProblem.answer}`}
+          <div className={`p-4 rounded-lg font-bold ${isCorrect ? 'bg-[#E8F5EB] text-[#2A7A3B]' : 'bg-[#FFE9EA] text-[#C0272D]'}`}>
+            {isCorrect ? "Correct!" : `Incorrect. Answer was ${problem.answer}`}
           </div>
         )}
       </div>

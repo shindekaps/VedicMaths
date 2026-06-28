@@ -29,7 +29,7 @@ function App() {
           {view === 'quiz' && <QuizView />}
           {view === 'games' && <GamesView />}
           {view === 'lesson' && <LessonView setActive={setView} />}
-          {view === 'practice' && <PracticeView sutraID="1" />}
+          {view === 'practice' && <PracticeView sutraID="60d5ec49f1f0a8001f3b1e01" />}
         </div>
       </div>
     </QueryClientProvider>

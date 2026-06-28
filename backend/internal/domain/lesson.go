@@ -1,25 +1,34 @@
 package domain
 
 import (
-	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // Sutra represents a Vedic Mathematics Sutra
 type Sutra struct {
-	ID             uuid.UUID `bson:"_id"`
-	Name           string    `bson:"name"`
-	Slug           string    `bson:"slug"` // URL-friendly identifier
-	Meaning        string    `bson:"meaning"`
-	Description    string    `bson:"description"`
-	OrderIndex     int       `bson:"order_index"`
-	PrerequisiteID *uuid.UUID `bson:"prerequisite_id,omitempty"`
+	ID             primitive.ObjectID   `bson:"_id"`
+	Name           string               `bson:"name"`
+	Slug           string               `bson:"slug"`
+	Meaning        string               `bson:"meaning"`
+	Description    string               `bson:"description"`
+	OrderIndex     int                  `bson:"order_index"`
+	PrerequisiteID *primitive.ObjectID  `bson:"prerequisite_id,omitempty"`
 }
 
-// Lesson represents a specific lesson within a Sutra
 type Lesson struct {
-	ID          uuid.UUID `bson:"_id"`
-	SutraID     uuid.UUID `bson:"sutra_id"`
-	Title       string    `bson:"title"`
-	Content     string    `bson:"content"` // Markdown or structured content
-	OrderIndex  int       `bson:"order_index"`
+	ID          primitive.ObjectID `bson:"_id"`
+	SutraID     primitive.ObjectID `bson:"sutra_id"`
+	Title       string             `bson:"title"`
+	Content     string             `bson:"content"`
+	OrderIndex  int                `bson:"order_index"`
+}
+
+// SutraDTO is used for JSON serialization
+type SutraDTO struct {
+	ID          string  `json:"id"`
+	Name        string  `json:"name"`
+	Slug        string  `json:"slug"`
+	Meaning     string  `json:"meaning"`
+	Description string  `json:"description"`
+	OrderIndex  int     `json:"order_index"`
 }

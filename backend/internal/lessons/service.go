@@ -7,7 +7,7 @@ import (
 
 // Service defines the interface for the learning engine
 type Service interface {
-	ListSutras(ctx context.Context) ([]domain.Sutra, error)
+	ListSutras(ctx context.Context) ([]domain.SutraDTO, error)
 	GetLessons(ctx context.Context, sutraID string) ([]domain.Lesson, error)
 }
 
@@ -21,8 +21,24 @@ func NewService(repo Repository) Service {
 }
 
 // ListSutras fetches all available sutras using the repository
-func (s *service) ListSutras(ctx context.Context) ([]domain.Sutra, error) {
-	return s.repo.GetAllSutras(ctx)
+func (s *service) ListSutras(ctx context.Context) ([]domain.SutraDTO, error) {
+	sutras, err := s.repo.GetAllSutras(ctx)
+	if err != nil {
+		return nil, err
+	}
+	
+	var dtos []domain.SutraDTO
+	for _, sutra := range sutras {
+		dtos = append(dtos, domain.SutraDTO{
+			ID:          sutra.ID.Hex(),
+			Name:        sutra.Name,
+			Slug:        sutra.Slug,
+			Meaning:     sutra.Meaning,
+			Description: sutra.Description,
+			OrderIndex:  sutra.OrderIndex,
+		})
+	}
+	return dtos, nil
 }
 
 // GetLessons fetches all lessons for a specific sutra

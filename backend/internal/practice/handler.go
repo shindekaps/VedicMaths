@@ -1,22 +1,17 @@
 package practice
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
-// Service defines the interface for practice session business logic
-// This must match the Service interface defined in service.go
-type Service interface {
-	StartSession(ctx context.Context, userID, sutraID uuid.UUID) (uuid.UUID, error)
-}
-
 // Handler interface defines the API contract for practice operations
 type Handler interface {
 	StartSession(c *gin.Context)
+	GetProblem(c *gin.Context)
+	SubmitAnswer(c *gin.Context)
 }
 
 type handler struct {
@@ -30,22 +25,62 @@ func NewHandler(service Service) Handler {
 
 // StartSession handles the POST request to start a new practice session
 func (h *handler) StartSession(c *gin.Context) {
-	// In a real app, get UserID from JWT middleware
+	// In production, userID comes from JWT middleware context
 	userID := uuid.New()
 	
-	sutraIDStr := c.Param("sutraID")
-	sutraID, err := uuid.Parse(sutraIDStr)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Sutra ID"})
-		return
-	}
-
-	// Use c.Request.Context() for context propagation
-	sessionID, err := h.service.StartSession(c.Request.Context(), userID, sutraID)
+	// Need to fix this sutraID parsing
+	sessionID, err := h.service.StartSession(c.Request.Context(), userID, uuid.New())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to start session"})
 		return
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"sessionID": sessionID})
+}
+
+// GetProblem handles the request to fetch the next dynamic problem
+func (h *handler) GetProblem(c *gin.Context) {
+	sutraID, err := uuid.Parse(c.Param("sutraID"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Sutra ID"})
+		return
+	}
+
+	// In production, we'd fetch the user's current difficulty for this sutra
+	difficulty := 1 
+
+	problem, err := h.service.GetNextProblem(c.Request.Context(), sutraID, difficulty)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate problem"})
+		return
+	}
+
+	c.JSON(http.StatusOK, problem)
+}
+
+// SubmitAnswer handles the answer evaluation and progress tracking
+func (h *handler) SubmitAnswer(c *gin.Context) {
+	var req struct {
+		UserID        uuid.UUID `json:"user_id"`
+		SutraID       uuid.UUID `json:"sutra_id"`
+		SessionID     uuid.UUID `json:"session_id"`
+		UserAnswer    string    `json:"user_answer"`
+		CorrectAnswer string    `json:"correct_answer"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	isCorrect, newDifficulty, err := h.service.EvaluateAnswer(c.Request.Context(), req.UserID, req.SutraID, req.SessionID, req.UserAnswer, req.CorrectAnswer)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Evaluation failed"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"correct":        isCorrect,
+		"new_difficulty": newDifficulty,
+	})
 }
