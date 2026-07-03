@@ -1,38 +1,49 @@
-const VIEWS = [
-  { id: "landing", label: "🏠 Landing" },
-  { id: "curriculum", label: "📚 Curriculum" },
-  { id: "lesson", label: "✨ Lesson View" },
-  { id: "practice", label: "⚡ Practice" },
-  { id: "games", label: "🎮 Game Modes" },
-  { id: "dashboard", label: "📊 Dashboard" },
-  { id: "leaderboard", label: "🏆 Leaderboard" },
-  { id: "quiz", label: "📝 Quiz" },
-];
-
 interface NavBarProps {
   active: string;
   setActive: (id: string) => void;
 }
 
 export const NavBar = ({ active, setActive }: NavBarProps) => {
+  const VIEWS = [
+    { id: "dashboard", label: "Home", icon: "🏠" },
+    { id: "curriculum", label: "Learn", icon: "📚" },
+    { id: "games", label: "Games", icon: "🎮" },
+    { id: "profile", label: "Profile", icon: "👤" },
+  ];
+
   return (
-    <nav className="bg-[#1A1208] border-b-2 border-[#E8650A] flex items-center px-5 gap-1 flex-wrap h-16">
-      <div className="text-[#E8650A] font-serif font-bold text-base px-4 py-3 border-r border-[#ffffff22] mr-2">
-        वैदिक <span className="text-white">Path</span>
-      </div>
-      {VIEWS.map((v) => (
-        <button
-          key={v.id}
-          onClick={() => setActive(v.id)}
-          className={`px-3 py-2 rounded text-xs transition-all ${
-            active === v.id
-              ? "bg-[#E8650A] text-white font-bold"
-              : "text-[#aaa] hover:text-white"
-          }`}
-        >
-          {v.label}
-        </button>
-      ))}
-    </nav>
+    <>
+      {/* Desktop Top Nav */}
+      <nav className="hidden md:flex fixed top-0 w-full bg-white border-b border-gray-100 z-50 h-16 items-center px-8 justify-between">
+        <div className="font-serif font-black text-2xl text-violet">VedicPath</div>
+        <div className="flex gap-8">
+          {VIEWS.map((v) => (
+            <button
+              key={v.id}
+              onClick={() => setActive(v.id)}
+              className={`font-bold transition-colors ${active === v.id ? "text-violet" : "text-sub hover:text-ink"}`}
+            >
+              {v.label}
+            </button>
+          ))}
+        </div>
+      </nav>
+
+      {/* Mobile Bottom Nav */}
+      <nav className="md:hidden fixed bottom-0 w-full bg-white border-t border-gray-100 flex items-center justify-around py-2 shadow-lg z-50">
+        {VIEWS.map((v) => (
+          <button
+            key={v.id}
+            onClick={() => setActive(v.id)}
+            className={`flex flex-col items-center gap-1 p-2 text-[10px] font-bold transition-colors ${
+              active === v.id ? "text-violet" : "text-gray-400"
+            }`}
+          >
+            <span className="text-xl">{v.icon}</span>
+            <span>{v.label}</span>
+          </button>
+        ))}
+      </nav>
+    </>
   );
 };

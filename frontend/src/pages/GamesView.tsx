@@ -1,46 +1,27 @@
-import { useState } from "react";
-
-// Mock data based on the prototype
-const GAMES = [
-  { id: "blitz", name: "Speed Blitz", emoji: "⚡", color: "saffron", tag: "Solo", desc: "Answer as many problems as possible in 60 seconds. Bonus XP for speed combos.", preview: "60s · Combo · Lives" },
-  { id: "ninja", name: "Number Ninja", emoji: "🥷", color: "indigo", tag: "Solo", desc: "Falling numbers — tap the correct answer before it hits the ground. Increasing speed.", preview: "Arcade · Waves · Boss" },
-  { id: "wars", name: "Sutra Wars", emoji: "⚔️", color: "ruby", tag: "1v1 Live", desc: "Challenge a friend or random opponent in real-time. First to 10 correct wins.", preview: "Live · 1v1 · ELO" },
-  { id: "quest", name: "Vedic Quest", emoji: "🗺️", color: "teal", tag: "Campaign", desc: "Story-driven math adventure. Solve puzzles using Vedic techniques to unlock ancient secrets.", preview: "Story · 15 Chapters" },
-  { id: "memory", name: "Pattern Memory", emoji: "🧠", color: "lotus", tag: "Brain Training", desc: "Remember and reproduce Vedic calculation patterns. Tests working memory alongside math.", preview: "Memory · Patterns" },
-  { id: "collab", name: "Team Challenge", emoji: "👥", color: "green", tag: "Team", desc: "Classes compete together. Every student's correct answer adds to the team total.", preview: "30 Players · Live" },
-];
-
 export const GamesView = () => {
-  const [activeGame, setActiveGame] = useState<string | null>(null);
+  const games = [
+    { name: "Speed Blitz", sub: "Solve 20 sums before time runs out!", badge: "Hot", bg: "linear-gradient(135deg,#064E3B,#10B981)", icon: "⚡" },
+    { name: "Number Ninja", sub: "Slash falling numbers fast!", badge: "New", bg: "linear-gradient(135deg,#1E1B4B,#7C3AED)", icon: "🥷" },
+    { name: "Sutra Wars", sub: "Battle opponents in real-time.", badge: "", bg: "linear-gradient(135deg,#7C1D1D,#DC2626)", icon: "⚔️" },
+    { name: "Vedic Quest", sub: "Solve puzzles to unlock secrets.", badge: "", bg: "linear-gradient(135deg,#92400E,#F59E0B)", icon: "🗺️" },
+    { name: "Pattern Memory", sub: "Reproduce Vedic calculation patterns.", badge: "", bg: "linear-gradient(135deg,#701A75,#EC4899)", icon: "🧠" },
+  ];
 
   return (
-    <div className="bg-bg min-h-screen p-9">
-      <div className="mb-7">
-        <h2 className="font-serif text-[30px] text-deep mb-1.5">Game Modes</h2>
-        <p className="text-muted text-sm">6 ways to learn through play. Every game teaches real Vedic techniques.</p>
+    <div className="min-h-screen bg-[#0F172A] text-white flex flex-col">
+      <div className="p-6 pt-10 pb-4 border-b border-white/10 bg-white/5">
+        <h2 className="text-lg font-extrabold text-white">🎮 Game Zone</h2>
+        <p className="text-xs text-gold font-bold mt-1">🪙 3,240</p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {GAMES.map(g => (
-          <div key={g.id} onClick={() => setActiveGame(activeGame === g.id ? null : g.id)} 
-               className={`bg-card border-2 rounded-2xl overflow-hidden cursor-pointer transition-all ${activeGame === g.id ? 'border-primary' : 'border-border'}`}>
-            {/* Game header */}
-            <div className={`bg-${g.color}/10 p-6 border-b border-${g.color}/20`}>
-              <div className="flex justify-between items-start">
-                <div className="text-4xl">{g.emoji}</div>
-                <div className={`bg-${g.color}/20 border border-${g.color}/40 rounded-lg px-2.5 py-0.5 text-${g.color} text-[10px] font-bold font-mono uppercase tracking-widest`}>
-                    {g.tag}
-                </div>
-              </div>
-              <div className="font-serif text-lg font-bold text-deep mt-3">{g.name}</div>
-              <div className="text-[11px] text-muted font-mono mt-1">{g.preview}</div>
-            </div>
-            <div className="p-5">
-              <p className="text-sm text-ink leading-relaxed mb-4">{g.desc}</p>
-              {activeGame === g.id && (
-                <button className={`bg-${g.color} text-white rounded-lg px-5 py-2.5 text-sm font-bold w-full`}>
-                    Play Now {g.emoji}
-                </button>
-              )}
+
+      <div className="p-4 flex flex-col gap-3">
+        {games.map((g) => (
+          <div key={g.name} className="rounded-[16px] p-3 flex items-center gap-3 cursor-pointer hover:scale-[1.02] transition-transform" style={{ background: g.bg }}>
+            <div className="w-11 h-11 rounded-[14px] bg-white/10 flex items-center justify-center text-xl shrink-0">{g.icon}</div>
+            <div className="flex-1">
+              <h3 className="text-[13px] font-extrabold text-white">{g.name}</h3>
+              <p className="text-[10px] text-white/50 mt-0.5">{g.sub}</p>
+              {g.badge && <div className="flex gap-1 mt-1"><span className="text-[9px] font-bold text-saffron uppercase tracking-widest bg-black/20 px-2 py-0.5 rounded-full">{g.badge}</span></div>}
             </div>
           </div>
         ))}

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { theme } from "@/theme";
 
 // QuizView component for interactive testing
 export const QuizView = () => {
@@ -13,57 +12,65 @@ export const QuizView = () => {
   ];
 
   return (
-    <div className="bg-bg min-h-screen flex flex-col items-center justify-center p-10">
+    <div className="bg-bg min-h-screen flex flex-col items-center justify-center p-6">
       {/* Header */}
       <div className="w-full max-w-[600px] mb-8">
         <div className="flex justify-between items-center mb-3">
-          <div className="text-xs text-muted font-mono uppercase tracking-widest">QUESTION 5 OF 10 · NIKHILAM QUIZ</div>
-          <div className="bg-rubyLight text-ruby text-xs font-bold px-3 py-1 rounded-full">⏱ 00:42</div>
+          <div className="text-[10px] text-sub font-bold uppercase tracking-widest">Question 5 of 10</div>
+          <div className="bg-pink-100 text-pink-600 text-xs font-bold px-3 py-1 rounded-full">⏱ 00:42</div>
         </div>
-        <div className="h-1.5 bg-border rounded-full">
-          <div className="w-1/2 h-full bg-accent rounded-full" />
+        <div className="h-2 bg-white rounded-full overflow-hidden">
+          <div className="w-1/2 h-full bg-gradient-to-r from-violet to-saffron rounded-full" />
         </div>
       </div>
 
       {/* Question Card */}
-      <div className="w-full max-w-[600px] bg-card border border-border rounded-2xl p-9 mb-5 shadow-sm">
-        <div className="text-xs text-accent font-mono font-bold uppercase tracking-widest mb-3.5">Using Nikhilam Sutra</div>
-        <div className="font-serif text-4xl font-bold text-deep text-center py-4 tracking-tighter">97 × 98 = ?</div>
+      <div className="w-full max-w-[600px] bg-card rounded-[32px] p-8 mb-6 shadow-sm border border-gray-100">
+        <div className="text-[10px] text-violet font-bold uppercase tracking-widest mb-3">Using Nikhilam Sutra</div>
+        <div className="font-serif text-4xl font-black text-ink text-center py-6 tracking-tight">97 × 98 = ?</div>
       </div>
 
       {/* Options */}
-      <div className="w-full max-w-[600px] grid grid-cols-2 gap-3 mb-5">
+      <div className="w-full max-w-[600px] grid grid-cols-2 gap-4 mb-6">
         {options.map(o => {
           const isSelected = selected === o.id;
           const showResult = confirmed;
-          const bg = showResult ? (o.correct ? "bg-greenLight" : (isSelected ? "bg-rubyLight" : "bg-card")) : (isSelected ? "bg-tealLight" : "bg-card");
-          const border = showResult ? (o.correct ? "border-green" : (isSelected ? "border-ruby" : "border-border")) : (isSelected ? "border-accent" : "border-border");
+          const baseClasses = "border-2 rounded-2xl p-6 flex items-center gap-4 transition-all ";
+          
+          let stateClasses = "bg-white border-gray-100 ";
+          if (showResult && o.correct) stateClasses = "bg-green-100 border-green-500 ";
+          else if (showResult && isSelected && !o.correct) stateClasses = "bg-pink-100 border-pink-500 ";
+          else if (isSelected) stateClasses = "bg-violet-50 border-violet ";
 
           return (
-            <button key={o.id} onClick={() => !confirmed && setSelected(o.id)} className={`border-2 rounded-xl p-4 flex items-center gap-3 transition-all ${bg} ${border}`}>
-              <div className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0 ${
-                isSelected ? (showResult ? (o.correct ? "bg-green text-white" : "bg-ruby text-white") : "bg-accent text-white") : "bg-border text-muted"
+            <button key={o.id} onClick={() => !confirmed && setSelected(o.id)} className={baseClasses + stateClasses}>
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm flex-shrink-0 ${
+                isSelected ? 'bg-violet text-white' : 'bg-gray-100 text-sub'
               }`}>
                 {o.id.toUpperCase()}
               </div>
-              <span className="font-serif text-[22px] font-bold text-deep">{o.label}</span>
+              <span className="font-serif text-2xl font-bold text-ink">{o.label}</span>
             </button>
           );
         })}
       </div>
 
       {!confirmed ? (
-        <button onClick={() => selected && setConfirmed(true)} className={`rounded-xl px-12 py-3.5 text-sm font-bold transition-all ${selected ? "bg-primary text-white" : "bg-border text-muted"}`}>
+        <button 
+          onClick={() => selected && setConfirmed(true)} 
+          disabled={!selected}
+          className={`rounded-2xl px-12 py-4 font-black transition-all ${selected ? "bg-gradient-to-r from-violet to-saffron text-white shadow-lg hover:scale-[1.02]" : "bg-gray-200 text-sub"}`}
+        >
           Confirm Answer
         </button>
       ) : (
-        <div className={`w-full max-w-[600px] rounded-xl p-5 ${selected === "c" ? "bg-greenLight border border-green" : "bg-rubyLight border border-ruby"}`}>
-          <div className={`font-serif text-base font-bold mb-1.5 ${selected === "c" ? "text-green" : "text-ruby"}`}>
+        <div className={`w-full max-w-[600px] rounded-2xl p-6 border ${selected === "c" ? "bg-green-50 border-green-200" : "bg-pink-50 border-pink-200"}`}>
+          <div className={`font-serif text-lg font-bold mb-2 ${selected === "c" ? "text-green-700" : "text-pink-700"}`}>
             {selected === "c" ? "🎉 Correct! +15 XP" : "Not quite — the answer is 9506"}
           </div>
-          <div className="text-[13px] text-ink leading-loose">
-            <b>Solution:</b> Deficit of 97 = 3, deficit of 98 = 2.<br />
-            Cross: 97 − 2 = <b>95</b> (left part) | 3 × 2 = <b>06</b> (right part) → <b>9506</b>
+          <div className="text-sm text-ink leading-relaxed">
+            <b>Solution:</b> Deficit of 97 is 3, deficit of 98 is 2. 
+            Cross subtract: 97 - 2 = 95 | 3 × 2 = 06. → 9506
           </div>
         </div>
       )}

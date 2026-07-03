@@ -5,22 +5,23 @@ import (
 )
 
 // Sutra represents a Vedic Mathematics Sutra
+// Sutra represents a Vedic Mathematics Sutra
 type Sutra struct {
-	ID             primitive.ObjectID   `bson:"_id"`
-	Name           string               `bson:"name"`
-	Slug           string               `bson:"slug"`
-	Meaning        string               `bson:"meaning"`
-	Description    string               `bson:"description"`
-	OrderIndex     int                  `bson:"order_index"`
-	PrerequisiteID *primitive.ObjectID  `bson:"prerequisite_id,omitempty"`
+	ID             primitive.ObjectID   `bson:"_id" json:"id"`
+	Name           string               `bson:"name" json:"name"`
+	Slug           string               `bson:"slug" json:"slug"`
+	Meaning        string               `bson:"meaning" json:"meaning"`
+	Description    string               `bson:"description" json:"description"`
+	OrderIndex     int                  `bson:"order_index" json:"order_index"`
+	PrerequisiteID *primitive.ObjectID  `bson:"prerequisite_id,omitempty" json:"prerequisite_id,omitempty"`
 }
 
 type Lesson struct {
-	ID          primitive.ObjectID `bson:"_id"`
-	SutraID     primitive.ObjectID `bson:"sutra_id"`
-	Title       string             `bson:"title"`
-	Content     string             `bson:"content"`
-	OrderIndex  int                `bson:"order_index"`
+	ID          primitive.ObjectID `bson:"_id" json:"id"`
+	SutraID     primitive.ObjectID `bson:"sutra_id" json:"sutra_id"`
+	Title       string             `bson:"title" json:"title"`
+	Content     string             `bson:"content" json:"content"`
+	OrderIndex  int                `bson:"order_index" json:"order_index"`
 }
 
 // SutraDTO is used for JSON serialization

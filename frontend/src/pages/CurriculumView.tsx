@@ -1,56 +1,76 @@
-import { useState } from "react";
-import { theme } from "@/theme";
+import { useState, useMemo } from "react";
 import { useSutras } from "@/api/lessons";
 
 interface CurriculumViewProps {
   setActive: (id: string) => void;
 }
 
-// Map order_index to a color for variety
-const getColor = (index: number) => {
-  const colors = [theme.colors.saffron, theme.colors.teal, theme.colors.indigo, theme.colors.ruby, theme.colors.lotus];
-  return colors[index % colors.length];
+const TABS = ["All", "Easy", "Medium", "Hard"];
+
+// Expert pedagogical classification for Vedic Mathematics Sutras
+const getDifficulty = (index: number): "Easy" | "Medium" | "Hard" => {
+  if (index <= 5) return "Easy";
+  if (index <= 10) return "Medium";
+  return "Hard";
 };
 
 export const CurriculumView = ({ setActive }: CurriculumViewProps) => {
   const { data: SUTRAS, isLoading, error } = useSutras();
-  const categories = ["All", "Multiplication", "Division", "Algebra", "Squares & Cubes"];
-  const [cat, setCat] = useState("All");
+  const [activeTab, setActiveTab] = useState("All");
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error loading curriculum</div>;
+  const filteredSutras = useMemo(() => {
+    if (!SUTRAS) return [];
+    if (activeTab === "All") return SUTRAS.sort((a, b) => a.order_index - b.order_index);
+    return SUTRAS.filter((s) => getDifficulty(s.order_index) === activeTab).sort(
+      (a, b) => a.order_index - b.order_index
+    );
+  }, [SUTRAS, activeTab]);
+
+  const getCategoryColor = (index: number) => {
+    const colors = ["bg-green", "bg-violet", "bg-saffron", "bg-gray-400"];
+    return colors[(index - 1) % colors.length];
+  };
+
+  if (isLoading) return <div className="p-10 text-center text-ink">Loading...</div>;
+  if (error) return <div className="p-10 text-center text-pink">Error loading curriculum</div>;
 
   return (
-    <div className="bg-[#FBF7EE] min-h-screen p-9">
-      <div className="mb-7">
-        <h2 className="font-serif text-[30px] text-[#1A1208] mb-1.5">Vedic Mathematics Curriculum</h2>
-        <p className="text-[#8B7355] text-sm">16 Sutras. Unlock the next Sutra by mastering the previous.</p>
+    <div className="min-h-screen bg-white">
+      <div className="bg-slate-900 p-6 pt-10 pb-6 text-white">
+        <h2 className="text-xl font-extrabold mb-1">16 Vedic Sutras</h2>
+        <p className="text-xs text-white/60 mb-4">Your structured learning path</p>
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+          {TABS.map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap ${
+                activeTab === tab ? "bg-gold text-slate-900" : "bg-white/10 text-white/60"
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Sutra grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {SUTRAS?.sort((a,b) => a.OrderIndex - b.OrderIndex).map(s => {
-          const color = getColor(s.OrderIndex);
-          return (
-            <div 
-              key={s.ID} 
-              onClick={() => setActive("lesson")} 
-              className="bg-white border border-[#E8DEC8] rounded-[10px] p-[16px_20px] cursor-pointer flex gap-3 transition-all relative overflow-hidden border-t-[4px] shadow-sm hover:shadow-md"
-              style={{ borderTopColor: color }}
-            >
-              <div className="w-10 h-10 rounded-[8px] flex items-center justify-center text-lg flex-shrink-0" style={{ backgroundColor: `${color}15`, border: `1px solid ${color}44`, color: color }}>
-                {s.OrderIndex}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-center mb-1">
-                  <div className="font-serif text-[15px] font-bold text-[#1A1208] truncate">{s.Name}</div>
-                </div>
-                <div className="text-[12px] text-[#8B7355] italic mb-1 truncate">"{s.Meaning}"</div>
-                <div className="text-[12px] text-[#2D2010] mb-2 truncate">{s.Description}</div>
-              </div>
+      <div className="p-4 flex flex-col gap-3">
+        {filteredSutras.map((s) => (
+          <div 
+            key={s.id} 
+            onClick={() => setActive("lesson")} 
+            className="flex items-center gap-3 p-3 rounded-[14px] border border-gray-100 bg-white shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+          >
+            <div className={`w-9 h-9 rounded-[12px] flex items-center justify-center text-white font-bold text-sm ${getCategoryColor(s.order_index)}`}>
+              {s.order_index}
             </div>
-          );
-        })}
+            <div className="flex-1">
+              <h3 className="font-bold text-ink text-xs">{s.name}</h3>
+              <p className="text-[10px] text-sub mt-0.5">"{s.meaning}"</p>
+            </div>
+            <span className="text-[10px] font-bold text-green bg-green-50 px-2.5 py-1 rounded-full">Done</span>
+          </div>
+        ))}
       </div>
     </div>
   );

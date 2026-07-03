@@ -15,56 +15,40 @@ export const LeaderboardView = () => {
   const medals = ["🥇", "🥈", "🥉"];
 
   return (
-    <div className="bg-bg min-h-screen p-9">
-      <h2 className="font-serif text-[30px] text-deep mb-1.5">Leaderboard</h2>
-      <p className="text-muted text-sm mb-6">Top students by XP this week. Resets every Monday.</p>
+    <div className="bg-bg min-h-screen p-6 md:p-10">
+      <h2 className="font-serif text-4xl font-extrabold text-ink mb-2">Leaderboard</h2>
+      <p className="text-sub text-lg mb-8">Top students by XP this week.</p>
 
       {/* Podium */}
-      <div className="flex justify-center gap-4 mb-8 items-end">
+      <div className="flex justify-center gap-6 mb-12 items-end">
         {[players[1], players[0], players[2]].map((p, i) => {
-          const heights = ["h-24", "h-32", "h-20"];
-          const colors = ["border-muted bg-muted/10", "border-gold bg-gold/10", "border-saffron bg-saffron/10"];
+          const heights = ["h-24", "h-40", "h-20"];
+          const colors = ["bg-gray-200", "bg-gold", "bg-orange-300"];
           return (
-            <div key={p.rank} className="flex flex-col items-center gap-2">
-              <div className="text-3xl">{p.avatar}</div>
-              <div className="text-sm font-bold text-deep">{p.name.split(" ")[0]}</div>
-              <div className="text-xs text-muted font-mono">{p.xp.toLocaleString()} XP</div>
-              <div className={`w-20 ${heights[i]} ${colors[i]} border-2 rounded-t-[6px] flex items-start justify-center pt-2 text-2xl`}>
-                {medals[p.rank - 1]}
+            <div key={p.rank} className="flex flex-col items-center gap-3">
+              <div className="text-4xl">{p.avatar}</div>
+              <div className="text-xs font-bold text-ink">{p.name.split(" ")[0]}</div>
+              <div className={`w-20 ${heights[i]} ${colors[i]} rounded-t-[16px] flex items-start justify-center pt-4 text-3xl shadow-md`}>
+                {medals[i]}
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* Filter tabs */}
-      <div className="flex gap-2 mb-4">
-        {["weekly", "monthly", "alltime"].map(t => (
-          <button key={t} onClick={() => setTab(t)} className={`rounded-full px-4 py-1 text-xs border transition-colors capitalize ${
-            tab === t ? "bg-deep text-white border-deep" : "bg-card text-muted border-border"
-          }`}>{t}</button>
-        ))}
-      </div>
-
       {/* Table */}
-      <div className="bg-card border border-border rounded-xl overflow-hidden">
-        <div className="p-3 px-5 bg-[#F5F0E8] grid grid-cols-[48px_1fr_100px_80px_80px] text-[10px] text-muted font-mono tracking-widest font-bold">
-          <span>RANK</span><span>STUDENT</span><span>XP</span><span>STREAK</span><span>LEVEL</span>
-        </div>
+      <div className="bg-white border border-gray-100 rounded-[24px] overflow-hidden shadow-sm">
         {players.map(p => (
-          <div key={p.rank} className={`p-3.5 px-5 grid grid-cols-[48px_1fr_100px_80px_80px] border-b border-border items-center ${p.isMe ? 'bg-saffronLight' : ''}`}>
-            <span className={`font-mono font-bold text-[15px] ${p.rank <= 3 ? 'text-gold' : 'text-muted'}`}>
-              {p.rank <= 3 ? medals[p.rank - 1] : `#${p.rank}`}
+          <div key={p.rank} className={`p-5 flex items-center gap-4 border-b border-gray-50 last:border-0 ${p.isMe ? 'bg-violet-50' : ''}`}>
+            <span className={`font-bold w-6 text-center ${p.rank <= 3 ? 'text-gold' : 'text-sub'}`}>
+              {p.rank}
             </span>
-            <div className="flex gap-2.5 items-center">
-              <div className="text-xl">{p.avatar}</div>
-              <div className={`text-sm ${p.isMe ? 'font-bold' : ''} text-deep`}>
-                {p.name} {p.isMe && <span className="text-saffron text-[11px]"> ← You</span>}
-              </div>
+            <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-xl">{p.avatar}</div>
+            <div className="flex-1">
+              <div className={`font-bold text-ink ${p.isMe ? 'text-violet' : ''}`}>{p.name} {p.isMe && <span className="text-xs text-saffron"> (You)</span>}</div>
+              <div className="text-xs text-sub">{p.level}</div>
             </div>
-            <span className="font-mono font-bold text-gold text-sm">{p.xp.toLocaleString()}</span>
-            <span className="text-[13px] text-ruby">🔥 {p.streak}d</span>
-            <span className="text-[11px] text-accent font-bold">{p.level}</span>
+            <div className="font-bold text-ink">{p.xp.toLocaleString()} XP</div>
           </div>
         ))}
       </div>

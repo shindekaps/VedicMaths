@@ -3,12 +3,12 @@ import { useQuery } from '@tanstack/react-query';
 
 // Sutra defines the data structure for a Vedic Mathematics Sutra
 export interface Sutra {
-  ID: string;
-  Name: string;
-  Slug: string;
-  Meaning: string;
-  Description: string;
-  OrderIndex: number;
+  id: string;
+  name: string;
+  slug: string;
+  meaning: string;
+  description: string;
+  order_index: number;
 }
 
 // Lesson defines the data structure for a specific lesson

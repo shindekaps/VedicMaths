@@ -28,7 +28,7 @@ export const PracticeView = ({ sutraID }: PracticeViewProps) => {
     if (!sessionID || !problem || !user) return;
     
     const result = await submitAnswer({
-      user_id: user.id, // Assuming user ID is in store
+      user_id: user.id,
       sutra_id: sutraID,
       session_id: sessionID,
       user_answer: ans,
@@ -39,13 +39,13 @@ export const PracticeView = ({ sutraID }: PracticeViewProps) => {
     setSubmitted(true);
   };
 
-  if (!problem) return <div>Loading...</div>;
+  if (!problem) return <div className="p-10 text-center text-ink">Loading problem...</div>;
 
   return (
-    <div className="bg-[#FBF7EE] min-h-screen flex flex-col items-center justify-center p-10">
-      <div className="bg-white border border-[#E8DEC8] rounded-2xl p-12 text-center shadow-sm max-w-md w-full">
-        <h2 className="text-sm text-[#0D8A7A] font-mono font-bold uppercase tracking-widest mb-3">Practice Session</h2>
-        <div className="font-serif text-5xl font-bold text-[#1A1208] mb-8">{problem.question}</div>
+    <div className="bg-bg min-h-screen flex flex-col items-center justify-center p-6">
+      <div className="bg-card border border-gray-100 rounded-[32px] p-8 md:p-12 text-center shadow-lg max-w-md w-full">
+        <h2 className="text-xs text-sub font-bold uppercase tracking-widest mb-4">Practice Session</h2>
+        <div className="font-serif text-5xl font-black text-ink mb-10">{problem.question}</div>
         
         {!submitted ? (
           <div className="flex flex-col gap-4">
@@ -53,18 +53,18 @@ export const PracticeView = ({ sutraID }: PracticeViewProps) => {
               value={ans}
               onChange={(e) => setAns(e.target.value)}
               placeholder="Your answer"
-              className="border-2 border-[#E8DEC8] rounded-lg p-4 text-center text-xl focus:border-[#0D8A7A] outline-none"
+              className="border-2 border-gray-100 rounded-2xl p-4 text-center text-xl focus:border-violet outline-none transition-colors"
             />
             <button 
               onClick={submit} 
-              className="bg-[#0D8A7A] text-white rounded-lg p-4 font-bold hover:bg-[#075E53]"
+              className="bg-gradient-to-r from-violet to-saffron text-white rounded-2xl p-4 font-bold hover:scale-[1.02] transition-transform shadow-md"
             >
               Submit Answer
             </button>
           </div>
         ) : (
-          <div className={`p-4 rounded-lg font-bold ${isCorrect ? 'bg-[#E8F5EB] text-[#2A7A3B]' : 'bg-[#FFE9EA] text-[#C0272D]'}`}>
-            {isCorrect ? "Correct!" : `Incorrect. Answer was ${problem.answer}`}
+          <div className={`p-6 rounded-2xl font-bold text-lg ${isCorrect ? 'bg-green-100 text-green-700' : 'bg-pink-100 text-pink-700'}`}>
+            {isCorrect ? "Correct! ✨" : `Incorrect. Answer was ${problem.answer}`}
           </div>
         )}
       </div>

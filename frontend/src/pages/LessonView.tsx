@@ -1,69 +1,58 @@
 import { useState } from "react";
-import { theme } from "@/theme";
 import { useLessonsBySutra } from "@/api/lessons";
 
 interface LessonViewProps {
   setActive: (id: string) => void;
-  sutraID: string; // Passed from curriculum
+  sutraID: string;
 }
 
 export const LessonView = ({ setActive, sutraID }: LessonViewProps) => {
   const { data: lessons, isLoading, error } = useLessonsBySutra(sutraID);
   const [step, setStep] = useState(0);
 
-  if (isLoading) return <div>Loading lesson...</div>;
-  if (error || !lessons || lessons.length === 0) return <div>Error loading lesson</div>;
+  if (isLoading) return <div className="p-10 text-center text-white">Loading lesson...</div>;
+  if (error || !lessons || lessons.length === 0) return <div className="p-10 text-center text-pink-500">Error loading lesson</div>;
 
   const cur = lessons[step];
 
   return (
-    <div className="bg-[#FBF7EE] min-h-screen flex">
-      {/* Sidebar progress */}
-      <div className="w-[220px] bg-[#FFFDF7] border-r border-[#E8DEC8] p-4 flex-shrink-0">
-        <div className="text-[10px] text-[#8B7355] font-mono tracking-widest uppercase mb-4">Lesson</div>
-        <div className="font-serif text-[15px] font-bold text-[#1A1208] mb-5">{cur.title}</div>
-        
-        {lessons.map((s, i) => (
-          <div key={s.id} onClick={() => setStep(i)} className={`flex items-center gap-2.5 p-2 rounded-lg cursor-pointer mb-1 ${step === i ? 'bg-[#E6F7F5] border border-[#075E53]/30' : ''}`}>
-            <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold ${i < step ? 'bg-[#0D8A7A] text-white' : step === i ? 'bg-[#0D8A7A] text-white' : 'bg-[#E8DEC8] text-[#8B7355]'}`}>
-              {i < step ? "✓" : i + 1}
-            </div>
-            <span className={`text-[12px] ${step === i ? 'text-[#0D8A7A]' : 'text-[#8B7355]'}`}>{s.title}</span>
+    <div className="min-h-screen bg-slate-900 text-white flex flex-col">
+      {/* Header */}
+      <div className="p-6 pt-10 pb-4 border-b border-white/10 bg-white/5">
+        <div className="text-[10px] font-bold text-violet-300 uppercase tracking-widest mb-1">Lesson Step {step + 1} / {lessons.length}</div>
+        <h2 className="text-xl font-extrabold text-white">{cur.title}</h2>
+      </div>
+
+      {/* Progress Strip */}
+      <div className="flex items-center gap-2 p-4 overflow-x-auto scrollbar-hide bg-black/20">
+        {lessons.map((_, i) => (
+          <div
+            key={i}
+            onClick={() => setStep(i)}
+            className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold cursor-pointer ${
+              step === i ? "bg-saffron text-white" : i < step ? "bg-violet-600 text-white" : "bg-white/10 text-white/50"
+            }`}
+          >
+            {i + 1}
           </div>
         ))}
       </div>
 
-      {/* Main lesson area */}
-      <div className="flex-1 p-10 overflow-y-auto">
-        <div className="max-w-[680px]">
-          <div className="flex justify-between items-center mb-7">
-            <div>
-              <div className="text-[12px] text-[#8B7355] font-mono tracking-wider mb-1">STEP {step + 1} OF {lessons.length}</div>
-              <h2 className="font-serif text-[28px] text-[#1A1208]">{cur.title}</h2>
-            </div>
-            <div className="flex gap-1">
-              {lessons.map((_, i) => (
-                <div key={i} className={`w-8 h-1 rounded ${i <= step ? 'bg-[#0D8A7A]' : 'bg-[#E8DEC8]'}`} />
-              ))}
-            </div>
-          </div>
+      {/* Main content area */}
+      <div className="p-6 flex-1 flex flex-col">
+        <div className="bg-white rounded-[24px] p-6 text-slate-900 mb-8">
+          <p className="text-sm leading-relaxed">{cur.content}</p>
+        </div>
 
-          {/* Content card */}
-          <div className="bg-white border border-[#E8DEC8] rounded-xl p-8 mb-5 shadow-sm">
-            <p className="text-[16px] text-[#2D2010] leading-loose mb-5">{cur.content}</p>
-          </div>
-
-          {/* Navigation */}
-          <div className="flex gap-3">
-            {step > 0 && (
-              <button onClick={() => setStep(step - 1)} className="bg-white text-[#8B7355] border border-[#E8DEC8] rounded-lg px-6 py-3 text-sm hover:bg-gray-50">← Back</button>
-            )}
-            {step < lessons.length - 1 ? (
-              <button onClick={() => setStep(step + 1)} className="bg-[#0D8A7A] text-white rounded-lg px-7 py-3 text-sm font-bold hover:bg-[#075E53]">Next Step →</button>
-            ) : (
-              <button onClick={() => setActive("practice")} className="bg-[#E8650A] text-white rounded-lg px-7 py-3 text-sm font-bold hover:bg-[#C04E00]">Start Practice ⚡</button>
-            )}
-          </div>
+        <div className="mt-auto flex gap-4">
+          {step > 0 && (
+            <button onClick={() => setStep(step - 1)} className="flex-1 bg-white/10 text-white rounded-[16px] py-4 font-bold hover:bg-white/20 transition-colors">Back</button>
+          )}
+          {step < lessons.length - 1 ? (
+            <button onClick={() => setStep(step + 1)} className="flex-1 bg-violet-600 text-white rounded-[16px] py-4 font-bold hover:bg-violet-700 transition-colors">Next</button>
+          ) : (
+            <button onClick={() => setActive("practice")} className="flex-1 bg-saffron text-white rounded-[16px] py-4 font-bold hover:bg-orange-600 transition-colors">Start Practice ⚡</button>
+          )}
         </div>
       </div>
     </div>

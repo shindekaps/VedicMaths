@@ -1,50 +1,64 @@
-import { theme } from "@/theme";
+interface DashboardViewProps {
+  setActive: (id: string) => void;
+}
 
-// Dashboard component showing user statistics and activity
-export const DashboardView = ({ setActive }: { setActive: (id: string) => void }) => {
-  const activity = [3, 5, 2, 7, 4, 6, 1];
-  
+export const DashboardView = ({ setActive }: DashboardViewProps) => {
   return (
-    <div className="bg-bg min-h-screen p-9">
+    <div className="bg-bg min-h-screen flex flex-col pb-20 md:pb-0">
       {/* Header */}
-      <div className="flex justify-between items-start mb-7">
-        <div>
-          <div className="text-sm text-muted mb-1">Good morning,</div>
-          <h2 className="font-serif text-[28px] text-deep mb-2">Arjun Sharma 👋</h2>
-          <div className="flex gap-3">
-            <span className="bg-saffronLight text-primary text-xs px-3 py-1 rounded-full font-bold">🔥 14 Day Streak</span>
-            <span className="bg-tealLight text-accent text-xs px-3 py-1 rounded-full font-bold">Level 8 · Scholar</span>
+      <div className="bg-gradient-to-br from-indigo-900 to-violet-800 p-8 pt-12 pb-10 text-white rounded-b-[40px] shadow-xl">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <div className="text-xs font-semibold opacity-70">Good Morning 👋</div>
+            <div className="text-2xl font-bold">Kapil</div>
           </div>
+          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-gold to-saffron flex items-center justify-center font-bold text-lg shadow-lg">K</div>
         </div>
-        <button onClick={() => setActive("practice")} className="bg-primary text-white rounded-lg px-6 py-3 text-sm font-bold hover:bg-opacity-90">
-          Continue Learning →
-        </button>
+        <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md rounded-2xl px-5 py-3 text-sm font-bold shadow-md">
+          🔥 12-Day Streak &nbsp;&nbsp; ⭐ 1,450 XP
+        </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-4 gap-4 mb-6">
-        {[
-          { label: "Total XP", value: "4,820", color: "text-secondary" },
-          { label: "Sutras Mastered", value: "5 / 16", color: "text-accent" },
-          { label: "Problems Solved", value: "1,247", color: "text-indigo-800" },
-          { label: "Accuracy", value: "83%", color: "text-green-700" },
-        ].map(s => (
-          <div key={s.label} className="bg-card border border-border rounded-xl p-5 shadow-sm">
-            <div className="text-[10px] text-muted font-mono mb-2">{s.label.toUpperCase()}</div>
-            <div className={`font-serif text-[26px] font-bold ${s.color}`}>{s.value}</div>
+      {/* Body */}
+      <div className="p-6 flex flex-col gap-8 flex-1">
+        
+        {/* Module Cards Grid */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-white rounded-[24px] p-5 shadow-sm border border-violet-100 flex flex-col gap-2 cursor-pointer transition-transform hover:scale-[1.03]" onClick={() => setActive("curriculum")}>
+            <div className="text-3xl">📖</div>
+            <div className="font-bold text-ink">Curriculum</div>
+            <div className="text-xs text-sub">16 Sutras</div>
+            <div className="h-2 rounded-full bg-gray-100 mt-2">
+              <div className="h-full rounded-full bg-violet" style={{ width: "50%" }}></div>
+            </div>
           </div>
-        ))}
-      </div>
+          
+          <div className="bg-white rounded-[24px] p-5 shadow-sm border border-violet-100 flex flex-col gap-2 cursor-pointer transition-transform hover:scale-[1.03]" onClick={() => setActive("practice")}>
+            <div className="text-3xl">✏️</div>
+            <div className="font-bold text-ink">Practice Quiz</div>
+            <div className="text-xs text-sub">120 Questions</div>
+            <div className="h-2 rounded-full bg-gray-100 mt-2">
+              <div className="h-full rounded-full bg-gold" style={{ width: "35%" }}></div>
+            </div>
+          </div>
 
-      {/* Activity Chart */}
-      <div className="bg-card border border-border rounded-xl p-5">
-        <div className="text-sm font-bold text-deep mb-4">This Week's Activity</div>
-        <div className="flex gap-2 items-end h-20 mb-2">
-            {activity.map((v, i) => (
-              <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                <div className="w-full bg-accent rounded-t-sm" style={{ height: `${v * 10}px` }} />
-              </div>
-            ))}
+          <div className="bg-white rounded-[24px] p-5 shadow-sm border border-violet-100 flex flex-col gap-2 cursor-pointer transition-transform hover:scale-[1.03]" onClick={() => setActive("games")}>
+            <div className="text-3xl">🎮</div>
+            <div className="font-bold text-ink">Game Mode</div>
+            <div className="text-xs text-sub">5 Games</div>
+            <div className="h-2 rounded-full bg-gray-100 mt-2">
+              <div className="h-full rounded-full bg-green" style={{ width: "20%" }}></div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-[24px] p-5 shadow-sm border border-violet-100 flex flex-col gap-2 cursor-pointer transition-transform hover:scale-[1.03]" onClick={() => setActive("progress")}>
+            <div className="text-3xl">📊</div>
+            <div className="font-bold text-ink">Your Stats</div>
+            <div className="text-xs text-sub">Progress Track</div>
+            <div className="h-2 rounded-full bg-gray-100 mt-2">
+              <div className="h-full rounded-full bg-pink" style={{ width: "60%" }}></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
