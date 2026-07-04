@@ -1,0 +1,12 @@
+{
+  "sutra": {
+    "name": "Ekadhikena Purvena",
+    "slug": "ekadhikena-purvena",
+    "meaning": "By one more than the previous",
+    "order_index": 1
+  },
+  "lessons": [
+    { "title": "Introduction to Ekadhikena", "content": "Ekadhikena Purvena means 'By one more than the previous'. It is widely used to square numbers ending in 5.", "order_index": 1 },
+    { "title": "Squaring Examples", "content": "To square 15: 1*(1+1) = 2, append 25 -> 225.", "order_index": 2 }
+  ]
+}

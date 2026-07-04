@@ -1,0 +1,209 @@
+[
+  {
+    "_id": { "$oid": "000000000000000000000001" },
+    "sutraNumber": 1,
+    "slug": "ekadhikena-purvena",
+    "sanskritName": "Ekadhikena Purvena",
+    "englishMeaning": "By One More Than the Previous One",
+    "icon": "➕",
+    "difficulty": "easy",
+    "scope": "Squaring numbers ending in 5",
+    "themeColor": "#7C3AED",
+    "order": 1,
+    "isLocked": false,
+    "xpReward": 80,
+    "estimatedMinutes": 8,
+
+    "intro": {
+      "description": "Instantly square any number ending in 5. A simple pattern that turns intimidating squares into two quick steps.",
+      "whatYouLearn": [
+        "Identify numbers ending in 5",
+        "Multiply the leading digit by itself+1",
+        "Append 25 to complete the square"
+      ]
+    },
+
+    "concept": {
+      "title": "The Core Method",
+      "formula": "n5\u00b2 = [n \u00d7 (n+1)] | 25",
+      "formulaNote": "Multiply, then append 25",
+      "rules": [
+        { "icon": "1\ufe0f\u20e3", "text": "Take the leading digit(s) before the 5" },
+        { "icon": "2\ufe0f\u20e3", "text": "Multiply it by itself plus one" },
+        { "icon": "3\ufe0f\u20e3", "text": "Append 25 to the result" },
+        { "icon": "\u2705", "text": "That combined number is your answer" }
+      ]
+    },
+
+    "visualExample": {
+      "problem": "35\u00b2",
+      "displayEquation": "35 \u00d7 35",
+      "steps": [
+        { "num": 1, "title": "Leading digit", "calc": "3 (before the 5)" },
+        { "num": 2, "title": "Multiply n \u00d7 (n+1)", "calc": "3 \u00d7 4 = 12" },
+        { "num": 3, "title": "Append 25", "calc": "12 | 25" },
+        { "num": "\u2713", "title": "Answer", "calc": "= 1225", "isAnswer": true }
+      ]
+    },
+
+    "nextSutraSlug": "nikhilam-navatashcaramam-dashatah",
+    "createdAt": { "$date": "2026-01-01T00:00:00Z" },
+    "updatedAt": { "$date": "2026-01-01T00:00:00Z" }
+  },
+
+  {
+    "_id": { "$oid": "000000000000000000000002" },
+    "sutraNumber": 2,
+    "slug": "nikhilam-navatashcaramam-dashatah",
+    "sanskritName": "Nikhilam Navatashcaramam Dashatah",
+    "englishMeaning": "All from 9 and the Last from 10",
+    "icon": "\ud83d\udd1f",
+    "difficulty": "easy",
+    "scope": "Multiplication near a base (10, 100, 1000)",
+    "themeColor": "#10B981",
+    "order": 2,
+    "isLocked": false,
+    "xpReward": 80,
+    "estimatedMinutes": 9,
+
+    "intro": {
+      "description": "Multiply numbers close to a power of 10 using their deviation from the base instead of long multiplication.",
+      "whatYouLearn": [
+        "Find deviation from the nearest base",
+        "Cross-subtract deviations",
+        "Multiply deviations for the last digits"
+      ]
+    },
+
+    "concept": {
+      "title": "The Core Method",
+      "formula": "(a\u2212dev\u2081) | (dev\u2081 \u00d7 dev\u2082)",
+      "formulaNote": "Deviation-based multiplication",
+      "rules": [
+        { "icon": "1\ufe0f\u20e3", "text": "Pick the nearest base (10, 100, 1000)" },
+        { "icon": "2\ufe0f\u20e3", "text": "Find each number's deviation from base" },
+        { "icon": "3\ufe0f\u20e3", "text": "Cross-subtract: number + other's deviation" },
+        { "icon": "\u2705", "text": "Multiply the two deviations for the right part" }
+      ]
+    },
+
+    "visualExample": {
+      "problem": "97 \u00d7 96",
+      "displayEquation": "97 \u00d7 96",
+      "steps": [
+        { "num": 1, "title": "Deviations from 100", "calc": "97\u2192\u22123, 96\u2192\u22124" },
+        { "num": 2, "title": "Cross-subtract", "calc": "97\u22124 = 93" },
+        { "num": 3, "title": "Multiply deviations", "calc": "(\u22123)\u00d7(\u22124) = 12" },
+        { "num": "\u2713", "title": "Answer", "calc": "= 9312", "isAnswer": true }
+      ]
+    },
+
+    "nextSutraSlug": "urdhva-tiryagbhyam",
+    "createdAt": { "$date": "2026-01-01T00:00:00Z" },
+    "updatedAt": { "$date": "2026-01-01T00:00:00Z" }
+  },
+
+  {
+    "_id": { "$oid": "000000000000000000000003" },
+    "sutraNumber": 3,
+    "slug": "urdhva-tiryagbhyam",
+    "sanskritName": "Urdhva-Tiryagbhyam",
+    "englishMeaning": "Vertically and Crosswise",
+    "icon": "\u2716\ufe0f",
+    "difficulty": "medium",
+    "scope": "General multiplication, any digit count",
+    "themeColor": "#7C3AED",
+    "order": 3,
+    "isLocked": false,
+    "xpReward": 80,
+    "estimatedMinutes": 10,
+
+    "intro": {
+      "description": "The universal multiplication formula. Works for any size number \u2014 fast and elegant, no long multiplication needed.",
+      "whatYouLearn": [
+        "Cross multiply digits",
+        "Add partial products",
+        "Solve 2-digit \u00d7 2-digit instantly"
+      ]
+    },
+
+    "concept": {
+      "title": "The Core Method",
+      "formula": "(a\u00d7d + b\u00d7c) | (b\u00d7d)",
+      "formulaNote": "Cross then Vertical",
+      "rules": [
+        { "icon": "1\ufe0f\u20e3", "text": "Write two numbers side by side: ab \u00d7 cd" },
+        { "icon": "2\ufe0f\u20e3", "text": "Cross multiply and sum: (a\u00d7d) + (b\u00d7c)" },
+        { "icon": "3\ufe0f\u20e3", "text": "Vertically multiply units: b\u00d7d" },
+        { "icon": "\u2705", "text": "Combine results left to right" }
+      ]
+    },
+
+    "visualExample": {
+      "problem": "23 \u00d7 41",
+      "displayEquation": "23 \u00d7 41",
+      "steps": [
+        { "num": 1, "title": "Tens \u00d7 Tens", "calc": "2 \u00d7 4 = 8 \u2192 800" },
+        { "num": 2, "title": "Cross Multiply", "calc": "2\u00d71 + 3\u00d74 = 14 \u2192 140" },
+        { "num": 3, "title": "Units \u00d7 Units", "calc": "3 \u00d7 1 = 3" },
+        { "num": "\u2713", "title": "Answer", "calc": "800+140+3 = 943", "isAnswer": true }
+      ]
+    },
+
+    "nextSutraSlug": "paravartya-yojayet",
+    "createdAt": { "$date": "2026-01-01T00:00:00Z" },
+    "updatedAt": { "$date": "2026-01-01T00:00:00Z" }
+  },
+
+  {
+    "_id": { "$oid": "000000000000000000000004" },
+    "sutraNumber": 4,
+    "slug": "paravartya-yojayet",
+    "sanskritName": "Paravartya Yojayet",
+    "englishMeaning": "Transpose and Adjust",
+    "icon": "\u21c4\ufe0f",
+    "difficulty": "medium",
+    "scope": "Division and simple equations",
+    "themeColor": "#06B6D4",
+    "order": 4,
+    "isLocked": false,
+    "xpReward": 90,
+    "estimatedMinutes": 10,
+
+    "intro": {
+      "description": "Transpose and adjust terms across an equation to solve division problems and linear equations in one clean pass.",
+      "whatYouLearn": [
+        "Reverse the sign of the divisor's non-leading digits",
+        "Bring down and adjust step by step",
+        "Extract quotient and remainder"
+      ]
+    },
+
+    "concept": {
+      "title": "The Core Method",
+      "formula": "divisor digits (except first) \u2192 sign flipped",
+      "formulaNote": "Transpose, then work left to right",
+      "rules": [
+        { "icon": "1\ufe0f\u20e3", "text": "Write the divisor's digits with signs flipped (except leading digit)" },
+        { "icon": "2\ufe0f\u20e3", "text": "Bring down the first dividend digit" },
+        { "icon": "3\ufe0f\u20e3", "text": "Multiply and add across each column" },
+        { "icon": "\u2705", "text": "Last digits form the remainder" }
+      ]
+    },
+
+    "visualExample": {
+      "problem": "125 \u00f7 5",
+      "displayEquation": "125 \u00f7 5",
+      "steps": [
+        { "num": 1, "title": "Transpose divisor", "calc": "5 \u2192 leading digit stays" },
+        { "num": 2, "title": "Bring down 1", "calc": "Quotient starts: 1" },
+        { "num": 3, "title": "Process remaining digits", "calc": "1\u21922, 2\u21925" },
+        { "num": "\u2713", "title": "Answer", "calc": "= 25", "isAnswer": true }
+      ]
+    },
+
+    "nextSutraSlug": "sunyam-samyasamuccaye",
+    "createdAt": { "$date": "2026-01-01T00:00:00Z" },
+    "updatedAt": { "$date": "2026-01-01T00:00:00Z" }
+  }
+]

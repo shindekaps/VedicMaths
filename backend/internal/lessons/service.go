@@ -2,6 +2,7 @@ package lessons
 
 import (
 	"context"
+	"strconv"
 	"vedicpath/internal/domain"
 )
 
@@ -30,11 +31,10 @@ func (s *service) ListSutras(ctx context.Context) ([]domain.SutraDTO, error) {
 	var dtos []domain.SutraDTO
 	for _, sutra := range sutras {
 		dtos = append(dtos, domain.SutraDTO{
-			ID:          sutra.ID.Hex(),
-			Name:        sutra.Name,
+			ID:          strconv.Itoa(sutra.ID),
+			Name:        sutra.SanskritName,
 			Slug:        sutra.Slug,
-			Meaning:     sutra.Meaning,
-			Description: sutra.Description,
+			Meaning:     sutra.EnglishMeaning,
 			OrderIndex:  sutra.OrderIndex,
 		})
 	}

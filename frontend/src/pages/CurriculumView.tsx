@@ -3,6 +3,7 @@ import { useSutras } from "@/api/lessons";
 
 interface CurriculumViewProps {
   setActive: (id: string) => void;
+  navigateToLesson: (sutraID: string) => void;
 }
 
 const TABS = ["All", "Easy", "Medium", "Hard"];
@@ -14,7 +15,7 @@ const getDifficulty = (index: number): "Easy" | "Medium" | "Hard" => {
   return "Hard";
 };
 
-export const CurriculumView = ({ setActive }: CurriculumViewProps) => {
+export const CurriculumView = ({ setActive, navigateToLesson }: CurriculumViewProps) => {
   const { data: SUTRAS, isLoading, error } = useSutras();
   const [activeTab, setActiveTab] = useState("All");
 
@@ -58,7 +59,7 @@ export const CurriculumView = ({ setActive }: CurriculumViewProps) => {
         {filteredSutras.map((s) => (
           <div 
             key={s.id} 
-            onClick={() => setActive("lesson")} 
+            onClick={() => navigateToLesson(s.id)} 
             className="flex items-center gap-3 p-3 rounded-[14px] border border-gray-100 bg-white shadow-sm cursor-pointer hover:shadow-md transition-shadow"
           >
             <div className={`w-9 h-9 rounded-[12px] flex items-center justify-center text-white font-bold text-sm ${getCategoryColor(s.order_index)}`}>

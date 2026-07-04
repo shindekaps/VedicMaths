@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLessonsBySutra } from "@/api/lessons";
+import { IntroStep } from "@/components/lesson/IntroStep";
 
 interface LessonViewProps {
   setActive: (id: string) => void;
@@ -10,50 +11,55 @@ export const LessonView = ({ setActive, sutraID }: LessonViewProps) => {
   const { data: lessons, isLoading, error } = useLessonsBySutra(sutraID);
   const [step, setStep] = useState(0);
 
-  if (isLoading) return <div className="p-10 text-center text-white">Loading lesson...</div>;
-  if (error || !lessons || lessons.length === 0) return <div className="p-10 text-center text-pink-500">Error loading lesson</div>;
+  if (isLoading) return <div className="p-10 text-center text-white">Loading...</div>;
+  if (error) return <div className="p-10 text-center text-pink">Error.</div>;
+  if (!lessons || lessons.length === 0) return <div className="p-10 text-center text-white">No lessons.</div>;
 
-  const cur = lessons[step];
+  const lesson = lessons[0];
+  const steps = lesson.steps as Array<Array<{ Key: string; Value: any }>>;
+
+  if (!lesson || !steps || steps.length === 0) return <div className="p-10 text-center text-white">Lesson content unavailable.</div>;
+
+  const renderStep = () => {
+    const currentStepArray = steps[step];
+    // Find the object with Key "type" to determine the type
+    const typeObj = currentStepArray.find(i => i.Key === "type");
+    const dataObj = currentStepArray.find(i => i.Key === "data");
+    
+    switch (typeObj?.Value) {
+      case "intro":
+        return <IntroStep stepData={dataObj?.Value} />;
+      default:
+        return <div className="text-white">Unknown step type: {typeObj?.Value}</div>;
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white flex flex-col">
-      {/* Header */}
-      <div className="p-6 pt-10 pb-4 border-b border-white/10 bg-white/5">
-        <div className="text-[10px] font-bold text-violet-300 uppercase tracking-widest mb-1">Lesson Step {step + 1} / {lessons.length}</div>
-        <h2 className="text-xl font-extrabold text-white">{cur.title}</h2>
+    <div className="fixed inset-0 z-50 flex flex-col bg-navy text-white font-sans p-6 overflow-y-auto">
+      {/* Top Bar - Back Button */}
+      <div className="flex items-center justify-between mb-8">
+        <button onClick={() => setActive("curriculum")} className="text-white/60 font-bold">← Back</button>
       </div>
 
-      {/* Progress Strip */}
-      <div className="flex items-center gap-2 p-4 overflow-x-auto scrollbar-hide bg-black/20">
-        {lessons.map((_, i) => (
-          <div
-            key={i}
-            onClick={() => setStep(i)}
-            className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold cursor-pointer ${
-              step === i ? "bg-saffron text-white" : i < step ? "bg-violet-600 text-white" : "bg-white/10 text-white/50"
-            }`}
-          >
-            {i + 1}
-          </div>
-        ))}
+      {/* Main Content Area */}
+      <div className="flex-grow mb-8">
+        {renderStep()}
       </div>
 
-      {/* Main content area */}
-      <div className="p-6 flex-1 flex flex-col">
-        <div className="bg-white rounded-[24px] p-6 text-slate-900 mb-8">
-          <p className="text-sm leading-relaxed">{cur.content}</p>
+      {/* Navigation & Progress */}
+      <div className="flex flex-col gap-6 mt-auto">
+        <div className="flex justify-center gap-2">
+            {steps.map((_, i) => (
+              <div key={i} className={`h-2 rounded-full transition-all ${i === step ? 'w-8 bg-saffron' : 'w-2 bg-white/20'}`} />
+            ))}
         </div>
 
-        <div className="mt-auto flex gap-4">
-          {step > 0 && (
-            <button onClick={() => setStep(step - 1)} className="flex-1 bg-white/10 text-white rounded-[16px] py-4 font-bold hover:bg-white/20 transition-colors">Back</button>
-          )}
-          {step < lessons.length - 1 ? (
-            <button onClick={() => setStep(step + 1)} className="flex-1 bg-violet-600 text-white rounded-[16px] py-4 font-bold hover:bg-violet-700 transition-colors">Next</button>
-          ) : (
-            <button onClick={() => setActive("practice")} className="flex-1 bg-saffron text-white rounded-[16px] py-4 font-bold hover:bg-orange-600 transition-colors">Start Practice ⚡</button>
-          )}
-        </div>
+        <button 
+          onClick={() => step < steps.length - 1 ? setStep(step + 1) : setActive("practice")} 
+          className="w-full bg-violet rounded-full py-5 font-bold text-lg shadow-lg shadow-violet/30 transition-colors"
+        >
+          {step === 0 ? "Start Learning →" : step < steps.length - 1 ? "Next Step" : "Practice ⚡"}
+        </button>
       </div>
     </div>
   );

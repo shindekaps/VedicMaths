@@ -1,0 +1,18 @@
+[
+  {"order_index": 1, "name": "Ekadhikena Purvena", "slug": "ekadhikena-purvena", "meaning": "By one more than the previous", "description": "Fundamentals of multiplication by 11 and ending in 5."},
+  {"order_index": 2, "name": "Nikhilam Navatashcaramam", "slug": "nikhilam-navatashcaramam", "meaning": "All from 9 and the last from 10", "description": "Base-multiplication method."},
+  {"order_index": 3, "name": "Urdhva-Tiryagbhyam", "slug": "urdhva-tiryagbhyam", "meaning": "Vertically and crosswise", "description": "General multiplication formula."},
+  {"order_index": 4, "name": "Paravartya Yojayet", "slug": "paravartya-yojayet", "meaning": "Transpose and adjust", "description": "Division and algebraic simplification."},
+  {"order_index": 5, "name": "Shunyam Saamyasamuccaye", "slug": "shunyam-saamyasamuccaye", "meaning": "When the sum is same, zero", "description": "Solving simultaneous linear equations."},
+  {"order_index": 6, "name": "Anurupye Shunyamanyat", "slug": "anurupye-shunyamanyat", "meaning": "If one is in ratio, the other is zero", "description": "Solving equations by proportions."},
+  {"order_index": 7, "name": "Sankalana-vyavakalanabhyam", "slug": "sankalana-vyavakalanabhyam", "meaning": "By addition and by subtraction", "description": "Solving equations by sum and difference."},
+  {"order_index": 8, "name": "Puranapuranabhyam", "slug": "puranapuranabhyam", "meaning": "By the completion or non-completion", "description": "Algebraic factorizations."},
+  {"order_index": 9, "name": "Chalana-Kalanabhyam", "slug": "chalana-kalanabhyam", "meaning": "Differences and similarities", "description": "Solving quadratic equations."},
+  {"order_index": 10, "name": "Yaavadunam", "slug": "yaavadunam", "meaning": "Whatever the deficiency", "description": "Squaring and cubing."},
+  {"order_index": 11, "name": "Vyashtisamanstih", "slug": "vyashtisamanstih", "meaning": "Part and whole", "description": "Complex fractions."},
+  {"order_index": 12, "name": "Shesanyankena Charamena", "slug": "shesanyankena-charamena", "meaning": "The remainders by the last digit", "description": "Division techniques."},
+  {"order_index": 13, "name": "Sopaantyadvayamantyam", "slug": "sopaantyadvayamantyam", "meaning": "The ultimate and twice the penultimate", "description": "Higher order division."},
+  {"order_index": 14, "name": "Ekanyunena Purvena", "slug": "ekanyunena-purvena", "meaning": "By one less than the previous", "description": "Multiplying by series of 9s."},
+  {"order_index": 15, "name": "Gunitasamuccayah", "slug": "gunitasamuccayah", "meaning": "The product of the sum", "description": "Verification of multiplication."},
+  {"order_index": 16, "name": "Gunakasamuccayah", "slug": "gunakasamuccayah", "meaning": "The factors of the sum", "description": "Factorization validation."}
+]

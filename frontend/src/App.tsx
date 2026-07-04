@@ -17,25 +17,31 @@ const queryClient = new QueryClient();
 // App component sets up routing and global providers
 function App() {
   const [view, setView] = useState("onboarding");
+  const [selectedSutraID, setSelectedSutraID] = useState<string>("");
 
   // Determine if we should show the full app layout (nav bar, etc)
   const isAuthView = ['onboarding'].includes(view);
 
+  const navigateToLesson = (sutraID: string) => {
+    setSelectedSutraID(sutraID);
+    setView('lesson');
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="h-screen flex flex-col overflow-hidden bg-bg text-ink">
+      <div className={`h-screen flex flex-col overflow-hidden ${view === 'lesson' ? 'bg-[#0F172A]' : 'bg-bg'} text-ink`}>
         {!isAuthView && <NavBar active={view} setActive={setView} />}
         
         <div className={`flex-1 overflow-y-auto ${!isAuthView ? 'md:pt-16 pb-16 md:pb-0' : ''}`}>
           {view === 'onboarding' && <OnboardingView setActive={setView} />}
-          {view === 'curriculum' && <CurriculumView setActive={setView} />}
+          {view === 'curriculum' && <CurriculumView setActive={setView} navigateToLesson={navigateToLesson} />}
           {view === 'leaderboard' && <LeaderboardView />}
           {view === 'dashboard' && <DashboardView setActive={setView} />}
           {view === 'progress' && <ProgressView />}
           {view === 'quiz' && <QuizView />}
           {view === 'games' && <GamesView />}
-          {view === 'lesson' && <LessonView setActive={setView} sutraID="60d5ec49f1f0a8001f3b1e01" />}
-          {view === 'practice' && <PracticeView sutraID="60d5ec49f1f0a8001f3b1e01" />}
+          {view === 'lesson' && <LessonView setActive={setView} sutraID={selectedSutraID} />}
+          {view === 'practice' && <PracticeView sutraID={selectedSutraID} />}
         </div>
       </div>
     </QueryClientProvider>

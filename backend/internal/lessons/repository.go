@@ -2,7 +2,9 @@ package lessons
 
 import (
 	"context"
+	"strconv"
 	"vedicpath/internal/domain"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -44,9 +46,14 @@ func (r *repository) GetAllSutras(ctx context.Context) ([]domain.Sutra, error) {
 
 // GetLessonsBySutra retrieves all lessons associated with a given Sutra ID
 func (r *repository) GetLessonsBySutra(ctx context.Context, sutraID string) ([]domain.Lesson, error) {
-	// Need to convert string ID to appropriate type if necessary, assuming string for now
-	filter := bson.M{"sutra_id": sutraID}
-	cursor, err := r.lessonsCollection.Find(ctx, filter)
+	// 1. Convert sutraID string to int
+	id, err := strconv.Atoi(sutraID)
+	if err != nil {
+		return nil, err
+	}
+
+	// 2. Find lessons directly by sutra_id
+	cursor, err := r.lessonsCollection.Find(ctx, bson.M{"sutra_id": int32(id)})
 	if err != nil {
 		return nil, err
 	}
@@ -56,5 +63,10 @@ func (r *repository) GetLessonsBySutra(ctx context.Context, sutraID string) ([]d
 	if err := cursor.All(ctx, &lessons); err != nil {
 		return nil, err
 	}
+	
+	if len(lessons) == 0 {
+		return []domain.Lesson{}, nil
+	}
+	
 	return lessons, nil
 }

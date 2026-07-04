@@ -8,6 +8,7 @@ import (
     "vedicpath/internal/infrastructure/cache"
     "github.com/gin-gonic/gin"
     "github.com/gin-contrib/cors"
+    "vedicpath/internal/generator"
     "vedicpath/internal/auth"
     "vedicpath/internal/lessons"
     "vedicpath/internal/practice"
@@ -23,6 +24,15 @@ func main() {
     rdb := cache.Connect(cfg.RedisURL)
 
     r := gin.Default()
+
+    // Generator setup
+    seenStore, err := generator.NewMongoSeenStore(db.Database("vedicpath"), 30*24*time.Hour)
+    if err != nil {
+        log.Fatalf("Failed to initialize seen store: %v", err)
+    }
+    answerCache := generator.NewInMemoryAnswerCache()
+    genService := generator.NewService(seenStore, answerCache)
+    genHandler := generator.NewHandler(genService)
 
     // Configure CORS
     r.Use(cors.New(cors.Config{
@@ -70,7 +80,8 @@ func main() {
         practiceGroup := v1.Group("/practice")
         {
             practiceGroup.POST("/sutras/:sutraID/start", practiceHandler.StartSession)
-            practiceGroup.GET("/sutras/:sutraID/problem", practiceHandler.GetProblem)
+            practiceGroup.GET("/next", genHandler.NextProblem)
+            practiceGroup.POST("/submit", genHandler.SubmitAnswer)
         }
     }
 

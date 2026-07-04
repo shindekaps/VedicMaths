@@ -1,0 +1,29 @@
+[
+  {
+    "sutra_slug": "ekadhikena-purvena",
+    "title": "Introduction to Ekadhikena",
+    "order_index": 1,
+    "steps": [
+      {
+        "type": "intro",
+        "data": {
+          "description": "Instantly square any number ending in 5.",
+          "whatYouLearn": ["Identify numbers ending in 5", "Multiply leading digit by itself+1", "Append 25"]
+        }
+      },
+      {
+        "type": "concept",
+        "data": {
+          "title": "The Core Method",
+          "formula": "n5^2 = [n x (n+1)] | 25",
+          "formulaNote": "Multiply, then append 25",
+          "rules": [
+            {"icon": "1️⃣", "text": "Take the leading digit(s)"},
+            {"icon": "2️⃣", "text": "Multiply by itself plus one"},
+            {"icon": "3️⃣", "text": "Append 25"}
+          ]
+        }
+      }
+    ]
+  }
+]
