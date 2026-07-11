@@ -32,7 +32,7 @@ func main() {
     }
     answerCache := generator.NewInMemoryAnswerCache()
     genService := generator.NewService(seenStore, answerCache)
-    genHandler := generator.NewHandler(genService)
+    genHandler := generator.NewHandler(genService, db.Database("vedicpath"))
 
     // Configure CORS
     r.Use(cors.New(cors.Config{

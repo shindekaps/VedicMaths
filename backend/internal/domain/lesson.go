@@ -1,65 +1,57 @@
 package domain
 
 import (
+	"time"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Sutra struct {
-	ID             int    `bson:"_id" json:"id"`
-	Slug           string `bson:"slug" json:"slug"`
-	SanskritName   string `bson:"sanskritName" json:"name"`
-	EnglishMeaning string `bson:"englishMeaning" json:"meaning"`
-	OrderIndex     int    `bson:"orderIndex" json:"order_index"`
+	ID             primitive.ObjectID   `bson:"_id" json:"id"`
+	SutraId        int                  `bson:"sutraId" json:"sutraId"`
+	Name           string               `bson:"name" json:"name"`
+	SanskritName   string               `bson:"sanskritName" json:"sanskritName"`
+	Description    string               `bson:"description" json:"description"`
+	Order          int                  `bson:"order" json:"order"`
+	Difficulty     string               `bson:"difficulty" json:"difficulty"`
+	Prerequisites  []primitive.ObjectID `bson:"prerequisites" json:"prerequisites"`
+	EstimatedHours float64              `bson:"estimatedHours" json:"estimatedHours"`
+	Icon           string               `bson:"icon" json:"icon"`
+	Color          string               `bson:"color" json:"color"`
+	CreatedAt      time.Time            `bson:"createdAt" json:"createdAt"`
+	UpdatedAt      time.Time            `bson:"updatedAt" json:"updatedAt"`
 }
 
 type SutraDTO struct {
-	ID          string  `json:"id"`
-	Name        string  `json:"name"`
-	Slug        string  `json:"slug"`
-	Meaning     string  `json:"meaning"`
-	Description string  `json:"description"`
-	OrderIndex  int     `json:"order_index"`
+	ID         string `json:"id"`
+	Name       string `json:"name"`
+	Slug       string `json:"slug"`
+	Meaning    string `json:"meaning"`
+	OrderIndex int    `json:"order_index"`
+}
+
+type Example struct {
+	Problem     string   `bson:"problem" json:"problem"`
+	Solution    string   `bson:"solution" json:"solution"`
+	Steps       []string `bson:"steps" json:"steps"`
+	Explanation string   `bson:"explanation" json:"explanation"`
 }
 
 type Lesson struct {
-	ID         primitive.ObjectID `bson:"_id" json:"id"`
-	SutraID    int32              `bson:"sutra_id" json:"sutra_id"`
-	Title      string             `bson:"title" json:"title"`
-	Steps      interface{}        `bson:"steps" json:"steps"`
-	OrderIndex int                `bson:"order_index" json:"order_index"`
-}
-
-type LessonStep struct {
-	Type string      `bson:"type" json:"type"`
-	Data interface{} `bson:"data" json:"data"`
-}
-
-type Intro struct {
-	Description  string   `bson:"description" json:"description"`
-	WhatYouLearn []string `bson:"whatYouLearn" json:"whatYouLearn"`
-}
-
-type Concept struct {
-	Title       string `bson:"title" json:"title"`
-	Formula     string `bson:"formula" json:"formula"`
-	FormulaNote string `bson:"formulaNote" json:"formulaNote"`
-	Rules       []Rule `bson:"rules" json:"rules"`
-}
-
-type Rule struct {
-	Icon string `bson:"icon" json:"icon"`
-	Text string `bson:"text" json:"text"`
-}
-
-type VisualExample struct {
-	Problem         string `bson:"problem" json:"problem"`
-	DisplayEquation string `bson:"displayEquation" json:"displayEquation"`
-	Steps           []Step `bson:"steps" json:"steps"`
-}
-
-type Step struct {
-	Num      interface{} `bson:"num" json:"num"` // Supports int or string for checkmark
-	Title    string      `bson:"title" json:"title"`
-	Calc     string      `bson:"calc" json:"calc"`
-	IsAnswer bool        `bson:"isAnswer,omitempty" json:"isAnswer,omitempty"`
+	ID               primitive.ObjectID `bson:"_id" json:"id"`
+	LessonId         string             `bson:"lessonId" json:"lessonId"`
+	SutraId          primitive.ObjectID `bson:"sutraId" json:"sutraId"`
+	SutraNumber      int                `bson:"sutraNumber" json:"sutraNumber"`
+	LessonNumber     int                `bson:"lessonNumber" json:"lessonNumber"`
+	Title            string             `bson:"title" json:"title"`
+	Description      string             `bson:"description" json:"description"`
+	Content          string             `bson:"content" json:"content"`
+	Examples         []Example          `bson:"examples" json:"examples"`
+	Difficulty       string             `bson:"difficulty" json:"difficulty"`
+	EstimatedMinutes int                `bson:"estimatedMinutes" json:"estimatedMinutes"`
+	VideoUrl         string             `bson:"videoUrl" json:"videoUrl"`
+	Order            int                `bson:"order" json:"order"`
+	IsActive         bool               `bson:"isActive" json:"isActive"`
+	CreatedAt        time.Time          `bson:"createdAt" json:"createdAt"`
+	UpdatedAt        time.Time          `bson:"updatedAt" json:"updatedAt"`
 }

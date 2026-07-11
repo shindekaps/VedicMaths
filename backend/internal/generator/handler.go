@@ -5,20 +5,50 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Handler struct {
 	svc *Service
+	db  *mongo.Database
 }
 
-func NewHandler(svc *Service) *Handler {
-	return &Handler{svc: svc}
+func NewHandler(svc *Service, db *mongo.Database) *Handler {
+	return &Handler{svc: svc, db: db}
 }
 
 // GET /practice/next?sutraId=3&difficulty=2
 func (h *Handler) NextProblem(c *gin.Context) {
 	userID := userIDFromContext(c)
-	sutraID, _ := strconv.Atoi(c.Query("sutraId"))
+	
+	sutraIDStr := c.Query("sutraId")
+	if sutraIDStr == "" {
+		sutraIDStr = c.Query("sutraID")
+	}
+
+	var sutraID int
+	if id, err := strconv.Atoi(sutraIDStr); err == nil {
+		sutraID = id
+	} else {
+		if objID, err := primitive.ObjectIDFromHex(sutraIDStr); err == nil {
+			var sutra struct {
+				SutraId int `bson:"sutraId"`
+			}
+			err := h.db.Collection("sutras").FindOne(c.Request.Context(), bson.M{"_id": objID}).Decode(&sutra)
+			if err == nil {
+				sutraID = sutra.SutraId
+			} else {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "sutra not found in database"})
+				return
+			}
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid sutraId format"})
+			return
+		}
+	}
+
 	difficulty, _ := strconv.Atoi(c.Query("difficulty"))
 	if difficulty == 0 {
 		difficulty = 1

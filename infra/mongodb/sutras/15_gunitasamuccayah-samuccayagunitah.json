@@ -1,0 +1,77 @@
+{
+  "sutra": {
+    "sutraId": 15,
+    "name": "Gunitasamuccayah Samuccayagunitah",
+    "sanskritName": "गुणितसमुच्चयः समुच्चयगुणितः",
+    "description": "This sutra states that in certain conditions, the product of sums equals the sum of products. It's a powerful algebraic tool.",
+    "order": 15,
+    "difficulty": "advanced",
+    "estimatedHours": 6,
+    "icon": "∏",
+    "color": "#db2777"
+  },
+  "lessons": [
+    {
+      "lessonId": "SUTRA_15_LESSON_1",
+      "lessonNumber": 1,
+      "title": "Factorization",
+      "description": "Use the principle for factoring",
+      "content": "## Theory\n- Use the principle for factoring\n- Recognize when it applies\n",
+      "examples": [
+        {
+          "problem": "Factor (a+b)(c+d)",
+          "solution": "ac + ad + bc + bd",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        }
+      ],
+      "difficulty": "hard",
+      "estimatedMinutes": 25,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 1
+    },
+    {
+      "lessonId": "SUTRA_15_LESSON_2",
+      "lessonNumber": 2,
+      "title": "Algebraic Identities",
+      "description": "Prove identities using this principle",
+      "content": "## Theory\n- Prove identities using this principle\n- Extend to multiple terms\n",
+      "examples": null,
+      "difficulty": "hard",
+      "estimatedMinutes": 25,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 2
+    },
+    {
+      "lessonId": "SUTRA_15_LESSON_3",
+      "lessonNumber": 3,
+      "title": "Polynomial Equations",
+      "description": "Solve polynomial equations efficiently",
+      "content": "## Theory\n- Solve polynomial equations efficiently\n- Use factorization technique\n",
+      "examples": [
+        {
+          "problem": "(2x+3)(x-1)",
+          "solution": "0 → x = -3/2 or 1",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        }
+      ],
+      "difficulty": "hard",
+      "estimatedMinutes": 25,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 3
+    },
+    {
+      "lessonId": "SUTRA_15_LESSON_4",
+      "lessonNumber": 4,
+      "title": "Systems of Equations",
+      "description": "Apply to solve complex systems",
+      "content": "## Theory\n- Apply to solve complex systems\n- Multiple variable equations\n",
+      "examples": null,
+      "difficulty": "hard",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 4
+    }
+  ]
+}

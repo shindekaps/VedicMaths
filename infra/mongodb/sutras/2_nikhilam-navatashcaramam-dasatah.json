@@ -1,0 +1,107 @@
+{
+  "sutra": {
+    "sutraId": 2,
+    "name": "Nikhilam Navatashcaramam Dasatah",
+    "sanskritName": "निखिलं नवतश्चरमं दशतः",
+    "description": "This sutra is used for subtraction and multiplication of numbers close to powers of 10. It uses the complement concept where you find the difference from the nearest power of 10.",
+    "order": 2,
+    "difficulty": "beginner",
+    "estimatedHours": 4.5,
+    "icon": "➖",
+    "color": "#ec4899"
+  },
+  "lessons": [
+    {
+      "lessonId": "SUTRA_2_LESSON_1",
+      "lessonNumber": 1,
+      "title": "Subtraction Using Complements",
+      "description": "Find complement from 10 (for single digits) or 100, 1000, etc.",
+      "content": "## Theory\n- Find complement from 10 (for single digits) or 100, 1000, etc.\n- Subtract using the complement method\n",
+      "examples": [
+        {
+          "problem": "1000 - 783",
+          "solution": "217",
+          "steps": [
+            "Find complements: 0",
+            "2",
+            "1",
+            "7 → result 217"
+          ],
+          "explanation": "Find complements: 0,2,1,7 → result 217"
+        },
+        {
+          "problem": "10 - 7",
+          "solution": "3",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        }
+      ],
+      "difficulty": "easy",
+      "estimatedMinutes": 15,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 1
+    },
+    {
+      "lessonId": "SUTRA_2_LESSON_2",
+      "lessonNumber": 2,
+      "title": "Multiplication by Complements",
+      "description": "When numbers are close to powers of 10",
+      "content": "## Theory\n- When numbers are close to powers of 10\n- Find how much more or less than 10 (or 100, 1000, etc.)\n- Use criss-cross method\n",
+      "examples": [
+        {
+          "problem": "98 × 97",
+          "solution": "9506",
+          "steps": [
+            "(100-2"
+          ],
+          "explanation": "(100-2"
+        },
+        {
+          "problem": "88 × 87",
+          "solution": "7656",
+          "steps": [
+            "(100-12"
+          ],
+          "explanation": "(100-12"
+        }
+      ],
+      "difficulty": "medium",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 2
+    },
+    {
+      "lessonId": "SUTRA_2_LESSON_3",
+      "lessonNumber": 3,
+      "title": "Division Using Complements",
+      "description": "Division using paravartya technique",
+      "content": "## Theory\n- Division using paravartya technique\n- Express dividend and divisor using complements\n",
+      "examples": [
+        {
+          "problem": "1000 ÷ 8",
+          "solution": "125",
+          "steps": [
+            "complement method"
+          ],
+          "explanation": "complement method"
+        }
+      ],
+      "difficulty": "hard",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 3
+    },
+    {
+      "lessonId": "SUTRA_2_LESSON_4",
+      "lessonNumber": 4,
+      "title": "Chain Operations with Complements",
+      "description": "Combine multiple operations efficiently",
+      "content": "## Theory\n- Combine multiple operations efficiently\n- Practical applications in calculations\n",
+      "examples": null,
+      "difficulty": "medium",
+      "estimatedMinutes": 15,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 4
+    }
+  ]
+}

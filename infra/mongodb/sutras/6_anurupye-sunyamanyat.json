@@ -1,0 +1,77 @@
+{
+  "sutra": {
+    "sutraId": 6,
+    "name": "Anurupye Sunyamanyat",
+    "sanskritName": "अनुरूप्ये शून्यमन्यत्",
+    "description": "Related to the previous sutra, this technique uses proportional relationships to simplify and solve equations quickly.",
+    "order": 6,
+    "difficulty": "intermediate",
+    "estimatedHours": 4.5,
+    "icon": "∝",
+    "color": "#8b5cf6"
+  },
+  "lessons": [
+    {
+      "lessonId": "SUTRA_6_LESSON_1",
+      "lessonNumber": 1,
+      "title": "Proportional Relations",
+      "description": "Identifying proportional terms",
+      "content": "## Theory\n- Identifying proportional terms\n- Setting up equations using ratios\n",
+      "examples": [
+        {
+          "problem": "a/b",
+          "solution": "c/d proportions",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        }
+      ],
+      "difficulty": "medium",
+      "estimatedMinutes": 18,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 1
+    },
+    {
+      "lessonId": "SUTRA_6_LESSON_2",
+      "lessonNumber": 2,
+      "title": "Solving with Proportions",
+      "description": "Using ratios to find unknowns",
+      "content": "## Theory\n- Using ratios to find unknowns\n- Cross multiplication concepts\n",
+      "examples": [
+        {
+          "problem": "If 3:5",
+          "solution": "x:20, find x",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        }
+      ],
+      "difficulty": "medium",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 2
+    },
+    {
+      "lessonId": "SUTRA_6_LESSON_3",
+      "lessonNumber": 3,
+      "title": "Partial Fractions",
+      "description": "Decompose complex fractions",
+      "content": "## Theory\n- Decompose complex fractions\n- Using proportionality\n",
+      "examples": null,
+      "difficulty": "hard",
+      "estimatedMinutes": 22,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 3
+    },
+    {
+      "lessonId": "SUTRA_6_LESSON_4",
+      "lessonNumber": 4,
+      "title": "Geometric Problems",
+      "description": "Apply to geometry and similarity",
+      "content": "## Theory\n- Apply to geometry and similarity\n- Finding unknown dimensions\n",
+      "examples": null,
+      "difficulty": "hard",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 4
+    }
+  ]
+}

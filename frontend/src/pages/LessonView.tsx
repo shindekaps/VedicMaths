@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { useLessonsBySutra } from "@/api/lessons";
-import { IntroStep } from "@/components/lesson/IntroStep";
+import { SutraShowcase } from "@/components/lesson/blocks/SutraShowcase";
+import { ChallengeHook } from "@/components/lesson/blocks/ChallengeHook";
+import { ConceptExplanation } from "@/components/lesson/blocks/ConceptExplanation";
+import { MathematicalProof } from "@/components/lesson/blocks/MathematicalProof";
+import { WorkedExample } from "@/components/lesson/blocks/WorkedExample";
+import { PracticeStep } from "@/components/lesson/PracticeStep";
+import { QuizWrapper } from "@/components/lesson/QuizWrapper";
+import { CompleteStep } from "@/components/lesson/CompleteStep";
+import type { Lesson, Block } from "@/types/lesson";
 
 interface LessonViewProps {
   setActive: (id: string) => void;
@@ -9,57 +17,69 @@ interface LessonViewProps {
 
 export const LessonView = ({ setActive, sutraID }: LessonViewProps) => {
   const { data: lessons, isLoading, error } = useLessonsBySutra(sutraID);
-  const [step, setStep] = useState(0);
+  const [sectionIndex, setSectionIndex] = useState(0);
 
-  if (isLoading) return <div className="p-10 text-center text-white">Loading...</div>;
-  if (error) return <div className="p-10 text-center text-pink">Error.</div>;
-  if (!lessons || lessons.length === 0) return <div className="p-10 text-center text-white">No lessons.</div>;
+  if (isLoading) return <div className="p-10 text-center text-white bg-navy min-h-screen">Loading...</div>;
+  if (error) return <div className="p-10 text-center text-pink bg-navy min-h-screen">Error.</div>;
+  if (!lessons || lessons.length === 0) return <div className="p-10 text-center text-white bg-navy min-h-screen">No lessons.</div>;
 
-  const lesson = lessons[0];
-  const steps = lesson.steps as Array<Array<{ Key: string; Value: any }>>;
+  const lesson = lessons[0] as unknown as Lesson;
+  const sections = lesson.sections;
 
-  if (!lesson || !steps || steps.length === 0) return <div className="p-10 text-center text-white">Lesson content unavailable.</div>;
+  if (!lesson || !sections || sections.length === 0) return <div className="p-10 text-center text-white bg-navy min-h-screen">Lesson content unavailable.</div>;
 
-  const renderStep = () => {
-    const currentStepArray = steps[step];
-    // Find the object with Key "type" to determine the type
-    const typeObj = currentStepArray.find(i => i.Key === "type");
-    const dataObj = currentStepArray.find(i => i.Key === "data");
-    
-    switch (typeObj?.Value) {
-      case "intro":
-        return <IntroStep stepData={dataObj?.Value} />;
+  const currentSection = sections[sectionIndex];
+
+  const renderBlock = (block: Block, i: number) => {
+    switch (block.type) {
+      case "sutra_showcase":
+        return <SutraShowcase key={i} data={block.data} />;
+      case "challenge_hook":
+        return <ChallengeHook key={i} data={block.data} />;
+      case "concept_explanation":
+        return <ConceptExplanation key={i} data={block.data} />;
+      case "mathematical_proof":
+        return <MathematicalProof key={i} data={block.data} />;
+      case "worked_example":
+        return <WorkedExample key={i} data={block.data} />;
+      case "practice_service_wrapper":
+      case "practice":
+        return <PracticeStep key={i} sutraID={lesson.sutra_id.toString()} />;
+      case "quiz":
+        return <QuizWrapper key={i} stepData={block.data} />;
+      case "complete":
+        return <CompleteStep key={i} stepData={block.data} />;
       default:
-        return <div className="text-white">Unknown step type: {typeObj?.Value}</div>;
+        return <div key={i} className="text-white">Unknown block type: {block.type}</div>;
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-navy text-white font-sans p-6 overflow-y-auto">
-      {/* Top Bar - Back Button */}
-      <div className="flex items-center justify-between mb-8">
-        <button onClick={() => setActive("curriculum")} className="text-white/60 font-bold">← Back</button>
+    <div className="min-h-screen bg-navy text-white font-sans flex flex-col md:flex-row">
+      {/* Sidebar Navigation - Responsive */}
+      <div className="w-full md:w-64 bg-white p-4 overflow-y-auto">
+        <h2 className="text-ink font-bold mb-4 hidden md:block">Lesson Sections</h2>
+        <div className="flex md:flex-col gap-2 overflow-x-auto md:overflow-visible">
+            {sections.map((section, i) => (
+              <button 
+                key={section.id} 
+                onClick={() => setSectionIndex(i)}
+                className={`p-3 rounded-xl text-left flex items-center gap-2 flex-shrink-0 ${i === sectionIndex ? 'bg-violet text-white' : 'bg-gray-100 text-ink'}`}
+              >
+                <span>{section.icon}</span>
+                <span className="hidden md:inline font-bold">{section.title}</span>
+              </button>
+            ))}
+        </div>
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-grow mb-8">
-        {renderStep()}
-      </div>
-
-      {/* Navigation & Progress */}
-      <div className="flex flex-col gap-6 mt-auto">
-        <div className="flex justify-center gap-2">
-            {steps.map((_, i) => (
-              <div key={i} className={`h-2 rounded-full transition-all ${i === step ? 'w-8 bg-saffron' : 'w-2 bg-white/20'}`} />
-            ))}
+      <div className="flex-grow p-4 md:p-8 overflow-y-auto">
+        <button onClick={() => setActive("curriculum")} className="text-white/60 font-bold mb-6">← Back to Curriculum</button>
+        <h1 className="text-3xl font-bold mb-6">{currentSection.title}</h1>
+        <div className="space-y-6">
+          {currentSection.blocks.map((block, i) => renderBlock(block, i))}
         </div>
-
-        <button 
-          onClick={() => step < steps.length - 1 ? setStep(step + 1) : setActive("practice")} 
-          className="w-full bg-violet rounded-full py-5 font-bold text-lg shadow-lg shadow-violet/30 transition-colors"
-        >
-          {step === 0 ? "Start Learning →" : step < steps.length - 1 ? "Next Step" : "Practice ⚡"}
-        </button>
       </div>
     </div>
   );

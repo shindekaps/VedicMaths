@@ -37,12 +37,13 @@ func (s *service) Register(ctx context.Context, email, password, username string
 	}
 
 	user := &domain.User{
-		Email:        email,
-		PasswordHash: string(hashedPassword),
-		Username:     username,
-		Role:         domain.RoleStudent,
-		Grade:        grade,
-		CreatedAt:    time.Now(),
+		Email:     email,
+		Password:  string(hashedPassword),
+		FirstName: username,
+		NickName:  username,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		IsActive:  true,
 	}
 
 	return s.repo.Create(ctx, user)
@@ -56,7 +57,7 @@ func (s *service) Login(ctx context.Context, email, password string) (string, er
 	}
 
 	// Compare provided password with hashed password
-	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
 		return "", errors.New("invalid credentials")
 	}

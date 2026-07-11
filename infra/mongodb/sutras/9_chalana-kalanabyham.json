@@ -1,0 +1,72 @@
+{
+  "sutra": {
+    "sutraId": 9,
+    "name": "Chalana-Kalanabyham",
+    "sanskritName": "चलन-कलनाभ्यां",
+    "description": "This sutra uses the concept of differences and similarities in numerical and algebraic expressions to find solutions efficiently.",
+    "order": 9,
+    "difficulty": "intermediate",
+    "estimatedHours": 5.5,
+    "icon": "△",
+    "color": "#059669"
+  },
+  "lessons": [
+    {
+      "lessonId": "SUTRA_9_LESSON_1",
+      "lessonNumber": 1,
+      "title": "Arithmetic Sequences",
+      "description": "Find patterns in sequences",
+      "content": "## Theory\n- Find patterns in sequences\n- Use common differences\n",
+      "examples": [
+        {
+          "problem": "a_n",
+          "solution": "a_1 +",
+          "steps": [
+            "n-1"
+          ],
+          "explanation": "n-1"
+        }
+      ],
+      "difficulty": "medium",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 1
+    },
+    {
+      "lessonId": "SUTRA_9_LESSON_2",
+      "lessonNumber": 2,
+      "title": "Calculus Concepts",
+      "description": "Connection to differentiation",
+      "content": "## Theory\n- Connection to differentiation\n- Rate of change concepts\n",
+      "examples": null,
+      "difficulty": "hard",
+      "estimatedMinutes": 25,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 2
+    },
+    {
+      "lessonId": "SUTRA_9_LESSON_3",
+      "lessonNumber": 3,
+      "title": "Solving Difference Equations",
+      "description": "Linear difference equations",
+      "content": "## Theory\n- Linear difference equations\n- Recurrence relations\n",
+      "examples": null,
+      "difficulty": "hard",
+      "estimatedMinutes": 25,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 3
+    },
+    {
+      "lessonId": "SUTRA_9_LESSON_4",
+      "lessonNumber": 4,
+      "title": "Optimization Problems",
+      "description": "Use differences to find maxima/minima",
+      "content": "## Theory\n- Use differences to find maxima/minima\n- Applied optimization\n",
+      "examples": null,
+      "difficulty": "hard",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 4
+    }
+  ]
+}

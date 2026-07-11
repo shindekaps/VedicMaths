@@ -1,0 +1,79 @@
+{
+  "sutra": {
+    "sutraId": 11,
+    "name": "Vyastisamastih",
+    "sanskritName": "व्यष्टिसमष्टिः",
+    "description": "This sutra connects individual elements with collective results, useful in series, summations, and probabilistic thinking.",
+    "order": 11,
+    "difficulty": "intermediate",
+    "estimatedHours": 5,
+    "icon": "∑",
+    "color": "#0891b2"
+  },
+  "lessons": [
+    {
+      "lessonId": "SUTRA_11_LESSON_1",
+      "lessonNumber": 1,
+      "title": "Series and Summations",
+      "description": "Sum of individual terms",
+      "content": "## Theory\n- Sum of individual terms\n- Arithmetic and geometric series\n",
+      "examples": null,
+      "difficulty": "medium",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 1
+    },
+    {
+      "lessonId": "SUTRA_11_LESSON_2",
+      "lessonNumber": 2,
+      "title": "Probability and Combinations",
+      "description": "Individual outcomes → collective probability",
+      "content": "## Theory\n- Individual outcomes → collective probability\n- Combinations and permutations\n",
+      "examples": [
+        {
+          "problem": "P(A or B)",
+          "solution": "P",
+          "steps": [
+            "A"
+          ],
+          "explanation": "A"
+        }
+      ],
+      "difficulty": "hard",
+      "estimatedMinutes": 22,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 2
+    },
+    {
+      "lessonId": "SUTRA_11_LESSON_3",
+      "lessonNumber": 3,
+      "title": "Statistical Analysis",
+      "description": "Individual data points → statistical measures",
+      "content": "## Theory\n- Individual data points → statistical measures\n- Mean, variance, standard deviation\n",
+      "examples": null,
+      "difficulty": "hard",
+      "estimatedMinutes": 22,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 3
+    },
+    {
+      "lessonId": "SUTRA_11_LESSON_4",
+      "lessonNumber": 4,
+      "title": "Summation Techniques",
+      "description": "Fast summation tricks",
+      "content": "## Theory\n- Fast summation tricks\n- Pattern recognition in sums\n",
+      "examples": [
+        {
+          "problem": "1 + 2 + 3 + ... + 100",
+          "solution": "5050",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        }
+      ],
+      "difficulty": "medium",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 4
+    }
+  ]
+}

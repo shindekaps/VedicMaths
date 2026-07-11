@@ -15,7 +15,7 @@ export const startPracticeSession = (sutraID: string): Promise<{ sessionID: stri
   api.post(`/practice/sutras/${sutraID}/start`, {});
 
 export const getNextProblem = (sutraID: string): Promise<Problem> => 
-  api.get(`/practice/sutras/${sutraID}/problem`);
+  api.get(`/practice/next?sutraID=${sutraID}`);
 
 export const submitAnswer = (data: {
   user_id: string;

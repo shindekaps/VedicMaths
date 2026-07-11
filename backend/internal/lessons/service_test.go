@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type MockRepository struct {
@@ -28,12 +29,26 @@ func TestListSutras(t *testing.T) {
 	mockRepo := new(MockRepository)
 	service := NewService(mockRepo)
 
-	sutras := []domain.Sutra{{Name: "Test Sutra"}}
+	oid := primitive.NewObjectID()
+	sutras := []domain.Sutra{{
+		ID:          oid,
+		Name:        "Test Sutra",
+		Description: "Test Meaning",
+		Order:       1,
+	}}
 	mockRepo.On("GetAllSutras", mock.Anything).Return(sutras, nil)
 
 	result, err := service.ListSutras(context.Background())
 	assert.NoError(t, err)
-	assert.Equal(t, sutras, result)
+
+	expected := []domain.SutraDTO{{
+		ID:         oid.Hex(),
+		Name:       "Test Sutra",
+		Slug:       "test-sutra",
+		Meaning:    "Test Meaning",
+		OrderIndex: 1,
+	}}
+	assert.Equal(t, expected, result)
 	mockRepo.AssertExpectations(t)
 }
 

@@ -6,14 +6,14 @@ import (
 	"time"
 	"vedicpath/internal/domain"
 
-	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // Service defines the business logic for practice sessions
 type Service interface {
-	StartSession(ctx context.Context, userID, sutraID uuid.UUID) (uuid.UUID, error)
-	GetNextProblem(ctx context.Context, sutraID uuid.UUID, difficulty int) (*Problem, error)
-	EvaluateAnswer(ctx context.Context, userID, sutraID, sessionID uuid.UUID, userAnswer string, correctAnswer string) (bool, int, error)
+	StartSession(ctx context.Context, userID, sutraID primitive.ObjectID) (primitive.ObjectID, error)
+	GetNextProblem(ctx context.Context, sutraID primitive.ObjectID, difficulty int) (*Problem, error)
+	EvaluateAnswer(ctx context.Context, userID, sutraID, sessionID primitive.ObjectID, userAnswer string, correctAnswer string) (bool, int, error)
 }
 
 // Problem represents a generated math question for the API
@@ -40,8 +40,8 @@ func NewService(repo Repository) Service {
 }
 
 // StartSession creates a new practice session entry in the database
-func (s *service) StartSession(ctx context.Context, userID, sutraID uuid.UUID) (uuid.UUID, error) {
-	sessionID := uuid.New()
+func (s *service) StartSession(ctx context.Context, userID, sutraID primitive.ObjectID) (primitive.ObjectID, error) {
+	sessionID := primitive.NewObjectID()
 	session := &domain.PracticeSession{
 		ID:          sessionID,
 		UserID:      userID,
@@ -54,7 +54,7 @@ func (s *service) StartSession(ctx context.Context, userID, sutraID uuid.UUID) (
 }
 
 // GetNextProblem selects the correct generator and produces a dynamic problem
-func (s *service) GetNextProblem(ctx context.Context, sutraID uuid.UUID, difficulty int) (*Problem, error) {
+func (s *service) GetNextProblem(ctx context.Context, sutraID primitive.ObjectID, difficulty int) (*Problem, error) {
 	// In production, we would fetch the sutra slug from the DB using sutraID
 	// For now, assuming a default or mapping
 	sutraSlug := "nikhilam-navatashcaramam" // Mock mapping
@@ -73,7 +73,7 @@ func (s *service) GetNextProblem(ctx context.Context, sutraID uuid.UUID, difficu
 }
 
 // EvaluateAnswer handles the logic for checking correctness and updating progress
-func (s *service) EvaluateAnswer(ctx context.Context, userID, sutraID, sessionID uuid.UUID, userAnswer string, correctAnswer string) (bool, int, error) {
+func (s *service) EvaluateAnswer(ctx context.Context, userID, sutraID, sessionID primitive.ObjectID, userAnswer string, correctAnswer string) (bool, int, error) {
 	isCorrect := userAnswer == correctAnswer
 
 	// TODO: Production DB updates

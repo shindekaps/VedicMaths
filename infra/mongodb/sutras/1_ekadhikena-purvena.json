@@ -1,0 +1,176 @@
+{
+  "sutra": {
+    "sutraId": 1,
+    "name": "Ekadhikena Purvena",
+    "sanskritName": "एकाधिकेन पूर्वेण",
+    "description": "This is the most fundamental sutra. It teaches how to perform rapid mental calculations by using the technique of \"one more than the previous.\" It's particularly useful for squaring numbers ending in 5, multiplication techniques, and recursive calculations.",
+    "order": 1,
+    "difficulty": "beginner",
+    "estimatedHours": 5,
+    "icon": "📊",
+    "color": "#6366f1"
+  },
+  "lessons": [
+    {
+      "lessonId": "SUTRA_1_LESSON_1",
+      "lessonNumber": 1,
+      "title": "Squaring Numbers Ending in 5",
+      "description": "When squaring a number ending in 5, multiply the digit before 5 by one more than itself",
+      "content": "## Theory\n- When squaring a number ending in 5, multiply the digit before 5 by one more than itself\n- Then append 25 to the result\n- Formula: (10a + 5)² = 100a(a+1) + 25\n",
+      "examples": [
+        {
+          "problem": "15²",
+          "solution": "225",
+          "steps": [
+            "1 × 2 = 2",
+            "append 25 → 225"
+          ],
+          "explanation": "1 × 2 = 2, append 25 → 225"
+        },
+        {
+          "problem": "25²",
+          "solution": "625",
+          "steps": [
+            "2 × 3 = 6",
+            "append 25 → 625"
+          ],
+          "explanation": "2 × 3 = 6, append 25 → 625"
+        },
+        {
+          "problem": "35²",
+          "solution": "1225",
+          "steps": [
+            "3 × 4 = 12",
+            "append 25 → 1225"
+          ],
+          "explanation": "3 × 4 = 12, append 25 → 1225"
+        },
+        {
+          "problem": "45²",
+          "solution": "2025",
+          "steps": [
+            "4 × 5 = 20",
+            "append 25 → 2025"
+          ],
+          "explanation": "4 × 5 = 20, append 25 → 2025"
+        },
+        {
+          "problem": "65²",
+          "solution": "4225",
+          "steps": [
+            "6 × 7 = 42",
+            "append 25 → 4225"
+          ],
+          "explanation": "6 × 7 = 42, append 25 → 4225"
+        },
+        {
+          "problem": "85²",
+          "solution": "7225",
+          "steps": [
+            "8 × 9 = 72",
+            "append 25 → 7225"
+          ],
+          "explanation": "8 × 9 = 72, append 25 → 7225"
+        }
+      ],
+      "difficulty": "easy",
+      "estimatedMinutes": 15,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 1
+    },
+    {
+      "lessonId": "SUTRA_1_LESSON_2",
+      "lessonNumber": 2,
+      "title": "Multiplying Numbers with the Same First Digit",
+      "description": "When multiplying two numbers with the same first digit, use a special technique",
+      "content": "## Theory\n- When multiplying two numbers with the same first digit, use a special technique\n- Formula: (10a + b)(10a + c) = 100a(a+1) + bc\n",
+      "examples": [
+        {
+          "problem": "23 × 27",
+          "solution": "621",
+          "steps": [
+            "2 × 3 = 6",
+            "then 3 × 7 = 21 → 621"
+          ],
+          "explanation": "2 × 3 = 6, then 3 × 7 = 21 → 621"
+        },
+        {
+          "problem": "12 × 18",
+          "solution": "216",
+          "steps": [
+            "1 × 2 = 2",
+            "then 2 × 8 = 16 → 216"
+          ],
+          "explanation": "1 × 2 = 2, then 2 × 8 = 16 → 216"
+        },
+        {
+          "problem": "34 × 36",
+          "solution": "1224",
+          "steps": [
+            "3 × 4 = 12",
+            "then 4 × 6 = 24 → 1224"
+          ],
+          "explanation": "3 × 4 = 12, then 4 × 6 = 24 → 1224"
+        }
+      ],
+      "difficulty": "medium",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 2
+    },
+    {
+      "lessonId": "SUTRA_1_LESSON_3",
+      "lessonNumber": 3,
+      "title": "Finding Recurring Decimals",
+      "description": "Convert fractions to recurring decimals using patterns",
+      "content": "## Theory\n- Convert fractions to recurring decimals using patterns\n- 1/7, 1/13, 1/19 have patterns that can be derived\n",
+      "examples": [
+        {
+          "problem": "1/7",
+          "solution": "0.142857142857...",
+          "steps": [
+            "6-digit cycle"
+          ],
+          "explanation": "6-digit cycle"
+        },
+        {
+          "problem": "1/11",
+          "solution": "0.090909...",
+          "steps": [
+            "2-digit cycle"
+          ],
+          "explanation": "2-digit cycle"
+        }
+      ],
+      "difficulty": "hard",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 3
+    },
+    {
+      "lessonId": "SUTRA_1_LESSON_4",
+      "lessonNumber": 4,
+      "title": "Divisibility Tests",
+      "description": "Quick methods to check divisibility by 3, 7, 9, 11",
+      "content": "## Theory\n- Quick methods to check divisibility by 3, 7, 9, 11\n- Sum of digits method\n- Alternating sum method\n",
+      "examples": [
+        {
+          "problem": "342 is divisible by 3 (3+4+2",
+          "solution": "9, divisible by 3)",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        },
+        {
+          "problem": "121 is divisible by 11 (1-2+1",
+          "solution": "0, divisible by 11)",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        }
+      ],
+      "difficulty": "medium",
+      "estimatedMinutes": 15,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 4
+    }
+  ]
+}

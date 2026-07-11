@@ -3,12 +3,13 @@ package database
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"path/filepath"
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -32,36 +33,98 @@ func Connect(uri string) *mongo.Client {
 	return client
 }
 
-type SeedSutra struct {
-	Name        string `json:"name"`
-	Slug        string `json:"slug"`
-	Meaning     string `json:"meaning"`
-	OrderIndex  int    `json:"order_index"`
-}
-type SeedLesson struct {
-	Title      string `json:"title"`
-	Content    string `json:"content"`
-	OrderIndex int    `json:"order_index"`
-}
-type SeedData struct {
-	Sutra   SeedSutra    `json:"sutra"`
-	Lessons []SeedLesson `json:"lessons"`
-}
-
-// RunMigrations executes initial schema setup
+// RunMigrations executes initial schema setup and indexing
 func RunMigrations(db *mongo.Client, dbName string) error {
 	log.Println("Running migrations...")
-	
-	sutrasCol := db.Database(dbName).Collection("sutras")
-	lessonsCol := db.Database(dbName).Collection("lessons")
+	database := db.Database(dbName)
+	ctx := context.Background()
 
-	// Adjust this path based on where you run the binary
-	files, err := filepath.Glob("../../infra/mongodb/sutras/*.json")
+	// Clean up legacy collections to prevent unique index build errors on stale data
+	_ = database.Collection("sutras").Drop(ctx)
+	_ = database.Collection("lessons").Drop(ctx)
+
+	// Define collections and their indexes
+	collections := map[string][]mongo.IndexModel{
+		"users": {
+			{Keys: bson.D{{"email", 1}}, Options: options.Index().SetUnique(true)},
+			{Keys: bson.D{{"googleId", 1}}, Options: options.Index().SetSparse(true)},
+			{Keys: bson.D{{"createdAt", -1}}},
+		},
+		"sutras": {
+			{Keys: bson.D{{"sutraId", 1}}, Options: options.Index().SetUnique(true)},
+			{Keys: bson.D{{"order", 1}}},
+			{Keys: bson.D{{"difficulty", 1}}},
+		},
+		"lessons": {
+			{Keys: bson.D{{"lessonId", 1}}, Options: options.Index().SetUnique(true)},
+			{Keys: bson.D{{"sutraId", 1}}},
+			{Keys: bson.D{{"sutraNumber", 1}, {"lessonNumber", 1}}},
+			{Keys: bson.D{{"order", 1}}},
+		},
+		"questions": {
+			{Keys: bson.D{{"questionId", 1}}, Options: options.Index().SetUnique(true)},
+			{Keys: bson.D{{"sutraId", 1}}},
+			{Keys: bson.D{{"lessonId", 1}}},
+			{Keys: bson.D{{"sutraNumber", 1}, {"lessonNumber", 1}}},
+			{Keys: bson.D{{"difficulty", 1}}},
+			{Keys: bson.D{{"type", 1}}},
+		},
+		"userProgress": {
+			{Keys: bson.D{{"userId", 1}, {"sutraId", 1}, {"lessonId", 1}}, Options: options.Index().SetUnique(true)},
+			{Keys: bson.D{{"userId", 1}, {"status", 1}}},
+			{Keys: bson.D{{"userId", 1}, {"completedAt", -1}}},
+			{Keys: bson.D{{"userId", 1}, {"sutraNumber", 1}}},
+		},
+		"userAnswers": {
+			{Keys: bson.D{{"userId", 1}, {"submittedAt", -1}}},
+			{Keys: bson.D{{"sessionId", 1}}},
+			{Keys: bson.D{{"userId", 1}, {"questionId", 1}}},
+			{Keys: bson.D{{"userId", 1}, {"sessionType", 1}}},
+		},
+		"assessments": {
+			{Keys: bson.D{{"assessmentId", 1}}, Options: options.Index().SetUnique(true)},
+			{Keys: bson.D{{"sutraId", 1}}},
+			{Keys: bson.D{{"sutraNumber", 1}}},
+		},
+		"userAssessmentResults": {
+			{Keys: bson.D{{"userId", 1}, {"completedAt", -1}}},
+			{Keys: bson.D{{"userId", 1}, {"sutraId", 1}}},
+			{Keys: bson.D{{"assessmentId", 1}}},
+			{Keys: bson.D{{"userId", 1}, {"passed", 1}}},
+		},
+		"userBadges": {
+			{Keys: bson.D{{"userId", 1}}},
+			{Keys: bson.D{{"userId", 1}, {"badgeId", 1}}, Options: options.Index().SetUnique(true)},
+		},
+		"leaderboard": {
+			{Keys: bson.D{{"totalXP", -1}}},
+			{Keys: bson.D{{"lessonsCompleted", -1}}},
+			{Keys: bson.D{{"userId", 1}}, Options: options.Index().SetUnique(true)},
+		},
+		"gameSessions": {
+			{Keys: bson.D{{"userId", 1}, {"completedAt", -1}}},
+			{Keys: bson.D{{"userId", 1}, {"gameType", 1}}},
+			{Keys: bson.D{{"sutraId", 1}}},
+		},
+	}
+
+	for colName, indexes := range collections {
+		_, err := database.Collection(colName).Indexes().CreateMany(ctx, indexes)
+		if err != nil {
+			return fmt.Errorf("failed to create indexes for %s: %w", colName, err)
+		}
+		log.Printf("Initialized indexes for collection: %s", colName)
+	}
+
+	// Seeding Logic (adjust paths if necessary)
+	log.Println("Seeding sutras and lessons...")
+	sutrasCol := database.Collection("sutras")
+	lessonsCol := database.Collection("lessons")
+
+	files, err := filepath.Glob("../infra/mongodb/sutras/*.json")
 	if err != nil {
 		return err
 	}
-
-	ctx := context.Background()
 
 	for _, file := range files {
 		data, err := ioutil.ReadFile(file)
@@ -77,39 +140,55 @@ func RunMigrations(db *mongo.Client, dbName string) error {
 		}
 
 		// Insert Sutra
-		sutra := struct {
-			ID          primitive.ObjectID `bson:"_id"`
-			Name        string             `bson:"name"`
-			Slug        string             `bson:"slug"`
-			Meaning     string             `bson:"meaning"`
-			OrderIndex  int                `bson:"order_index"`
-		}{
-			ID:         primitive.NewObjectID(),
-			Name:       seed.Sutra.Name,
-			Slug:       seed.Sutra.Slug,
-			Meaning:    seed.Sutra.Meaning,
-			OrderIndex: seed.Sutra.OrderIndex,
+		sutra := bson.M{
+			"sutraId":        seed.Sutra.SutraId,
+			"name":           seed.Sutra.Name,
+			"sanskritName":   seed.Sutra.SanskritName,
+			"description":    seed.Sutra.Description,
+			"order":          seed.Sutra.Order,
+			"difficulty":     seed.Sutra.Difficulty,
+			"estimatedHours": seed.Sutra.EstimatedHours,
+			"icon":           seed.Sutra.Icon,
+			"color":          seed.Sutra.Color,
+			"createdAt":      time.Now(),
+			"updatedAt":      time.Now(),
 		}
-		_, err = sutrasCol.InsertOne(ctx, sutra)
+		result, err := sutrasCol.InsertOne(ctx, sutra)
 		if err != nil {
 			log.Printf("Failed to insert sutra %s: %v", seed.Sutra.Name, err)
 			continue
 		}
 
+		sutraID := result.InsertedID
+
 		// Insert Lessons
 		for _, l := range seed.Lessons {
-			lesson := struct {
-				ID         primitive.ObjectID `bson:"_id"`
-				SutraID    primitive.ObjectID `bson:"sutra_id"`
-				Title      string             `bson:"title"`
-				Content    string             `bson:"content"`
-				OrderIndex int                `bson:"order_index"`
-			}{
-				ID:         primitive.NewObjectID(),
-				SutraID:    sutra.ID,
-				Title:      l.Title,
-				Content:    l.Content,
-				OrderIndex: l.OrderIndex,
+			examplesBSON := []bson.M{}
+			for _, ex := range l.Examples {
+				examplesBSON = append(examplesBSON, bson.M{
+					"problem":     ex.Problem,
+					"solution":    ex.Solution,
+					"steps":       ex.Steps,
+					"explanation": ex.Explanation,
+				})
+			}
+
+			lesson := bson.M{
+				"lessonId":         l.LessonId,
+				"sutraId":          sutraID,
+				"sutraNumber":      seed.Sutra.SutraId,
+				"lessonNumber":     l.LessonNumber,
+				"title":            l.Title,
+				"description":      l.Description,
+				"content":          l.Content,
+				"examples":         examplesBSON,
+				"difficulty":       l.Difficulty,
+				"estimatedMinutes": l.EstimatedMinutes,
+				"videoUrl":         l.VideoUrl,
+				"order":            l.Order,
+				"isActive":         true,
+				"createdAt":        time.Now(),
+				"updatedAt":        time.Now(),
 			}
 			_, err = lessonsCol.InsertOne(ctx, lesson)
 			if err != nil {
@@ -120,4 +199,41 @@ func RunMigrations(db *mongo.Client, dbName string) error {
 	}
 
 	return nil
+}
+
+type SeedSutra struct {
+	SutraId        int     `json:"sutraId"`
+	Name           string  `json:"name"`
+	SanskritName   string  `json:"sanskritName"`
+	Description    string  `json:"description"`
+	Order          int     `json:"order"`
+	Difficulty     string  `json:"difficulty"`
+	EstimatedHours float64 `json:"estimatedHours"`
+	Icon           string  `json:"icon"`
+	Color          string  `json:"color"`
+}
+
+type SeedExample struct {
+	Problem     string   `json:"problem"`
+	Solution    string   `json:"solution"`
+	Steps       []string `json:"steps"`
+	Explanation string   `json:"explanation"`
+}
+
+type SeedLesson struct {
+	LessonId         string        `json:"lessonId"`
+	LessonNumber     int           `json:"lessonNumber"`
+	Title            string        `json:"title"`
+	Description      string        `json:"description"`
+	Content          string        `json:"content"`
+	Examples         []SeedExample `json:"examples"`
+	Difficulty       string        `json:"difficulty"`
+	EstimatedMinutes int           `json:"estimatedMinutes"`
+	VideoUrl         string        `json:"videoUrl"`
+	Order            int           `json:"order"`
+}
+
+type SeedData struct {
+	Sutra   SeedSutra    `json:"sutra"`
+	Lessons []SeedLesson `json:"lessons"`
 }

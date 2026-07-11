@@ -1,0 +1,109 @@
+{
+  "sutra": {
+    "sutraId": 4,
+    "name": "Paravartya Yojayet",
+    "sanskritName": "परावर्त्य योजयेत्",
+    "description": "This sutra is used for division and also for solving linear equations. It employs the technique of transposing the divisor and applying operations in a specific order.",
+    "order": 4,
+    "difficulty": "intermediate",
+    "estimatedHours": 5.5,
+    "icon": "🔄",
+    "color": "#10b981"
+  },
+  "lessons": [
+    {
+      "lessonId": "SUTRA_4_LESSON_1",
+      "lessonNumber": 1,
+      "title": "Division by Single Digit",
+      "description": "Simple division technique",
+      "content": "## Theory\n- Simple division technique\n- Flag technique for remainder\n",
+      "examples": [
+        {
+          "problem": "256 ÷ 8",
+          "solution": "32",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        },
+        {
+          "problem": "435 ÷ 5",
+          "solution": "87",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        }
+      ],
+      "difficulty": "easy",
+      "estimatedMinutes": 15,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 1
+    },
+    {
+      "lessonId": "SUTRA_4_LESSON_2",
+      "lessonNumber": 2,
+      "title": "Division by Two Digits",
+      "description": "Extended division method",
+      "content": "## Theory\n- Extended division method\n- Transpose and multiply technique\n",
+      "examples": [
+        {
+          "problem": "1234 ÷ 23",
+          "solution": "53 remainder 15",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        },
+        {
+          "problem": "5678 ÷ 42",
+          "solution": "135 remainder 8",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        }
+      ],
+      "difficulty": "hard",
+      "estimatedMinutes": 25,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 2
+    },
+    {
+      "lessonId": "SUTRA_4_LESSON_3",
+      "lessonNumber": 3,
+      "title": "Division by Larger Numbers",
+      "description": "Apply to three-digit and larger divisors",
+      "content": "## Theory\n- Apply to three-digit and larger divisors\n- Complex transpose patterns\n",
+      "examples": [
+        {
+          "problem": "123456 ÷ 123",
+          "solution": "1002.9...",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        }
+      ],
+      "difficulty": "hard",
+      "estimatedMinutes": 25,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 3
+    },
+    {
+      "lessonId": "SUTRA_4_LESSON_4",
+      "lessonNumber": 4,
+      "title": "Solving Linear Equations",
+      "description": "Using paravartya for algebraic equations",
+      "content": "## Theory\n- Using paravartya for algebraic equations\n- ax + b = c type problems\n",
+      "examples": [
+        {
+          "problem": "3x + 5",
+          "solution": "20 → x = 5",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        },
+        {
+          "problem": "2x - 7",
+          "solution": "13 → x = 10",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        }
+      ],
+      "difficulty": "medium",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 4
+    }
+  ]
+}

@@ -1,28 +1,96 @@
 [
   {
     "sutra_slug": "ekadhikena-purvena",
-    "title": "Introduction to Ekadhikena",
+    "title": "Ekadhika Purvena: By One More Than the Previous",
     "order_index": 1,
-    "steps": [
+    "sections": [
       {
-        "type": "intro",
-        "data": {
-          "description": "Instantly square any number ending in 5.",
-          "whatYouLearn": ["Identify numbers ending in 5", "Multiply leading digit by itself+1", "Append 25"]
-        }
+        "id": "intro_history",
+        "title": "Introduction & History",
+        "icon": "📖",
+        "blocks": [
+          {
+            "type": "sutra_showcase",
+            "data": { 
+              "name": "Ekadhika Purvena", 
+              "meaning": "By One More Than the Previous", 
+              "breakdown": {
+                "ekadhika": "by one more/one additional",
+                "purvena": "than the previous/by the previous digit"
+              },
+              "principle": "This sutra provides a shortcut for squaring numbers ending in 5, using the digit before 5. It is part of a system revived largely due to the efforts of Jagadguru Swami Bharathi Krishna Tirtha Ji."
+            }
+          },
+          {
+            "type": "historical_context",
+            "data": {
+              "narrative": "Vedic Mathematics is a system of reasoning and mathematical working based on ancient Indian teachings called Veda. It originated from the 'Atharva Veda', the fourth Veda, which covers branches like Engineering, Mathematics, Sculpture, Medicine, and more. This subject was revived largely due to the efforts of Jagadguru Swami Bharathi Krishna Tirtha Ji of Govardhan Peeth, Puri Jaganath (1884-1960). Having researched the subject for years, even his efforts would have gone in vain but for the enterprise of some disciples who took down notes during his last days.",
+              "relevance": "Vedic Mathematics simplifies arithmetic and algebraic operations, has increasingly found acceptance the world over. It is a fast, efficient, and easy-to-learn tool for those who need to solve mathematical problems faster by the day."
+            }
+          }
+        ]
       },
       {
-        "type": "concept",
-        "data": {
-          "title": "The Core Method",
-          "formula": "n5^2 = [n x (n+1)] | 25",
-          "formulaNote": "Multiply, then append 25",
-          "rules": [
-            {"icon": "1️⃣", "text": "Take the leading digit(s)"},
-            {"icon": "2️⃣", "text": "Multiply by itself plus one"},
-            {"icon": "3️⃣", "text": "Append 25"}
-          ]
-        }
+        "id": "foundation",
+        "title": "Foundation Concepts",
+        "icon": "🧮",
+        "blocks": [
+          {
+            "type": "concept_explanation",
+            "data": {
+              "title": "What is 'Ekadhika'?",
+              "explanation": "Ekadhika means 'one more'.",
+              "examples": [
+                "Ekadhika of 0 is 1",
+                "Ekadhika of 1 is 2",
+                "Ekadhika of 8 is 9",
+                "Ekadhika of 364 is 365"
+              ]
+            }
+          },
+          {
+            "type": "mathematical_proof",
+            "data": {
+              "title": "Why it Works (Algebraic Proof)",
+              "steps": [
+                "Consider any number ending in 5 as (10a + 5).",
+                "Squaring it: (10a + 5)² = 100a² + 100a + 25.",
+                "Factor out 100a: 100a(a + 1) + 25.",
+                "This formula [a(a+1)]25 means: multiply the prefix 'a' by its successor 'a+1', and append 25 to the end."
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "examples",
+        "title": "Examples",
+        "icon": "📝",
+        "blocks": [
+          {
+            "type": "worked_example",
+            "data": {
+              "problem": "Calculate 65²",
+              "steps": [
+                {"num": "1", "title": "Identify prefix", "calc": "In 65, the digit before 5 is 6."},
+                {"num": "2", "title": "Add 1", "calc": "6 + 1 = 7"},
+                {"num": "3", "title": "Multiply", "calc": "6 x 7 = 42"},
+                {"num": "4", "title": "Append 25", "calc": "42 followed by 25 = 4225 (Do not carry!)"}
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "practice",
+        "title": "Practice",
+        "icon": "⚡",
+        "blocks": [
+          {
+            "type": "practice_service_wrapper",
+            "data": {}
+          }
+        ]
       }
     ]
   }

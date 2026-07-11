@@ -1,0 +1,93 @@
+{
+  "sutra": {
+    "sutraId": 5,
+    "name": "Sunyam Samyasamuccaye",
+    "sanskritName": "शून्यं साम्यसमुच्चये",
+    "description": "This sutra helps identify when expressions are equal or solutions are zero by examining the samuccaya (collection) concept.",
+    "order": 5,
+    "difficulty": "intermediate",
+    "estimatedHours": 5,
+    "icon": "∅",
+    "color": "#06b6d4"
+  },
+  "lessons": [
+    {
+      "lessonId": "SUTRA_5_LESSON_1",
+      "lessonNumber": 1,
+      "title": "Finding Zero Solutions",
+      "description": "Identify when a solution is zero",
+      "content": "## Theory\n- Identify when a solution is zero\n- Use samuccaya principle\n",
+      "examples": [
+        {
+          "problem": "(x-3)(x-5)",
+          "solution": "0 → x = 3 or 5",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        }
+      ],
+      "difficulty": "medium",
+      "estimatedMinutes": 18,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 1
+    },
+    {
+      "lessonId": "SUTRA_5_LESSON_2",
+      "lessonNumber": 2,
+      "title": "Quadratic Equations",
+      "description": "Apply to quadratic equations",
+      "content": "## Theory\n- Apply to quadratic equations\n- Finding roots quickly\n",
+      "examples": [
+        {
+          "problem": "x² - 7x + 12",
+          "solution": "0 → x = 3, 4",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        }
+      ],
+      "difficulty": "hard",
+      "estimatedMinutes": 22,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 2
+    },
+    {
+      "lessonId": "SUTRA_5_LESSON_3",
+      "lessonNumber": 3,
+      "title": "Solving Rational Equations",
+      "description": "When numerators and denominators have samuccaya",
+      "content": "## Theory\n- When numerators and denominators have samuccaya\n- Solution method\n",
+      "examples": [
+        {
+          "problem": "(2x+3)/(x+1)",
+          "solution": "",
+          "steps": [
+            "3x+2"
+          ],
+          "explanation": "3x+2"
+        }
+      ],
+      "difficulty": "hard",
+      "estimatedMinutes": 22,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 3
+    },
+    {
+      "lessonId": "SUTRA_5_LESSON_4",
+      "lessonNumber": 4,
+      "title": "Systems of Equations",
+      "description": "Using samuccaya for system solving",
+      "content": "## Theory\n- Using samuccaya for system solving\n- Multiple variable equations\n",
+      "examples": [
+        {
+          "problem": "x + y",
+          "solution": "5, xy = 6",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        }
+      ],
+      "difficulty": "hard",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 4
+    }
+  ]
+}

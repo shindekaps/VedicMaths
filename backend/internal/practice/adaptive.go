@@ -2,12 +2,13 @@ package practice
 
 import (
 	"context"
-	"github.com/google/uuid"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // DifficultyAdjuster defines the logic for adaptive difficulty
 type DifficultyAdjuster interface {
-	Adjust(ctx context.Context, userID, sutraID uuid.UUID, last10Correct []bool) (int, error)
+	Adjust(ctx context.Context, userID, sutraID primitive.ObjectID, last10Correct []bool) (int, error)
 }
 
 type difficultyAdjuster struct {
@@ -15,7 +16,7 @@ type difficultyAdjuster struct {
 }
 
 // Adjust calculates new difficulty based on the last 10 problems
-func (a *difficultyAdjuster) Adjust(ctx context.Context, userID, sutraID uuid.UUID, last10Correct []bool) (int, error) {
+func (a *difficultyAdjuster) Adjust(ctx context.Context, userID, sutraID primitive.ObjectID, last10Correct []bool) (int, error) {
 	if len(last10Correct) < 5 {
 		return 1, nil // Default start
 	}

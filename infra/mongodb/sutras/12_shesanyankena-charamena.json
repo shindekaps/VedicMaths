@@ -1,0 +1,63 @@
+{
+  "sutra": {
+    "sutraId": 12,
+    "name": "Shesanyankena Charamena",
+    "sanskritName": "शेषान्यङ्केन चरमेण",
+    "description": "This sutra and its corollary use the concept of remainders and last digits to check divisibility, verify calculations, and solve number problems.",
+    "order": 12,
+    "difficulty": "advanced",
+    "estimatedHours": 5.5,
+    "icon": "🎯",
+    "color": "#1f2937"
+  },
+  "lessons": [
+    {
+      "lessonId": "SUTRA_12_LESSON_1",
+      "lessonNumber": 1,
+      "title": "Divisibility Rules",
+      "description": "Use last digits for divisibility checks",
+      "content": "## Theory\n- Use last digits for divisibility checks\n- Rules for 2, 5, 10, etc.\n",
+      "examples": null,
+      "difficulty": "medium",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 1
+    },
+    {
+      "lessonId": "SUTRA_12_LESSON_2",
+      "lessonNumber": 2,
+      "title": "Casting Out Nines",
+      "description": "Check calculations using digit sums",
+      "content": "## Theory\n- Check calculations using digit sums\n- Find remainder when divided by 9\n",
+      "examples": null,
+      "difficulty": "medium",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 2
+    },
+    {
+      "lessonId": "SUTRA_12_LESSON_3",
+      "lessonNumber": 3,
+      "title": "Modular Arithmetic",
+      "description": "Working with remainders",
+      "content": "## Theory\n- Working with remainders\n- Modular equations\n",
+      "examples": null,
+      "difficulty": "hard",
+      "estimatedMinutes": 25,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 3
+    },
+    {
+      "lessonId": "SUTRA_12_LESSON_4",
+      "lessonNumber": 4,
+      "title": "Error Detection",
+      "description": "Use remainder technique to find errors",
+      "content": "## Theory\n- Use remainder technique to find errors\n- Verify complex calculations\n",
+      "examples": null,
+      "difficulty": "medium",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 4
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "sutra": {
+    "sutraId": 16,
+    "name": "Gunakasamuccayah",
+    "sanskritName": "गुणकसमुच्चयः",
+    "description": "This sutra uses the sum of coefficients of a polynomial for verification and solving purposes.",
+    "order": 16,
+    "difficulty": "intermediate",
+    "estimatedHours": 5.5,
+    "icon": "Σ",
+    "color": "#2563eb"
+  },
+  "lessons": [
+    {
+      "lessonId": "SUTRA_16_LESSON_1",
+      "lessonNumber": 1,
+      "title": "Finding Polynomial Values",
+      "description": "Find P(1) by adding coefficients",
+      "content": "## Theory\n- Find P(1) by adding coefficients\n- Verification technique\n",
+      "examples": [
+        {
+          "problem": "For P(x)",
+          "solution": "3x³ + 2x² - 5x + 7, P",
+          "steps": [
+            "1"
+          ],
+          "explanation": "1"
+        }
+      ],
+      "difficulty": "medium",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 1
+    },
+    {
+      "lessonId": "SUTRA_16_LESSON_2",
+      "lessonNumber": 2,
+      "title": "Root Finding",
+      "description": "Use coefficient sums to find if 1 is a root",
+      "content": "## Theory\n- Use coefficient sums to find if 1 is a root\n- Check divisibility\n",
+      "examples": [
+        {
+          "problem": "If P(1)",
+          "solution": "0, then",
+          "steps": [
+            "x-1"
+          ],
+          "explanation": "x-1"
+        }
+      ],
+      "difficulty": "medium",
+      "estimatedMinutes": 22,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 2
+    },
+    {
+      "lessonId": "SUTRA_16_LESSON_3",
+      "lessonNumber": 3,
+      "title": "Verification of Solutions",
+      "description": "Quickly verify if solution is correct",
+      "content": "## Theory\n- Quickly verify if solution is correct\n- Check arithmetic\n",
+      "examples": null,
+      "difficulty": "easy",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 3
+    },
+    {
+      "lessonId": "SUTRA_16_LESSON_4",
+      "lessonNumber": 4,
+      "title": "Advanced Applications",
+      "description": "Apply to differential equations",
+      "content": "## Theory\n- Apply to differential equations\n- Power series analysis\n",
+      "examples": [
+        {
+          "problem": "| 15 | Gunitasamuccayah Samuccayagunitah | Product of sum",
+          "solution": "sum of products | 4 | 6.0 | Advanced |",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        }
+      ],
+      "difficulty": "hard",
+      "estimatedMinutes": 22,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 4
+    }
+  ]
+}

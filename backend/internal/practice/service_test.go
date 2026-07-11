@@ -5,9 +5,9 @@ import (
 	"testing"
 	"vedicpath/internal/domain"
 
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type MockRepository struct {
@@ -23,8 +23,8 @@ func TestStartSession(t *testing.T) {
 	mockRepo := new(MockRepository)
 	service := NewService(mockRepo)
 
-	userID := uuid.New()
-	sutraID := uuid.New()
+	userID := primitive.NewObjectID()
+	sutraID := primitive.NewObjectID()
 	
 	mockRepo.On("CreateSession", mock.Anything, mock.MatchedBy(func(s *domain.PracticeSession) bool {
 		return s.UserID == userID && s.SutraID == sutraID
@@ -32,6 +32,6 @@ func TestStartSession(t *testing.T) {
 
 	sessionID, err := service.StartSession(context.Background(), userID, sutraID)
 	assert.NoError(t, err)
-	assert.NotEqual(t, uuid.Nil, sessionID)
+	assert.False(t, sessionID.IsZero())
 	mockRepo.AssertExpectations(t)
 }

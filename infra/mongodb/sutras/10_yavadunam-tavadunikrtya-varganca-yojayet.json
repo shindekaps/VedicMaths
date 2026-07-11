@@ -1,0 +1,115 @@
+{
+  "sutra": {
+    "sutraId": 10,
+    "name": "Yavadunam Tavadunikrtya Varganca Yojayet",
+    "sanskritName": "यावदूनं तावदूनीकृत्य वर्गं च योजयेत्",
+    "description": "This is a complex sutra used for squaring and is particularly powerful for numbers that are close to a reference point.",
+    "order": 10,
+    "difficulty": "advanced",
+    "estimatedHours": 6,
+    "icon": "²",
+    "color": "#7c3aed"
+  },
+  "lessons": [
+    {
+      "lessonId": "SUTRA_10_LESSON_1",
+      "lessonNumber": 1,
+      "title": "Squaring Numbers Close to 100",
+      "description": "Find deficiency from 100",
+      "content": "## Theory\n- Find deficiency from 100\n- Apply the formula: (100-d)² = 100² - 100(2d) + d²\n",
+      "examples": [
+        {
+          "problem": "98²",
+          "solution": "9604",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        },
+        {
+          "problem": "97²",
+          "solution": "9409",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        },
+        {
+          "problem": "89²",
+          "solution": "7921",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        }
+      ],
+      "difficulty": "hard",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 1
+    },
+    {
+      "lessonId": "SUTRA_10_LESSON_2",
+      "lessonNumber": 2,
+      "title": "Squaring Numbers Close to 1000",
+      "description": "Extend principle to 1000",
+      "content": "## Theory\n- Extend principle to 1000\n- Apply for larger bases\n",
+      "examples": [
+        {
+          "problem": "998²",
+          "solution": "996004",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        },
+        {
+          "problem": "987²",
+          "solution": "974169",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        }
+      ],
+      "difficulty": "hard",
+      "estimatedMinutes": 25,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 2
+    },
+    {
+      "lessonId": "SUTRA_10_LESSON_3",
+      "lessonNumber": 3,
+      "title": "Cubing Using Related Principles",
+      "description": "Extend to cubes and higher powers",
+      "content": "## Theory\n- Extend to cubes and higher powers\n- Modified formula application\n",
+      "examples": [
+        {
+          "problem": "99³",
+          "solution": "970299",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        },
+        {
+          "problem": "98³",
+          "solution": "941192",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        }
+      ],
+      "difficulty": "advanced",
+      "estimatedMinutes": 25,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 3
+    },
+    {
+      "lessonId": "SUTRA_10_LESSON_4",
+      "lessonNumber": 4,
+      "title": "Factorization Using Deficiency",
+      "description": "Factor using deficiency concept",
+      "content": "## Theory\n- Factor using deficiency concept\n- Fast factorization technique\n",
+      "examples": [
+        {
+          "problem": "Factor 9999",
+          "solution": "99 × 101",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        }
+      ],
+      "difficulty": "hard",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 4
+    }
+  ]
+}

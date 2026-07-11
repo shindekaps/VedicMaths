@@ -1,0 +1,89 @@
+{
+  "sutra": {
+    "sutraId": 14,
+    "name": "Ekanyunena Purvena",
+    "sanskritName": "एकन्यूनेन पूर्वेण",
+    "description": "This is the converse of the first sutra. It uses the concept of \"one less than the previous\" for multiplication, division, and other operations.",
+    "order": 14,
+    "difficulty": "intermediate",
+    "estimatedHours": 5,
+    "icon": "➖",
+    "color": "#ea580c"
+  },
+  "lessons": [
+    {
+      "lessonId": "SUTRA_14_LESSON_1",
+      "lessonNumber": 1,
+      "title": "Multiplication Technique",
+      "description": "(10a-5)² = 100a(a-1) + 25",
+      "content": "## Theory\n- (10a-5)² = 100a(a-1) + 25\n- Special multiplication patterns\n",
+      "examples": [
+        {
+          "problem": "95²",
+          "solution": "9025",
+          "steps": [
+            "9×8=72",
+            "append 25"
+          ],
+          "explanation": "9×8=72, append 25"
+        },
+        {
+          "problem": "85²",
+          "solution": "7225",
+          "steps": [
+            "8×7=56",
+            "append 25"
+          ],
+          "explanation": "8×7=56, append 25"
+        }
+      ],
+      "difficulty": "medium",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 1
+    },
+    {
+      "lessonId": "SUTRA_14_LESSON_2",
+      "lessonNumber": 2,
+      "title": "Division Methods",
+      "description": "Use one-less-than principle for division",
+      "content": "## Theory\n- Use one-less-than principle for division\n- Quotient and remainder finding\n",
+      "examples": [
+        {
+          "problem": "1000 ÷ 9",
+          "solution": "111.111...",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        }
+      ],
+      "difficulty": "hard",
+      "estimatedMinutes": 22,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 2
+    },
+    {
+      "lessonId": "SUTRA_14_LESSON_3",
+      "lessonNumber": 3,
+      "title": "Algebraic Applications",
+      "description": "Apply to algebraic expressions",
+      "content": "## Theory\n- Apply to algebraic expressions\n- Simplification techniques\n",
+      "examples": null,
+      "difficulty": "medium",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 3
+    },
+    {
+      "lessonId": "SUTRA_14_LESSON_4",
+      "lessonNumber": 4,
+      "title": "Geometric Progressions",
+      "description": "Use for GP sums and problems",
+      "content": "## Theory\n- Use for GP sums and problems\n- Common ratio insights\n",
+      "examples": null,
+      "difficulty": "hard",
+      "estimatedMinutes": 22,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 4
+    }
+  ]
+}

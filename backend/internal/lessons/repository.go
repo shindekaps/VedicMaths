@@ -2,10 +2,10 @@ package lessons
 
 import (
 	"context"
-	"strconv"
 	"vedicpath/internal/domain"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -46,14 +46,14 @@ func (r *repository) GetAllSutras(ctx context.Context) ([]domain.Sutra, error) {
 
 // GetLessonsBySutra retrieves all lessons associated with a given Sutra ID
 func (r *repository) GetLessonsBySutra(ctx context.Context, sutraID string) ([]domain.Lesson, error) {
-	// 1. Convert sutraID string to int
-	id, err := strconv.Atoi(sutraID)
+	// 1. Convert sutraID string to primitive.ObjectID
+	objID, err := primitive.ObjectIDFromHex(sutraID)
 	if err != nil {
 		return nil, err
 	}
 
-	// 2. Find lessons directly by sutra_id
-	cursor, err := r.lessonsCollection.Find(ctx, bson.M{"sutra_id": int32(id)})
+	// 2. Find lessons directly by sutraId
+	cursor, err := r.lessonsCollection.Find(ctx, bson.M{"sutraId": objID})
 	if err != nil {
 		return nil, err
 	}

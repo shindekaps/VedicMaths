@@ -1,0 +1,83 @@
+{
+  "sutra": {
+    "sutraId": 7,
+    "name": "Sankalana-Vyavaharana",
+    "sanskritName": "संकलन-व्यवहारण",
+    "description": "This sutra helps in solving equations by using addition and subtraction methods in clever ways to simplify problems.",
+    "order": 7,
+    "difficulty": "beginner",
+    "estimatedHours": 4,
+    "icon": "⊕",
+    "color": "#f97316"
+  },
+  "lessons": [
+    {
+      "lessonId": "SUTRA_7_LESSON_1",
+      "lessonNumber": 1,
+      "title": "Simple Linear Equations",
+      "description": "Use addition/subtraction to isolate variables",
+      "content": "## Theory\n- Use addition/subtraction to isolate variables\n- Step-by-step simplification\n",
+      "examples": [
+        {
+          "problem": "x + 5",
+          "solution": "12 → x = 7",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        },
+        {
+          "problem": "2x + 3",
+          "solution": "11 → x = 4",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        }
+      ],
+      "difficulty": "easy",
+      "estimatedMinutes": 15,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 1
+    },
+    {
+      "lessonId": "SUTRA_7_LESSON_2",
+      "lessonNumber": 2,
+      "title": "Equations with Multiple Terms",
+      "description": "Combine like terms",
+      "content": "## Theory\n- Combine like terms\n- Add/subtract to simplify\n",
+      "examples": [
+        {
+          "problem": "3x + 2y",
+          "solution": "12, 2x + y = 7",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        }
+      ],
+      "difficulty": "medium",
+      "estimatedMinutes": 18,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 2
+    },
+    {
+      "lessonId": "SUTRA_7_LESSON_3",
+      "lessonNumber": 3,
+      "title": "Word Problems",
+      "description": "Convert word problems to equations",
+      "content": "## Theory\n- Convert word problems to equations\n- Use addition/subtraction method\n",
+      "examples": null,
+      "difficulty": "medium",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 3
+    },
+    {
+      "lessonId": "SUTRA_7_LESSON_4",
+      "lessonNumber": 4,
+      "title": "Inequalities",
+      "description": "Solve inequalities using these methods",
+      "content": "## Theory\n- Solve inequalities using these methods\n- Maintain inequality direction\n",
+      "examples": null,
+      "difficulty": "medium",
+      "estimatedMinutes": 18,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 4
+    }
+  ]
+}

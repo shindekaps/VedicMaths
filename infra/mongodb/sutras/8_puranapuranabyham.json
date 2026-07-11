@@ -1,0 +1,96 @@
+{
+  "sutra": {
+    "sutraId": 8,
+    "name": "Puranapuranabyham",
+    "sanskritName": "पूरणापूरणाभ्यां",
+    "description": "This sutra deals with completing or augmenting expressions to make them perfect squares or other standard forms, then simplifying.",
+    "order": 8,
+    "difficulty": "intermediate",
+    "estimatedHours": 5,
+    "icon": "✓",
+    "color": "#dc2626"
+  },
+  "lessons": [
+    {
+      "lessonId": "SUTRA_8_LESSON_1",
+      "lessonNumber": 1,
+      "title": "Completing the Square",
+      "description": "Convert quadratics to perfect squares",
+      "content": "## Theory\n- Convert quadratics to perfect squares\n- Method of completing the square\n",
+      "examples": [
+        {
+          "problem": "x² + 6x + 5",
+          "solution": "",
+          "steps": [
+            "x+3"
+          ],
+          "explanation": "x+3"
+        },
+        {
+          "problem": "x² - 8x",
+          "solution": "",
+          "steps": [
+            "x-4"
+          ],
+          "explanation": "x-4"
+        }
+      ],
+      "difficulty": "medium",
+      "estimatedMinutes": 22,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 1
+    },
+    {
+      "lessonId": "SUTRA_8_LESSON_2",
+      "lessonNumber": 2,
+      "title": "Solving Quadratics",
+      "description": "Use completing the square to solve",
+      "content": "## Theory\n- Use completing the square to solve\n- Derive quadratic formula\n",
+      "examples": [
+        {
+          "problem": "x² + 5x + 6",
+          "solution": "0",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        }
+      ],
+      "difficulty": "hard",
+      "estimatedMinutes": 25,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 2
+    },
+    {
+      "lessonId": "SUTRA_8_LESSON_3",
+      "lessonNumber": 3,
+      "title": "Simplifying Algebraic Expressions",
+      "description": "Augment to recognize patterns",
+      "content": "## Theory\n- Augment to recognize patterns\n- Factorization techniques\n",
+      "examples": [
+        {
+          "problem": "a⁴ + a²b² + b⁴",
+          "solution": "",
+          "steps": [
+            "a²+ab+b²"
+          ],
+          "explanation": "a²+ab+b²"
+        }
+      ],
+      "difficulty": "medium",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 3
+    },
+    {
+      "lessonId": "SUTRA_8_LESSON_4",
+      "lessonNumber": 4,
+      "title": "Geometric Applications",
+      "description": "Apply to area and volume problems",
+      "content": "## Theory\n- Apply to area and volume problems\n- Optimization problems\n",
+      "examples": null,
+      "difficulty": "hard",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 4
+    }
+  ]
+}

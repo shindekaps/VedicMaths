@@ -1,0 +1,121 @@
+{
+  "sutra": {
+    "sutraId": 3,
+    "name": "Urdhva Tiryagbhyam",
+    "sanskritName": "ऊर्ध्व तिर्यग्भ्यां",
+    "description": "The most general and powerful multiplication sutra. It works for multiplying numbers of any length using a criss-cross pattern. This method is often faster than conventional long multiplication.",
+    "order": 3,
+    "difficulty": "intermediate",
+    "estimatedHours": 6,
+    "icon": "✕",
+    "color": "#f59e0b"
+  },
+  "lessons": [
+    {
+      "lessonId": "SUTRA_3_LESSON_1",
+      "lessonNumber": 1,
+      "title": "Two-Digit Number Multiplication",
+      "description": "Vertical and cross multiplication pattern",
+      "content": "## Theory\n- Vertical and cross multiplication pattern\n- Place value consideration\n",
+      "examples": [
+        {
+          "problem": "23 × 45",
+          "solution": "1035",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        },
+        {
+          "problem": "67 × 89",
+          "solution": "5963",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        }
+      ],
+      "difficulty": "medium",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 1
+    },
+    {
+      "lessonId": "SUTRA_3_LESSON_2",
+      "lessonNumber": 2,
+      "title": "Three-Digit Number Multiplication",
+      "description": "Extend the pattern to three digits",
+      "content": "## Theory\n- Extend the pattern to three digits\n- Managing carries in mental math\n",
+      "examples": [
+        {
+          "problem": "123 × 456",
+          "solution": "56088",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        },
+        {
+          "problem": "234 × 567",
+          "solution": "132678",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        }
+      ],
+      "difficulty": "hard",
+      "estimatedMinutes": 25,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 2
+    },
+    {
+      "lessonId": "SUTRA_3_LESSON_3",
+      "lessonNumber": 3,
+      "title": "Decimal Multiplication",
+      "description": "Apply the sutra to decimal numbers",
+      "content": "## Theory\n- Apply the sutra to decimal numbers\n- Place decimal point correctly in result\n",
+      "examples": [
+        {
+          "problem": "2.3 × 4.5",
+          "solution": "10.35",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        },
+        {
+          "problem": "1.25 × 3.2",
+          "solution": "4.00",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        }
+      ],
+      "difficulty": "hard",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 3
+    },
+    {
+      "lessonId": "SUTRA_3_LESSON_4",
+      "lessonNumber": 4,
+      "title": "Squaring Any Number",
+      "description": "Special application for squaring",
+      "content": "## Theory\n- Special application for squaring\n- Faster than general multiplication\n",
+      "examples": [
+        {
+          "problem": "23²",
+          "solution": "529",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        },
+        {
+          "problem": "45²",
+          "solution": "2025",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        },
+        {
+          "problem": "123²",
+          "solution": "15129",
+          "steps": [],
+          "explanation": "Solve using the sutra technique."
+        }
+      ],
+      "difficulty": "medium",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 4
+    }
+  ]
+}

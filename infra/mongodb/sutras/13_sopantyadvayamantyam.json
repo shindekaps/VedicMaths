@@ -1,0 +1,63 @@
+{
+  "sutra": {
+    "sutraId": 13,
+    "name": "Sopantyadvayamantyam",
+    "sanskritName": "सोपान्त्यद्वयमन्त्यम्",
+    "description": "This sutra deals with expressions involving the last and second-to-last terms, useful in algebra, calculus, and number patterns.",
+    "order": 13,
+    "difficulty": "advanced",
+    "estimatedHours": 5.5,
+    "icon": "🔗",
+    "color": "#9333ea"
+  },
+  "lessons": [
+    {
+      "lessonId": "SUTRA_13_LESSON_1",
+      "lessonNumber": 1,
+      "title": "Polynomial Patterns",
+      "description": "Identify patterns using last and penultimate terms",
+      "content": "## Theory\n- Identify patterns using last and penultimate terms\n- Polynomial sequence analysis\n",
+      "examples": null,
+      "difficulty": "hard",
+      "estimatedMinutes": 22,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 1
+    },
+    {
+      "lessonId": "SUTRA_13_LESSON_2",
+      "lessonNumber": 2,
+      "title": "Sequences and Series",
+      "description": "Apply to recursive sequences",
+      "content": "## Theory\n- Apply to recursive sequences\n- Find general terms\n",
+      "examples": null,
+      "difficulty": "medium",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 2
+    },
+    {
+      "lessonId": "SUTRA_13_LESSON_3",
+      "lessonNumber": 3,
+      "title": "Calculus Applications",
+      "description": "Connection to derivatives and limits",
+      "content": "## Theory\n- Connection to derivatives and limits\n- Taylor series concepts\n",
+      "examples": null,
+      "difficulty": "hard",
+      "estimatedMinutes": 25,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 3
+    },
+    {
+      "lessonId": "SUTRA_13_LESSON_4",
+      "lessonNumber": 4,
+      "title": "Complex Expressions",
+      "description": "Factor and simplify using the sutra",
+      "content": "## Theory\n- Factor and simplify using the sutra\n- Identify hidden patterns\n",
+      "examples": null,
+      "difficulty": "hard",
+      "estimatedMinutes": 20,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "order": 4
+    }
+  ]
+}
