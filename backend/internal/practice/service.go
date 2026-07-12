@@ -2,9 +2,10 @@ package practice
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"time"
 	"vedicpath/internal/domain"
+	"vedicpath/internal/generator"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -12,30 +13,22 @@ import (
 // Service defines the business logic for practice sessions
 type Service interface {
 	StartSession(ctx context.Context, userID, sutraID primitive.ObjectID) (primitive.ObjectID, error)
-	GetNextProblem(ctx context.Context, sutraID primitive.ObjectID, difficulty int) (*Problem, error)
-	EvaluateAnswer(ctx context.Context, userID, sutraID, sessionID primitive.ObjectID, userAnswer string, correctAnswer string) (bool, int, error)
-}
-
-// Problem represents a generated math question for the API
-type Problem struct {
-	Question   string `json:"question"`
-	Answer     string `json:"answer"` // In production, we might not send this to the client
-	Difficulty int    `json:"difficulty"`
+	GetNextProblem(ctx context.Context, userID string, sutraID primitive.ObjectID, difficulty int) (*domain.Problem, error)
+	EvaluateAnswer(ctx context.Context, userID string, sutraID primitive.ObjectID, sessionID string, problemID string, userAnswer interface{}) (*domain.Result, int, error)
 }
 
 type service struct {
-	repo       Repository
-	generators map[string]Generator
+	repo     Repository
+	genSvc   *generator.Service
+	adjuster DifficultyAdjuster
 }
 
-// NewService initializes a production-ready practice service with generators
-func NewService(repo Repository) Service {
+// NewService initializes a production-ready practice service with generator service dependency
+func NewService(repo Repository, genSvc *generator.Service) Service {
 	return &service{
-		repo: repo,
-		generators: map[string]Generator{
-			"ekadhikena-purvena":       &EkadhikenaGenerator{},
-			"nikhilam-navatashcaramam": &NikhilamGenerator{},
-		},
+		repo:     repo,
+		genSvc:   genSvc,
+		adjuster: &difficultyAdjuster{},
 	}
 }
 
@@ -54,32 +47,101 @@ func (s *service) StartSession(ctx context.Context, userID, sutraID primitive.Ob
 }
 
 // GetNextProblem selects the correct generator and produces a dynamic problem
-func (s *service) GetNextProblem(ctx context.Context, sutraID primitive.ObjectID, difficulty int) (*Problem, error) {
-	// In production, we would fetch the sutra slug from the DB using sutraID
-	// For now, assuming a default or mapping
-	sutraSlug := "nikhilam-navatashcaramam" // Mock mapping
-	
-	generator, ok := s.generators[sutraSlug]
-	if !ok {
-		return nil, errors.New("no generator found for this sutra")
+func (s *service) GetNextProblem(ctx context.Context, userID string, sutraID primitive.ObjectID, difficulty int) (*domain.Problem, error) {
+	// 1. Fetch sutra from DB using sutraID
+	sutra, err := s.repo.GetSutraByID(ctx, sutraID)
+	if err != nil {
+		return nil, err
 	}
 
-	q, a := generator.Generate(difficulty)
-	return &Problem{
-		Question:   q,
-		Answer:     a,
-		Difficulty: difficulty,
-	}, nil
+	// 2. Call generator service to get the next problem
+	return s.genSvc.NextProblem(ctx, userID, sutra.SutraId, difficulty)
 }
 
-// EvaluateAnswer handles the logic for checking correctness and updating progress
-func (s *service) EvaluateAnswer(ctx context.Context, userID, sutraID, sessionID primitive.ObjectID, userAnswer string, correctAnswer string) (bool, int, error) {
-	isCorrect := userAnswer == correctAnswer
+func (s *service) EvaluateAnswer(ctx context.Context, userID string, sutraID primitive.ObjectID, sessionID string, problemID string, userAnswer interface{}) (*domain.Result, int, error) {
+	// 1. Check answer using the generator service
+	result, problem, err := s.genSvc.SubmitAnswerAndGetProblem(ctx, problemID, userAnswer)
+	if err != nil {
+		return nil, 0, err
+	}
 
-	// TODO: Production DB updates
-	// 1. Record problem result in practice_sessions problem history
-	// 2. Update user_progress rolling accuracy
-	// 3. Trigger adaptive difficulty adjustment if threshold reached
+	if sutraID.IsZero() && problem != nil {
+		sutra, err := s.repo.GetSutraBySutraId(ctx, problem.SutraID)
+		if err == nil && sutra != nil {
+			sutraID = sutra.ID
+		}
+	}
 
-	return isCorrect, 1, nil // Returning mock difficulty for now
+	userOID, _ := primitive.ObjectIDFromHex(userID)
+
+	// 2. Save user answer log
+	ansStr := ""
+	if userAnswerStr, ok := userAnswer.(string); ok {
+		ansStr = userAnswerStr
+	} else {
+		ansStr = fmt.Sprintf("%v", userAnswer)
+	}
+
+	userAns := &domain.UserAnswer{
+		UserID:      userOID,
+		QuestionID:  problemID,
+		SutraID:     sutraID,
+		UserAnswer:  ansStr,
+		IsCorrect:   result.Correct,
+		SubmittedAt: time.Now(),
+		SessionID:   sessionID,
+		SessionType: "practice",
+	}
+	_ = s.repo.SaveUserAnswer(ctx, userAns)
+
+	// 3. Update User Progress in MongoDB
+	sutra, err := s.repo.GetSutraByID(ctx, sutraID)
+	if err == nil {
+		progress, progErr := s.repo.GetUserProgress(ctx, userOID, sutraID, primitive.NilObjectID)
+		if progErr == nil {
+			if progress == nil {
+				progress = &domain.UserProgress{
+					UserID:          userOID,
+					SutraID:         sutraID,
+					LessonID:        primitive.NilObjectID,
+					SutraNumber:     sutra.SutraId,
+					Status:          "in_progress",
+					CreatedAt:       time.Now(),
+					LastAttemptDate: time.Now(),
+				}
+			}
+			progress.LastAttemptDate = time.Now()
+			progress.UpdatedAt = time.Now()
+
+			// Update rolling score/accuracy logic
+			lastAnswers, lastAnswersErr := s.repo.GetLastAnswers(ctx, userOID, sutraID, 10)
+			if lastAnswersErr == nil && len(lastAnswers) > 0 {
+				correctCount := 0
+				for _, a := range lastAnswers {
+					if a.IsCorrect {
+						correctCount++
+					}
+				}
+				progress.BestScore = (float64(correctCount) / float64(len(lastAnswers))) * 100.0
+			}
+
+			_ = s.repo.UpdateUserProgress(ctx, progress)
+		}
+	}
+
+	// 4. Trigger adaptive difficulty adjustment if threshold reached
+	newDifficulty := 1
+	last10Correct := []bool{}
+	lastAnswers, lastAnswersErr := s.repo.GetLastAnswers(ctx, userOID, sutraID, 10)
+	if lastAnswersErr == nil {
+		for _, a := range lastAnswers {
+			last10Correct = append(last10Correct, a.IsCorrect)
+		}
+	}
+
+	if len(last10Correct) > 0 {
+		newDifficulty, _ = s.adjuster.Adjust(ctx, userOID, sutraID, last10Correct)
+	}
+
+	return result, newDifficulty, nil
 }

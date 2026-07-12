@@ -2,6 +2,7 @@ package practice
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -25,16 +26,23 @@ func NewHandler(service Service) Handler {
 
 // StartSession handles the POST request to start a new practice session
 func (h *handler) StartSession(c *gin.Context) {
-	// In production, userID comes from JWT middleware context
-	userID := primitive.NewObjectID()
-	
+	userIDStr := userIDFromContext(c)
+	userID, _ := primitive.ObjectIDFromHex(userIDStr)
+	if userID.IsZero() {
+		// fallback to random object ID for anonymous user
+		userID = primitive.NewObjectID()
+	}
+
 	sutraIDStr := c.Param("sutraID")
+	if sutraIDStr == "" {
+		sutraIDStr = c.Param("sutraId")
+	}
 	sutraID, err := primitive.ObjectIDFromHex(sutraIDStr)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Sutra ID"})
 		return
 	}
-	
+
 	sessionID, err := h.service.StartSession(c.Request.Context(), userID, sutraID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to start session"})
@@ -46,18 +54,30 @@ func (h *handler) StartSession(c *gin.Context) {
 
 // GetProblem handles the request to fetch the next dynamic problem
 func (h *handler) GetProblem(c *gin.Context) {
-	sutraID, err := primitive.ObjectIDFromHex(c.Param("sutraID"))
+	userID := userIDFromContext(c)
+
+	sutraIDStr := c.Query("sutraId")
+	if sutraIDStr == "" {
+		sutraIDStr = c.Query("sutraID")
+	}
+	if sutraIDStr == "" {
+		sutraIDStr = c.Param("sutraID")
+	}
+
+	sutraID, err := primitive.ObjectIDFromHex(sutraIDStr)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Sutra ID"})
 		return
 	}
 
-	// In production, we'd fetch the user's current difficulty for this sutra
-	difficulty := 1 
+	difficulty, _ := strconv.Atoi(c.Query("difficulty"))
+	if difficulty <= 0 {
+		difficulty = 1
+	}
 
-	problem, err := h.service.GetNextProblem(c.Request.Context(), sutraID, difficulty)
+	problem, err := h.service.GetNextProblem(c.Request.Context(), userID, sutraID, difficulty)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate problem"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -66,12 +86,13 @@ func (h *handler) GetProblem(c *gin.Context) {
 
 // SubmitAnswer handles the answer evaluation and progress tracking
 func (h *handler) SubmitAnswer(c *gin.Context) {
+	userID := userIDFromContext(c)
+
 	var req struct {
-		UserID        string `json:"user_id"`
-		SutraID       string `json:"sutra_id"`
-		SessionID     string `json:"session_id"`
-		UserAnswer    string `json:"user_answer"`
-		CorrectAnswer string `json:"correct_answer"`
+		SessionID  string      `json:"sessionId"`
+		ProblemID  string      `json:"problemId"`
+		UserAnswer interface{} `json:"answer"`
+		SutraID    string      `json:"sutraId"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -79,22 +100,27 @@ func (h *handler) SubmitAnswer(c *gin.Context) {
 		return
 	}
 
-	userOID, err1 := primitive.ObjectIDFromHex(req.UserID)
-	sutraOID, err2 := primitive.ObjectIDFromHex(req.SutraID)
-	sessionOID, err3 := primitive.ObjectIDFromHex(req.SessionID)
-	if err1 != nil || err2 != nil || err3 != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid hex string in request"})
-		return
-	}
+	sutraOID, _ := primitive.ObjectIDFromHex(req.SutraID)
 
-	isCorrect, newDifficulty, err := h.service.EvaluateAnswer(c.Request.Context(), userOID, sutraOID, sessionOID, req.UserAnswer, req.CorrectAnswer)
+	result, newDifficulty, err := h.service.EvaluateAnswer(c.Request.Context(), userID, sutraOID, req.SessionID, req.ProblemID, req.UserAnswer)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Evaluation failed"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"correct":        isCorrect,
+		"correct":        result.Correct,
+		"correctAnswer":  result.CorrectAnswer,
+		"solutionSteps":  result.SolutionSteps,
 		"new_difficulty": newDifficulty,
 	})
+}
+
+func userIDFromContext(c *gin.Context) string {
+	if v, exists := c.Get("userID"); exists {
+		if s, ok := v.(string); ok {
+			return s
+		}
+	}
+	return "anonymous"
 }

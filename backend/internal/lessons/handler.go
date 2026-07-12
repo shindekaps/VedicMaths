@@ -2,6 +2,7 @@ package lessons
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -10,6 +11,8 @@ import (
 type Handler interface {
 	ListSutras(c *gin.Context)
 	GetLessons(c *gin.Context)
+	GetSutraWithLessons(c *gin.Context)
+	GetLessonDetails(c *gin.Context)
 }
 
 type handler struct {
@@ -40,4 +43,32 @@ func (h *handler) GetLessons(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, lessons)
+}
+
+func (h *handler) GetSutraWithLessons(c *gin.Context) {
+	sutraId := c.Param("sutraId")
+	sutra, err := h.service.GetSutraWithLessons(c.Request.Context(), sutraId)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"success": false, "error": "Sutra not found"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": sutra})
+}
+
+func (h *handler) GetLessonDetails(c *gin.Context) {
+	sutraId := c.Param("sutraId")
+	lessonNumStr := c.Param("lessonNumber")
+	
+	lessonNum, err := strconv.Atoi(lessonNumStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "Invalid lesson number"})
+		return
+	}
+
+	lesson, err := h.service.GetLessonDetails(c.Request.Context(), sutraId, lessonNum)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"success": false, "error": "Lesson not found"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": gin.H{"lesson": lesson}})
 }

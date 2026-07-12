@@ -73,6 +73,39 @@ func (s *Service) NextProblem(ctx context.Context, userID string, sutraID, diffi
 	return &p, nil
 }
 
+func (s *Service) GetQuestions(ctx context.Context, userID string, sutraID, difficulty, count int) ([]domain.Problem, error) {
+	gen, ok := Registry[sutraID]
+	if !ok {
+		return nil, fmt.Errorf("unknown sutra id %d", sutraID)
+	}
+
+	var problems []domain.Problem
+	for i := 0; i < count; i++ {
+		var p domain.Problem
+		found := false
+		for attempt := 0; attempt < maxDedupAttempts; attempt++ {
+			candidate := gen(difficulty)
+			seenBefore, err := s.seen.Has(ctx, userID, sutraID, candidate.DedupKey)
+			if err != nil {
+				return nil, err
+			}
+			if !seenBefore {
+				p = candidate
+				found = true
+				break
+			}
+		}
+		if !found {
+			p = gen(difficulty)
+		}
+		p.ID = uuid.NewString()
+		_ = s.seen.Mark(ctx, userID, sutraID, p.DedupKey)
+		_ = s.answer.Put(ctx, p.ID, p, defaultAnswerTTL)
+		problems = append(problems, p)
+	}
+	return problems, nil
+}
+
 // SubmitAnswer validates a submitted answer against the cached problem.
 // The problem is consumed on read (one-shot), so a problemID can't be
 // resubmitted to fish for the right answer.
@@ -92,6 +125,26 @@ func (s *Service) SubmitAnswer(ctx context.Context, problemID string, submitted 
 		CorrectAnswer: p.Answer,
 		SolutionSteps: p.SolutionSteps,
 	}, nil
+}
+
+// SubmitAnswerAndGetProblem validates a submitted answer and returns both the result and the original problem.
+func (s *Service) SubmitAnswerAndGetProblem(ctx context.Context, problemID string, submitted interface{}) (*domain.Result, *domain.Problem, error) {
+	p, ok, err := s.answer.Take(ctx, problemID)
+	if err != nil {
+		return nil, nil, err
+	}
+	if !ok {
+		return nil, nil, fmt.Errorf("problem %s not found or expired", problemID)
+	}
+
+	correct := answersMatch(p.Answer, submitted)
+
+	res := &domain.Result{
+		Correct:       correct,
+		CorrectAnswer: p.Answer,
+		SolutionSteps: p.SolutionSteps,
+	}
+	return res, &p, nil
 }
 
 // answersMatch normalizes both sides through JSON so int/float64/map-key-order

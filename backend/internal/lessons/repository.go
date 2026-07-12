@@ -2,6 +2,7 @@ package lessons
 
 import (
 	"context"
+	"strconv"
 	"vedicpath/internal/domain"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -13,6 +14,9 @@ import (
 type Repository interface {
 	GetAllSutras(ctx context.Context) ([]domain.Sutra, error)
 	GetLessonsBySutra(ctx context.Context, sutraID string) ([]domain.Lesson, error)
+	GetSutraByIdOrHex(ctx context.Context, idOrHex string) (domain.Sutra, error)
+	GetLessonsBySutraID(ctx context.Context, sutraObjectID primitive.ObjectID) ([]domain.Lesson, error)
+	GetLessonByNumber(ctx context.Context, sutraObjectID primitive.ObjectID, lessonNum int) (domain.Lesson, error)
 }
 
 type repository struct {
@@ -52,8 +56,26 @@ func (r *repository) GetLessonsBySutra(ctx context.Context, sutraID string) ([]d
 		return nil, err
 	}
 
-	// 2. Find lessons directly by sutraId
-	cursor, err := r.lessonsCollection.Find(ctx, bson.M{"sutraId": objID})
+	return r.GetLessonsBySutraID(ctx, objID)
+}
+
+func (r *repository) GetSutraByIdOrHex(ctx context.Context, idOrHex string) (domain.Sutra, error) {
+	var filter bson.M
+	if objID, err := primitive.ObjectIDFromHex(idOrHex); err == nil {
+		filter = bson.M{"_id": objID}
+	} else if num, err := strconv.Atoi(idOrHex); err == nil {
+		filter = bson.M{"sutraId": num}
+	} else {
+		return domain.Sutra{}, mongo.ErrNoDocuments
+	}
+
+	var sutra domain.Sutra
+	err := r.sutrasCollection.FindOne(ctx, filter).Decode(&sutra)
+	return sutra, err
+}
+
+func (r *repository) GetLessonsBySutraID(ctx context.Context, sutraObjectID primitive.ObjectID) ([]domain.Lesson, error) {
+	cursor, err := r.lessonsCollection.Find(ctx, bson.M{"sutraId": sutraObjectID})
 	if err != nil {
 		return nil, err
 	}
@@ -63,10 +85,14 @@ func (r *repository) GetLessonsBySutra(ctx context.Context, sutraID string) ([]d
 	if err := cursor.All(ctx, &lessons); err != nil {
 		return nil, err
 	}
-	
 	if len(lessons) == 0 {
 		return []domain.Lesson{}, nil
 	}
-	
 	return lessons, nil
+}
+
+func (r *repository) GetLessonByNumber(ctx context.Context, sutraObjectID primitive.ObjectID, lessonNum int) (domain.Lesson, error) {
+	var lesson domain.Lesson
+	err := r.lessonsCollection.FindOne(ctx, bson.M{"sutraId": sutraObjectID, "lessonNumber": lessonNum}).Decode(&lesson)
+	return lesson, err
 }

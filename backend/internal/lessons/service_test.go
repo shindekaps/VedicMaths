@@ -25,6 +25,21 @@ func (m *MockRepository) GetLessonsBySutra(ctx context.Context, sutraID string) 
 	return args.Get(0).([]domain.Lesson), args.Error(1)
 }
 
+func (m *MockRepository) GetSutraByIdOrHex(ctx context.Context, idOrHex string) (domain.Sutra, error) {
+	args := m.Called(ctx, idOrHex)
+	return args.Get(0).(domain.Sutra), args.Error(1)
+}
+
+func (m *MockRepository) GetLessonsBySutraID(ctx context.Context, sutraObjectID primitive.ObjectID) ([]domain.Lesson, error) {
+	args := m.Called(ctx, sutraObjectID)
+	return args.Get(0).([]domain.Lesson), args.Error(1)
+}
+
+func (m *MockRepository) GetLessonByNumber(ctx context.Context, sutraObjectID primitive.ObjectID, lessonNum int) (domain.Lesson, error) {
+	args := m.Called(ctx, sutraObjectID, lessonNum)
+	return args.Get(0).(domain.Lesson), args.Error(1)
+}
+
 func TestListSutras(t *testing.T) {
 	mockRepo := new(MockRepository)
 	service := NewService(mockRepo)
@@ -42,11 +57,17 @@ func TestListSutras(t *testing.T) {
 	assert.NoError(t, err)
 
 	expected := []domain.SutraDTO{{
-		ID:         oid.Hex(),
-		Name:       "Test Sutra",
-		Slug:       "test-sutra",
-		Meaning:    "Test Meaning",
-		OrderIndex: 1,
+		ID:             oid.Hex(),
+		SutraId:        0,
+		Name:           "Test Sutra",
+		SanskritName:   "",
+		Description:    "Test Meaning",
+		Order:          1,
+		Difficulty:     "",
+		EstimatedHours: 0.0,
+		Icon:           "",
+		Color:          "",
+		Slug:           "test-sutra",
 	}}
 	assert.Equal(t, expected, result)
 	mockRepo.AssertExpectations(t)

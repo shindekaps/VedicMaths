@@ -23,11 +23,39 @@ type Sutra struct {
 }
 
 type SutraDTO struct {
-	ID         string `json:"id"`
-	Name       string `json:"name"`
-	Slug       string `json:"slug"`
-	Meaning    string `json:"meaning"`
-	OrderIndex int    `json:"order_index"`
+	ID             string  `json:"id"`
+	SutraId        int     `json:"sutraId"`
+	Name           string  `json:"name"`
+	SanskritName   string  `json:"sanskritName"`
+	Description    string  `json:"description"`
+	Order          int     `json:"order"`
+	Difficulty     string  `json:"difficulty"`
+	EstimatedHours float64 `json:"estimatedHours"`
+	Icon           string  `json:"icon"`
+	Color          string  `json:"color"`
+	Slug           string  `json:"slug"`
+}
+
+type LessonSummaryDTO struct {
+	LessonId         string `json:"lessonId"`
+	LessonNumber     int    `json:"lessonNumber"`
+	Title            string `json:"title"`
+	Description      string `json:"description"`
+	EstimatedMinutes int    `json:"estimatedMinutes"`
+	Difficulty       string `json:"difficulty"`
+}
+
+type SutraWithLessonsDTO struct {
+	ID             string             `json:"id"`
+	SutraId        int                `json:"sutraId"`
+	Name           string             `json:"name"`
+	SanskritName   string             `json:"sanskritName"`
+	Description    string             `json:"description"`
+	Difficulty     string             `json:"difficulty"`
+	EstimatedHours float64            `json:"estimatedHours"`
+	Icon           string             `json:"icon"`
+	Color          string             `json:"color"`
+	Lessons        []LessonSummaryDTO `json:"lessons"`
 }
 
 type Example struct {
