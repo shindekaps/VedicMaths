@@ -1,14 +1,18 @@
 import { api } from '@/api/client';
 
 export interface Problem {
-  question: string;
-  answer: string;
+  id: string;
+  sutraId: number;
+  questionText: string;
   difficulty: number;
+  answer?: string;
 }
 
 export interface SubmissionResponse {
   correct: boolean;
-  new_difficulty: number;
+  correctAnswer: string | number;
+  solutionSteps?: string[];
+  new_difficulty?: number;
 }
 
 export const startPracticeSession = (sutraID: string): Promise<{ sessionID: string }> => 

@@ -1,9 +1,12 @@
+import { useAuthStore } from '../stores/authStore';
+
 interface NavBarProps {
   active: string;
   setActive: (id: string) => void;
 }
 
 export const NavBar = ({ active, setActive }: NavBarProps) => {
+  const { logout } = useAuthStore();
   const VIEWS = [
     { id: "dashboard", label: "Home", icon: "🏠" },
     { id: "curriculum", label: "Learn", icon: "📚" },
@@ -16,7 +19,7 @@ export const NavBar = ({ active, setActive }: NavBarProps) => {
       {/* Desktop Top Nav */}
       <nav className="hidden md:flex fixed top-0 w-full bg-white border-b border-gray-100 z-50 h-16 items-center px-8 justify-between">
         <div className="font-serif font-black text-2xl text-violet">VedicPath</div>
-        <div className="flex gap-8">
+        <div className="flex gap-8 items-center">
           {VIEWS.map((v) => (
             <button
               key={v.id}
@@ -26,6 +29,13 @@ export const NavBar = ({ active, setActive }: NavBarProps) => {
               {v.label}
             </button>
           ))}
+          <div className="h-4 w-px bg-gray-200 mx-2" />
+          <button
+            onClick={logout}
+            className="font-bold text-sub hover:text-red-600 transition-colors text-sm"
+          >
+            Sign Out
+          </button>
         </div>
       </nav>
 
@@ -43,6 +53,13 @@ export const NavBar = ({ active, setActive }: NavBarProps) => {
             <span>{v.label}</span>
           </button>
         ))}
+        <button
+          onClick={logout}
+          className="flex flex-col items-center gap-1 p-2 text-[10px] font-bold text-gray-400 hover:text-red-500 transition-colors"
+        >
+          <span className="text-xl">🚪</span>
+          <span>Logout</span>
+        </button>
       </nav>
     </>
   );

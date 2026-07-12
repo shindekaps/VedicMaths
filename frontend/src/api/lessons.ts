@@ -1,23 +1,44 @@
 import { api } from '@/api/client';
 import { useQuery } from '@tanstack/react-query';
 
+export interface Example {
+  problem: string;
+  solution: string;
+  steps: string[];
+  explanation: string;
+}
+
 // Sutra defines the data structure for a Vedic Mathematics Sutra
 export interface Sutra {
   id: string;
+  sutraId: number;
   name: string;
-  slug: string;
-  meaning: string;
+  sanskritName: string;
   description: string;
-  order_index: number;
+  order: number;
+  difficulty: string;
+  estimatedHours: number;
+  icon: string;
+  color: string;
+  slug: string;
 }
 
 // Lesson defines the data structure for a specific lesson
 export interface Lesson {
   id: string;
-  sutra_id: string;
+  lessonId: string;
+  sutraId: string;
+  sutraNumber: number;
+  lessonNumber: number;
   title: string;
+  description: string;
   content: string;
-  order_index: number;
+  examples: Example[];
+  difficulty: string;
+  estimatedMinutes: number;
+  videoUrl: string;
+  order: number;
+  isActive: boolean;
 }
 
 // fetchSutras calls the backend API to get all sutras

@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 const players = [
   { rank: 1, name: "Priya Mehta", xp: 3240, streak: 22, level: "Vedic Master", avatar: "🧙‍♀️" },
   { rank: 2, name: "Rohan Gupta", xp: 2980, streak: 15, level: "Guru", avatar: "👨‍🎓" },
@@ -11,7 +9,6 @@ const players = [
 ];
 
 export const LeaderboardView = () => {
-  const [tab, setTab] = useState("weekly");
   const medals = ["🥇", "🥈", "🥉"];
 
   return (

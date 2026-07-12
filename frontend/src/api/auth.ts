@@ -1,11 +1,52 @@
-import { api } from '@/api/client';
+import { api } from './client';
 
-export interface LoginResponse {
-  token: string;
+export interface AuthResponse {
+  success: boolean;
+  message?: string;
+  data: {
+    userId?: string;
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    profilePhoto?: string;
+    accessToken?: string;
+    token?: string;
+    refreshToken?: string;
+    expiresIn?: number;
+    isNewUser?: boolean;
+    user?: {
+      userId: string;
+      email: string;
+      name: string;
+      profilePhoto?: string;
+    };
+  };
 }
 
-export const login = (data: { email: string; password: string }): Promise<LoginResponse> => 
-  api.post('/auth/login', data);
+export interface LoginPayload {
+  email: string;
+  password: string;
+}
 
-export const register = (data: { email: string; password: string; username: string; grade: number }): Promise<any> => 
-  api.post('/auth/register', data);
+export interface SignUpPayload {
+  name: string;
+  email: string;
+  password: string;
+}
+
+export const authApi = {
+  login: (data: LoginPayload): Promise<AuthResponse> =>
+    api.post('/auth/login', data),
+
+  signup: (data: SignUpPayload): Promise<AuthResponse> =>
+    api.post('/auth/signup', data),
+
+  googleLogin: (data: { googleIdToken: string; googleAccessToken?: string }): Promise<AuthResponse> =>
+    api.post('/auth/google', data),
+
+  refresh: (data: { refreshToken: string }): Promise<AuthResponse> =>
+    api.post('/auth/refresh', data),
+
+  logout: (): Promise<{ success: boolean; message: string }> =>
+    api.post('/auth/logout', {}),
+};

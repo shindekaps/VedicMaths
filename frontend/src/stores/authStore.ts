@@ -1,42 +1,132 @@
 import { create } from 'zustand';
-import { login, register } from '@/api/auth';
+import { authApi } from '../api/auth';
 
 interface User {
-  id: string;
+  userId: string;
   email: string;
-  username: string;
+  firstName: string;
+  lastName: string;
+  nickName?: string;
+  profilePhoto?: string;
 }
 
-// AuthState defines the structure for authentication state
 interface AuthState {
   token: string | null;
+  refreshToken: string | null;
   user: User | null;
-  setToken: (token: string | null) => void;
-  setUser: (user: User | null) => void;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  error: string | null;
+
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, username: string, grade: number) => Promise<void>;
-  refresh: () => Promise<void>;
+  signup: (name: string, email: string, password: string) => Promise<void>;
+  googleLogin: () => Promise<void>;
+  logout: () => void;
+  clearError: () => void;
+  setUser: (user: User | null) => void;
 }
 
-// useAuthStore manages the authentication state (JWT token and user)
 export const useAuthStore = create<AuthState>((set) => ({
   token: localStorage.getItem('token'),
+  refreshToken: localStorage.getItem('refreshToken'),
   user: null,
-  setToken: (token) => {
-    if (token) localStorage.setItem('token', token);
-    else localStorage.removeItem('token');
-    set({ token });
+  isAuthenticated: !!localStorage.getItem('token'),
+  isLoading: false,
+  error: null,
+
+  login: async (email: string, password: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const res = await authApi.login({ email, password });
+      if (res.success && res.data) {
+        localStorage.setItem('token', res.data.accessToken || res.data.token || '');
+        localStorage.setItem('refreshToken', res.data.refreshToken || '');
+        set({
+          token: res.data.accessToken || res.data.token || '',
+          refreshToken: res.data.refreshToken || '',
+          user: {
+            userId: res.data.userId || res.data.user?.userId || '',
+            email: res.data.email || res.data.user?.email || email,
+            firstName: res.data.firstName || res.data.user?.name?.split(' ')[0] || '',
+            lastName: res.data.lastName || res.data.user?.name?.split(' ').slice(1).join(' ') || '',
+            profilePhoto: res.data.profilePhoto || res.data.user?.profilePhoto || '',
+          },
+          isAuthenticated: true,
+          isLoading: false,
+        });
+      } else {
+        set({ error: 'Login failed', isLoading: false });
+      }
+    } catch (err: any) {
+      set({ error: err?.message || 'Login failed', isLoading: false });
+    }
   },
+
+  signup: async (name: string, email: string, password: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const res = await authApi.signup({ name, email, password });
+      if (res.success && res.data) {
+        localStorage.setItem('token', res.data.accessToken || res.data.token || '');
+        localStorage.setItem('refreshToken', res.data.refreshToken || '');
+        set({
+          token: res.data.accessToken || res.data.token || '',
+          refreshToken: res.data.refreshToken || '',
+          user: {
+            userId: res.data.userId || res.data.user?.userId || '',
+            email: res.data.email || res.data.user?.email || email,
+            firstName: res.data.firstName || res.data.user?.name?.split(' ')[0] || name.split(' ')[0] || '',
+            lastName: res.data.lastName || res.data.user?.name?.split(' ').slice(1).join(' ') || name.split(' ').slice(1).join(' ') || '',
+            profilePhoto: res.data.profilePhoto || res.data.user?.profilePhoto || '',
+          },
+          isAuthenticated: true,
+          isLoading: false,
+        });
+      } else {
+        set({ error: 'Signup failed', isLoading: false });
+      }
+    } catch (err: any) {
+      set({ error: err?.message || 'Signup failed', isLoading: false });
+    }
+  },
+
+  googleLogin: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const res = await authApi.googleLogin({ googleIdToken: 'google-mock-token' });
+      if (res.success && res.data) {
+        const token = res.data.accessToken || res.data.token || '';
+        const refreshToken = res.data.refreshToken || '';
+        localStorage.setItem('token', token);
+        localStorage.setItem('refreshToken', refreshToken);
+        set({
+          token,
+          refreshToken,
+          user: {
+            userId: res.data.userId || res.data.user?.userId || '',
+            email: res.data.email || res.data.user?.email || '',
+            firstName: res.data.firstName || res.data.user?.name?.split(' ')[0] || '',
+            lastName: res.data.lastName || res.data.user?.name?.split(' ').slice(1).join(' ') || '',
+            profilePhoto: res.data.profilePhoto || res.data.user?.profilePhoto || '',
+          },
+          isAuthenticated: true,
+          isLoading: false,
+        });
+      } else {
+        set({ error: 'Google login failed', isLoading: false });
+      }
+    } catch (err: any) {
+      set({ error: err?.message || 'Google login failed', isLoading: false });
+    }
+  },
+
+  logout: () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    authApi.logout().catch(() => {});
+    set({ token: null, refreshToken: null, user: null, isAuthenticated: false });
+  },
+
+  clearError: () => set({ error: null }),
   setUser: (user) => set({ user }),
-  login: async (email, password) => {
-    const { token } = await login({ email, password });
-    localStorage.setItem('token', token);
-    set({ token });
-  },
-  register: async (email, password, username, grade) => {
-    await register({ email, password, username, grade });
-  },
-  refresh: async () => {
-    console.log('Refreshing token...');
-  },
 }));
