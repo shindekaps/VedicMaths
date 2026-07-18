@@ -13,7 +13,7 @@ import (
 // Service defines the business logic for practice sessions
 type Service interface {
 	StartSession(ctx context.Context, userID, sutraID primitive.ObjectID) (primitive.ObjectID, error)
-	GetNextProblem(ctx context.Context, userID string, sutraID primitive.ObjectID, difficulty int) (*domain.Problem, error)
+	GetNextProblem(ctx context.Context, userID string, sutraID primitive.ObjectID, difficulty int, lessonID string) (*domain.Problem, error)
 	EvaluateAnswer(ctx context.Context, userID string, sutraID primitive.ObjectID, sessionID string, problemID string, userAnswer interface{}) (*domain.Result, int, error)
 }
 
@@ -47,7 +47,7 @@ func (s *service) StartSession(ctx context.Context, userID, sutraID primitive.Ob
 }
 
 // GetNextProblem selects the correct generator and produces a dynamic problem
-func (s *service) GetNextProblem(ctx context.Context, userID string, sutraID primitive.ObjectID, difficulty int) (*domain.Problem, error) {
+func (s *service) GetNextProblem(ctx context.Context, userID string, sutraID primitive.ObjectID, difficulty int, lessonID string) (*domain.Problem, error) {
 	// 1. Fetch sutra from DB using sutraID
 	sutra, err := s.repo.GetSutraByID(ctx, sutraID)
 	if err != nil {
@@ -55,7 +55,7 @@ func (s *service) GetNextProblem(ctx context.Context, userID string, sutraID pri
 	}
 
 	// 2. Call generator service to get the next problem
-	return s.genSvc.NextProblem(ctx, userID, sutra.SutraId, difficulty)
+	return s.genSvc.NextProblem(ctx, userID, sutra.SutraId, difficulty, lessonID)
 }
 
 func (s *service) EvaluateAnswer(ctx context.Context, userID string, sutraID primitive.ObjectID, sessionID string, problemID string, userAnswer interface{}) (*domain.Result, int, error) {

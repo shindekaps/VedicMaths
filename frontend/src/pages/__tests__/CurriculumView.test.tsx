@@ -8,6 +8,14 @@ vi.mock('@/api/lessons', () => ({
   useSutras: vi.fn(),
 }));
 
+// Mock the stats API module
+vi.mock('@/api/stats', () => ({
+  useProgress: vi.fn(() => ({
+    data: undefined,
+    isLoading: false,
+  })),
+}));
+
 const mockSutras = [
   {
     id: "sutra-1",

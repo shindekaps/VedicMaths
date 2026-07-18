@@ -53,25 +53,27 @@ func difficultyFromMagnitude(n int) int {
 // generator's internal magnitude ranges. Each generator interprets this
 // loosely to widen/narrow its number range.
 func rangeForDifficulty(difficulty int) (lo, hi int) {
-	switch {
-	case difficulty <= 1:
-		return 10, 99
-	case difficulty == 2:
+	switch difficulty {
+	case 2:
 		return 100, 999
-	case difficulty == 3:
+	case 3:
 		return 1000, 9999
-	default:
+	case 4:
 		return 10000, 99999
+	default: // Default to level 1
+		return 10, 99
 	}
 }
 
 // ---------- Sutra 1: Ekadhikena Purvena (squaring numbers ending in 5) ----------
-func genSutra1(difficulty int) domain.Problem {
-	_, hi := rangeForDifficulty(difficulty)
+func genSutra1Lesson1(difficulty int) domain.Problem {
+	lo, hi := rangeForDifficulty(difficulty)
 	if hi > 99995 {
 		hi = 99995
 	}
-	tens := rand.Intn(hi/10) + 1
+	loTens := lo / 10
+	hiTens := hi / 10
+	tens := loTens + rand.Intn(hiTens-loTens+1)
 	num := tens*10 + 5
 	ans := num * num
 	return domain.Problem{
@@ -89,10 +91,73 @@ func genSutra1(difficulty int) domain.Problem {
 	}
 }
 
+// Multiplying numbers with same first digit and units digits sum is 10 (Lesson 2)
+func genSutra1Lesson2(difficulty int) domain.Problem {
+	_, hiDiff := rangeForDifficulty(difficulty)
+	var minTens, maxTens int
+	if hiDiff < 100 {
+		minTens = 1
+		maxTens = 9
+	} else if hiDiff < 1000 {
+		minTens = 10
+		maxTens = 99
+	} else {
+		minTens = 100
+		maxTens = 999
+	}
+
+	tens := minTens + rand.Intn(maxTens-minTens+1)
+	u1 := rand.Intn(9) + 1
+	u2 := 10 - u1
+
+	num1 := tens*10 + u1
+	num2 := tens*10 + u2
+	ans := num1 * num2
+
+	return domain.Problem{
+		SutraID:      1,
+		QuestionText: fmt.Sprintf("%d x %d", num1, num2),
+		Difficulty:   difficultyFromMagnitude(num1),
+		DedupKey:     fmt.Sprintf("s1:L2:%d:%d", num1, num2),
+		Answer:       ans,
+		SolutionSteps: []string{
+			fmt.Sprintf("Tens digit is same: %d", tens),
+			fmt.Sprintf("Sum of units digits is 10: %d + %d = 10", u1, u2),
+			fmt.Sprintf("Left part: %d x (%d + 1) = %d", tens, tens, tens*(tens+1)),
+			fmt.Sprintf("Right part: %d x %d = %d", u1, u2, u1*u2),
+			fmt.Sprintf("Answer: %d", ans),
+		},
+	}
+}
+
+func genSutra1WithLesson(difficulty int, lessonID string) domain.Problem {
+	if lessonID == "SUTRA_1_LESSON_2" {
+		return genSutra1Lesson2(difficulty)
+	}
+	if lessonID == "SUTRA_1_LESSON_1" {
+		return genSutra1Lesson1(difficulty)
+	}
+	if rand.Intn(2) == 0 {
+		return genSutra1Lesson2(difficulty)
+	}
+	return genSutra1Lesson1(difficulty)
+}
+
+func genSutra1(difficulty int) domain.Problem {
+	return genSutra1WithLesson(difficulty, "")
+}
+
 // ---------- Sutra 2: Nikhilam (multiplication near a base) ----------
 func genSutra2(difficulty int) domain.Problem {
-	bases := []int{10, 100, 1000, 10000}
-	base := bases[rand.Intn(len(bases))]
+	var base int
+	switch {
+	case difficulty <= 1:
+		base = 10
+	case difficulty == 2:
+		base = 100
+	default:
+		base = 1000
+	}
 	span := base / 10
 	if span < 1 {
 		span = 1
@@ -124,10 +189,14 @@ func genSutra2(difficulty int) domain.Problem {
 
 // ---------- Sutra 3: Urdhva-Tiryagbhyam (general multiplication) ----------
 func genSutra3(difficulty int) domain.Problem {
-	digitsOptions := []int{2, 2, 2, 3, 3, 4}
-	digits := digitsOptions[rand.Intn(len(digitsOptions))]
-	if difficulty >= 3 {
-		digits = 3 + rand.Intn(2)
+	var digits int
+	switch {
+	case difficulty <= 1:
+		digits = 2
+	case difficulty == 2:
+		digits = 3
+	default:
+		digits = 4
 	}
 	lo10, hi10 := pow10(digits-1), pow10(digits)-1
 	a := lo10 + rand.Intn(hi10-lo10+1)
@@ -285,7 +354,7 @@ func genSutra9(difficulty int) domain.Problem {
 
 // ---------- Sutra 10: Yaavadunam (squaring near a base) ----------
 func genSutra10(difficulty int) domain.Problem {
-	bases := []int{10, 100, 1000, 10000}
+	bases := []int{100, 1000, 10000}
 	base := bases[rand.Intn(len(bases))]
 	span := base / 10
 	if span < 1 {

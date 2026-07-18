@@ -57,7 +57,12 @@ func (h *Handler) NextProblem(c *gin.Context) {
 		difficulty = 1
 	}
 
-	problem, err := h.svc.NextProblem(c.Request.Context(), userID, sutraID, difficulty)
+	lessonID := c.Query("lessonId")
+	if lessonID == "" {
+		lessonID = c.Query("lessonID")
+	}
+
+	problem, err := h.svc.NextProblem(c.Request.Context(), userID, sutraID, difficulty, lessonID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

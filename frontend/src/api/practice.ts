@@ -6,6 +6,7 @@ export interface Problem {
   questionText: string;
   difficulty: number;
   answer?: string;
+  options?: string[];
 }
 
 export interface SubmissionResponse {
@@ -18,14 +19,17 @@ export interface SubmissionResponse {
 export const startPracticeSession = (sutraID: string): Promise<{ sessionID: string }> => 
   api.post(`/practice/sutras/${sutraID}/start`, {});
 
-export const getNextProblem = (sutraID: string): Promise<Problem> => 
-  api.get(`/practice/next?sutraID=${sutraID}`);
+export const getNextProblem = (sutraID: string, lessonId?: string, difficulty?: number): Promise<Problem> => {
+  const diffParam = difficulty !== undefined ? `&difficulty=${difficulty}` : '';
+  return api.get(`/practice/next?sutraID=${sutraID}${lessonId ? `&lessonId=${lessonId}` : ''}${diffParam}&_=${Math.random()}`);
+};
 
-export const submitAnswer = (data: {
-  user_id: string;
-  sutra_id: string;
-  session_id: string;
-  user_answer: string;
-  correct_answer: string;
-}): Promise<SubmissionResponse> => 
+export interface SubmissionRequest {
+  sessionId: string;
+  problemId: string;
+  answer: string | number;
+  sutraId: string;
+}
+
+export const submitAnswer = (data: SubmissionRequest): Promise<SubmissionResponse> => 
   api.post('/practice/submit', data);

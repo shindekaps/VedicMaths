@@ -225,7 +225,7 @@ func (h *Handler) GetQuestions(c *gin.Context) {
 	ctx := c.Request.Context()
 
 	for i := 0; i < count; i++ {
-		p, err := h.gen.NextProblem(ctx, "anonymous", sutraId, difficulty)
+		p, err := h.gen.NextProblem(ctx, "anonymous", sutraId, difficulty, "")
 		if err != nil {
 			continue
 		}
@@ -360,11 +360,11 @@ func (h *Handler) StartAssessment(c *gin.Context) {
 	}
 
 	var questions []gin.H
-	// 20 balanced questions: 6 Easy (difficulty=1), 10 Medium (difficulty=2), 4 Hard (difficulty=3)
-	difficulties := []int{1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3}
+	// 20 balanced questions: 16 Easy (difficulty=1), 2 Medium (difficulty=2), 2 Hard (difficulty=3)
+	difficulties := []int{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3}
 
 	for _, diff := range difficulties {
-		p, err := h.gen.NextProblem(ctx, "anonymous", sutraId, diff)
+		p, err := h.gen.NextProblem(ctx, "anonymous", sutraId, diff, "")
 		if err != nil {
 			continue
 		}

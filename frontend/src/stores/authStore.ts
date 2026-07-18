@@ -24,9 +24,10 @@ interface AuthState {
   logout: () => void;
   clearError: () => void;
   setUser: (user: User | null) => void;
+  refresh: () => Promise<void>;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
   token: localStorage.getItem('token'),
   refreshToken: localStorage.getItem('refreshToken'),
   user: null,
@@ -129,4 +130,35 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   clearError: () => set({ error: null }),
   setUser: (user) => set({ user }),
+  refresh: async () => {
+    const rToken = get().refreshToken;
+    if (!rToken) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      set({ token: null, refreshToken: null, user: null, isAuthenticated: false });
+      return;
+    }
+    try {
+      const res = await authApi.refresh({ refreshToken: rToken });
+      if (res.success && res.data) {
+        const newToken = res.data.accessToken || res.data.token || '';
+        const newRefreshToken = res.data.refreshToken || rToken;
+        localStorage.setItem('token', newToken);
+        localStorage.setItem('refreshToken', newRefreshToken);
+        set({
+          token: newToken,
+          refreshToken: newRefreshToken,
+          isAuthenticated: true,
+        });
+      } else {
+        localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
+        set({ token: null, refreshToken: null, user: null, isAuthenticated: false });
+      }
+    } catch (err) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      set({ token: null, refreshToken: null, user: null, isAuthenticated: false });
+    }
+  },
 }));

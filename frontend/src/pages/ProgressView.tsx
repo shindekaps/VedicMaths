@@ -1,7 +1,10 @@
 import { motion } from 'framer-motion';
 import { useUserStats, useProgress, useDailyStats, useLeaderboard } from '../api/stats';
 import { useAuthStore } from '../stores/authStore';
-import { MandalaDecor } from '../components/MandalaDecor';
+import { VedicBackground } from '../components/VedicBackground';
+import { StatCard } from '../components/StatCard';
+import { BadgeCard } from '../components/BadgeCard';
+import { LeaderboardRow } from '../components/LeaderboardRow';
 
 export const ProgressView = () => {
   const { user } = useAuthStore();
@@ -33,7 +36,7 @@ export const ProgressView = () => {
 
   const itemVariants = {
     hidden: { opacity: 0, y: 15 },
-    show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } },
+    show: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 100 } },
   };
 
   const isLoading = isStatsLoading || isProgressLoading || isDailyLoading || isLeaderboardLoading;
@@ -59,13 +62,7 @@ export const ProgressView = () => {
 
   return (
     <div className="bg-[#F8F4FF] min-h-screen pb-20 relative overflow-hidden font-['Nunito',sans-serif]">
-      {/* Background elements */}
-      <div className="absolute right-[-40px] top-[260px] opacity-[0.02] pointer-events-none rotate-45">
-        <MandalaDecor size={300} />
-      </div>
-      <div className="absolute left-[-50px] bottom-[120px] opacity-[0.015] pointer-events-none">
-        <MandalaDecor size={260} />
-      </div>
+      <VedicBackground variant="light" />
 
       {/* ── HEADER BANNER ── */}
       <motion.div
@@ -84,21 +81,24 @@ export const ProgressView = () => {
           
           {/* Stat Cards Row */}
           <div className="grid grid-cols-3 gap-4 mt-8 w-full">
-            {[
-              { val: `${currentStreak} Days`, label: 'Streak', icon: '🔥', color: 'from-amber-400 to-saffron' },
-              { val: totalXP.toLocaleString(), label: 'XP Points', icon: '⭐', color: 'from-yellow-300 to-amber-500' },
-              { val: `${sutrasDone}/16`, label: 'Sutras Done', icon: '📚', color: 'from-violet-400 to-indigo-500' }
-            ].map((item, i) => (
-              <motion.div
-                key={i}
-                className="bg-white/10 backdrop-blur-md rounded-3xl p-4 text-center border border-white/15 shadow-lg relative overflow-hidden group"
-                whileHover={{ scale: 1.04, y: -2 }}
-              >
-                <div className="text-2xl mb-1">{item.icon}</div>
-                <div className="text-xl font-black text-white">{item.val}</div>
-                <div className="text-[9px] text-violet-200 font-extrabold uppercase tracking-wider mt-0.5">{item.label}</div>
-              </motion.div>
-            ))}
+            <StatCard
+              icon="🔥"
+              label="Streak"
+              value={`${currentStreak} Days`}
+              layout="vertical"
+            />
+            <StatCard
+              icon="⭐"
+              label="XP Points"
+              value={totalXP.toLocaleString()}
+              layout="vertical"
+            />
+            <StatCard
+              icon="📚"
+              label="Sutras Done"
+              value={`${sutrasDone}/16`}
+              layout="vertical"
+            />
           </div>
         </div>
       </motion.div>
@@ -118,30 +118,14 @@ export const ProgressView = () => {
               const isUnlocked = stats?.badges?.some(b => b.badgeId === badge.id || b.name === badge.name) ?? false;
 
               return (
-                <motion.div
+                <BadgeCard
                   key={badge.id}
-                  className={`flex flex-col items-center bg-white rounded-3xl p-5 border shadow-sm text-center relative overflow-hidden group transition-all ${
-                    isUnlocked
-                      ? 'border-violet-100/50 hover:shadow-card-hover'
-                      : 'border-gray-200/50 opacity-50 bg-slate-50/40'
-                  }`}
-                  whileHover={isUnlocked ? { scale: 1.06, rotate: [0, -1, 1, 0], transition: { duration: 0.3 } } : {}}
-                >
-                  {/* Badge Emoji */}
-                  <div className={`w-16 h-16 rounded-[24px] flex items-center justify-center text-3xl mb-3 shadow-inner ${
-                    isUnlocked ? 'bg-violet-50/70 text-4xl' : 'bg-slate-100 text-slate-300 filter grayscale'
-                  }`}>
-                    {isUnlocked ? badge.icon : '🔒'}
-                  </div>
-
-                  <span className="text-xs font-black text-ink">{badge.name}</span>
-                  <span className="text-[9px] text-sub mt-1 leading-snug font-medium max-w-[90px]">{badge.desc}</span>
-
-                  {/* Ribbon or master banner if unlocked */}
-                  {isUnlocked && (
-                    <div className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-success animate-pulse" />
-                  )}
-                </motion.div>
+                  id={badge.id}
+                  name={badge.name}
+                  icon={badge.icon}
+                  desc={badge.desc}
+                  isUnlocked={isUnlocked}
+                />
               );
             })}
           </div>
@@ -163,53 +147,17 @@ export const ProgressView = () => {
               const isCurrentUser = player.name.toLowerCase().includes('kapil') || player.name.toLowerCase().includes('you');
 
               return (
-                <motion.div
+                <LeaderboardRow
                   key={player.rank}
+                  rank={player.rank}
+                  avatar={player.avatar}
+                  name={player.name}
+                  streak={player.streak}
+                  level={player.level}
+                  xp={player.xp}
+                  isCurrentUser={isCurrentUser}
                   variants={itemVariants}
-                  whileHover={{ scale: 1.01, transition: { type: 'spring', stiffness: 300 } }}
-                  className={`p-4 flex items-center gap-4 rounded-3xl border-2 transition-all ${
-                    isCurrentUser
-                      ? 'bg-gradient-to-r from-amber-50/40 to-violet-50/40 border-violet-200 shadow-sm'
-                      : 'bg-transparent border-transparent hover:bg-slate-50/50'
-                  }`}
-                >
-                  {/* Rank badge */}
-                  <span className="font-serif font-black w-8 text-center text-lg flex-shrink-0">
-                    {player.rank === 1 ? '🥇' : player.rank === 2 ? '🥈' : player.rank === 3 ? '🥉' : player.rank}
-                  </span>
-
-                  {/* Avatar */}
-                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-violet-100 to-indigo-100 flex items-center justify-center font-bold text-sm text-violet flex-shrink-0 shadow-inner">
-                    {player.avatar || '👤'}
-                  </div>
-
-                  {/* Profile info */}
-                  <div className="flex-grow min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="font-serif text-sm font-black text-ink truncate">
-                        {player.name}
-                      </span>
-                      {player.streak > 0 && (
-                        <span className="text-[10px] font-bold text-saffron bg-amber-50 px-2 py-0.5 rounded-full flex items-center gap-0.5">
-                          🔥{player.streak}
-                        </span>
-                      )}
-                    </div>
-                    <span className="text-[9px] font-extrabold text-sub uppercase tracking-wider">
-                      {player.level || 'Apprentice'}
-                    </span>
-                  </div>
-
-                  {/* Score */}
-                  <div className="text-right flex-shrink-0">
-                    <span className="font-serif text-sm font-black text-violet">
-                      {player.xp.toLocaleString()}
-                    </span>
-                    <span className="text-[9px] font-black text-sub uppercase block mt-0.5">
-                      XP Points
-                    </span>
-                  </div>
-                </motion.div>
+                />
               );
             })}
 

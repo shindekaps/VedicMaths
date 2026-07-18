@@ -51,11 +51,11 @@ function App() {
           {view === 'curriculum' && <CurriculumView navigateToLesson={navigateToLesson} />}
           {view === 'leaderboard' && <LeaderboardView />}
           {view === 'dashboard' && <DashboardView setActive={setView} />}
-          {view === 'progress' && <ProgressView />}
+          {(view === 'progress' || view === 'profile') && <ProgressView />}
           {view === 'quiz' && <QuizView />}
           {view === 'games' && <GamesView />}
           {view === 'lesson' && <LessonView setActive={setView} sutraID={selectedSutraID} />}
-          {view === 'practice' && <PracticeView sutraID={selectedSutraID} />}
+          {view === 'practice' && <PracticeView sutraID={selectedSutraID} setActive={setView} />}
         </div>
       </div>
     </QueryClientProvider>

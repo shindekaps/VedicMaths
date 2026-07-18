@@ -95,8 +95,8 @@ export const AuthPage = ({ onSuccess }: AuthPageProps) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
         >
-          <div className="w-20 h-20 mx-auto mb-8 bg-white/10 backdrop-blur-xl rounded-3xl flex items-center justify-center text-5xl border border-white/20 shadow-glow">
-            🕉️
+          <div className="w-20 h-20 mx-auto mb-8 bg-white backdrop-blur-xl rounded-3xl flex items-center justify-center border border-white/20 shadow-glow overflow-hidden">
+            <img src="/Vedic-Math.jpg" alt="Vedic Math Logo" className="w-full h-full object-cover" />
           </div>
           <h1 className="font-serif text-5xl font-black text-white mb-4 tracking-tight">
             VedicPath
@@ -143,8 +143,8 @@ export const AuthPage = ({ onSuccess }: AuthPageProps) => {
         >
           {/* Mobile branding */}
           <div className="lg:hidden text-center mb-8">
-            <div className="w-14 h-14 mx-auto mb-3 bg-gradient-to-br from-violet to-violet-700 rounded-2xl flex items-center justify-center text-2xl shadow-glow">
-              🕉️
+            <div className="w-14 h-14 mx-auto mb-3 bg-white border border-violet-100 rounded-2xl flex items-center justify-center shadow-glow overflow-hidden">
+              <img src="/Vedic-Math.jpg" alt="Vedic Math Logo" className="w-full h-full object-cover" />
             </div>
             <h1 className="font-serif text-2xl font-black text-ink">VedicPath</h1>
           </div>

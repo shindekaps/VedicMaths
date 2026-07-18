@@ -19,15 +19,6 @@
       "content": "## Theory\n- When squaring a number ending in 5, multiply the digit before 5 by one more than itself\n- Then append 25 to the result\n- Formula: (10a + 5)² = 100a(a+1) + 25\n",
       "examples": [
         {
-          "problem": "15²",
-          "solution": "225",
-          "steps": [
-            "1 × 2 = 2",
-            "append 25 → 225"
-          ],
-          "explanation": "1 × 2 = 2, append 25 → 225"
-        },
-        {
           "problem": "25²",
           "solution": "625",
           "steps": [
@@ -37,33 +28,6 @@
           "explanation": "2 × 3 = 6, append 25 → 625"
         },
         {
-          "problem": "35²",
-          "solution": "1225",
-          "steps": [
-            "3 × 4 = 12",
-            "append 25 → 1225"
-          ],
-          "explanation": "3 × 4 = 12, append 25 → 1225"
-        },
-        {
-          "problem": "45²",
-          "solution": "2025",
-          "steps": [
-            "4 × 5 = 20",
-            "append 25 → 2025"
-          ],
-          "explanation": "4 × 5 = 20, append 25 → 2025"
-        },
-        {
-          "problem": "65²",
-          "solution": "4225",
-          "steps": [
-            "6 × 7 = 42",
-            "append 25 → 4225"
-          ],
-          "explanation": "6 × 7 = 42, append 25 → 4225"
-        },
-        {
           "problem": "85²",
           "solution": "7225",
           "steps": [
@@ -71,6 +35,33 @@
             "append 25 → 7225"
           ],
           "explanation": "8 × 9 = 72, append 25 → 7225"
+        },
+        {
+          "problem": "115²",
+          "solution": "13225",
+          "steps": [
+            "11 × 12 = 132",
+            "append 25 → 13225"
+          ],
+          "explanation": "11 × 12 = 132, append 25 → 13225"
+        },
+        {
+          "problem": "295²",
+          "solution": "87025",
+          "steps": [
+            "29 × 30 = 870",
+            "append 25 → 87025"
+          ],
+          "explanation": "29 × 30 = 870, append 25 → 87025"
+        },
+        {
+          "problem": "1005²",
+          "solution": "1010025",
+          "steps": [
+            "100 × 101 = 10100",
+            "append 25 → 1010025"
+          ],
+          "explanation": "100 × 101 = 10100, append 25 → 1010025"
         }
       ],
       "difficulty": "easy",
@@ -81,36 +72,59 @@
     {
       "lessonId": "SUTRA_1_LESSON_2",
       "lessonNumber": 2,
-      "title": "Multiplying Numbers with the Same First Digit",
-      "description": "When multiplying two numbers with the same first digit, use a special technique",
-      "content": "## Theory\n- When multiplying two numbers with the same first digit, use a special technique\n- Formula: (10a + b)(10a + c) = 100a(a+1) + bc\n",
+      "title": "Special Multiplication (Ekadhikena)",
+      "description": "Multiply numbers when the last digits add up to 10 or 100, and the previous parts are identical.",
+      "content": "## Theory\n- This method is used when the last digits of two numbers add up to 10, 100, 1000, etc., and the remaining \"previous\" parts of the numbers are identical.\n- **Right-hand side (RHS)**: Multiply the last digits together (e.g., 4 × 6 = 24).\n- **Left-hand side (LHS)**: Take the identical \"previous\" part, multiply it by \"one more than itself\" (e.g., 2 × (2+1) = 6).\n- **Combine**: Concatenate LHS and RHS results to get the final answer (e.g., 624).\n",
       "examples": [
         {
-          "problem": "23 × 27",
-          "solution": "621",
+          "problem": "24 × 26",
+          "solution": "624",
           "steps": [
-            "2 × 3 = 6",
-            "then 3 × 7 = 21 → 621"
+            "LHS: Multiply previous part by one more: 2 × 3 = 6",
+            "RHS: Multiply last digits: 4 × 6 = 24",
+            "Combine: LHS | RHS = 6 | 24 → 624"
           ],
-          "explanation": "2 × 3 = 6, then 3 × 7 = 21 → 621"
+          "explanation": "LHS: 2 × 3 = 6. RHS: 4 × 6 = 24. Combine to get 624."
         },
         {
-          "problem": "12 × 18",
-          "solution": "216",
+          "problem": "73 × 77",
+          "solution": "5621",
           "steps": [
-            "1 × 2 = 2",
-            "then 2 × 8 = 16 → 216"
+            "LHS: Multiply previous part by one more: 7 × 8 = 56",
+            "RHS: Multiply last digits: 3 × 7 = 21",
+            "Combine: LHS | RHS = 56 | 21 → 5621"
           ],
-          "explanation": "1 × 2 = 2, then 2 × 8 = 16 → 216"
+          "explanation": "LHS: 7 × 8 = 56. RHS: 3 × 7 = 21. Combine to get 5621."
         },
         {
-          "problem": "34 × 36",
-          "solution": "1224",
+          "problem": "130 × 170",
+          "solution": "22100",
           "steps": [
-            "3 × 4 = 12",
-            "then 4 × 6 = 24 → 1224"
+            "LHS: Multiply previous part by one more: 1 × 2 = 2",
+            "RHS: Multiply last digits: 30 × 70 = 2100",
+            "Combine: LHS | RHS = 2 | 2100 → 22100"
           ],
-          "explanation": "3 × 4 = 12, then 4 × 6 = 24 → 1224"
+          "explanation": "Last digits (30 and 70) add to 100. RHS: 30 × 70 = 2100. LHS: 1 × 2 = 2. Combine to get 22100."
+        },
+        {
+          "problem": "991 × 999",
+          "solution": "990009",
+          "steps": [
+            "LHS: Multiply previous part by one more: 99 × 100 = 9900",
+            "RHS: Multiply last digits: 1 × 9 = 09",
+            "Combine: LHS | RHS = 9900 | 09 → 990009"
+          ],
+          "explanation": "LHS: 99 × 100 = 9900. RHS: 1 × 9 = 09 (must keep 2 digits for product of units). Combine to get 990009."
+        },
+        {
+          "problem": "1002 × 1008",
+          "solution": "1010016",
+          "steps": [
+            "LHS: Multiply previous part by one more: 100 × 101 = 10100",
+            "RHS: Multiply last digits: 2 × 8 = 16",
+            "Combine: LHS | RHS = 10100 | 16 → 1010016"
+          ],
+          "explanation": "LHS: 100 × 101 = 10100. RHS: 2 × 8 = 16. Combine to get 1010016."
         }
       ],
       "difficulty": "medium",

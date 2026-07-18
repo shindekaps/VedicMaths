@@ -10,6 +10,7 @@ type Problem struct {
 	SutraID       int         `json:"sutraId"`
 	QuestionText  string      `json:"questionText"`
 	Difficulty    int         `json:"difficulty"`
+	Options       []string    `json:"options,omitempty"`
 	DedupKey      string      `json:"-"`
 	Answer        interface{} `json:"-"`
 	SolutionSteps []string    `json:"-"`

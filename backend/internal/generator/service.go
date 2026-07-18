@@ -1,10 +1,12 @@
 package generator
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"math/rand"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -30,7 +32,8 @@ func NewService(seen SeenStore, answer AnswerCache) *Service {
 // caller before it's serialized to JSON (the struct tags already do this —
 // see domain.Problem `json:"-"` tags) — only ID, SutraID, QuestionText,
 // Difficulty reach the client.
-func (s *Service) NextProblem(ctx context.Context, userID string, sutraID, difficulty int) (*domain.Problem, error) {
+func (s *Service) NextProblem(ctx context.Context, userID string, sutraID, difficulty int, lessonID string) (*domain.Problem, error) {
+	fmt.Printf("[DEBUG] NextProblem: sutraID=%d, difficulty=%d, lessonID=%q\n", sutraID, difficulty, lessonID)
 	gen, ok := Registry[sutraID]
 	if !ok {
 		return nil, fmt.Errorf("unknown sutra id %d", sutraID)
@@ -39,7 +42,13 @@ func (s *Service) NextProblem(ctx context.Context, userID string, sutraID, diffi
 	var p domain.Problem
 	found := false
 	for attempt := 0; attempt < maxDedupAttempts; attempt++ {
-		candidate := gen(difficulty)
+		var candidate domain.Problem
+		if sutraID == 1 {
+			candidate = genSutra1WithLesson(difficulty, lessonID)
+		} else {
+			candidate = gen(difficulty)
+		}
+
 		seenBefore, err := s.seen.Has(ctx, userID, sutraID, candidate.DedupKey)
 		if err != nil {
 			return nil, err
@@ -58,10 +67,15 @@ func (s *Service) NextProblem(ctx context.Context, userID string, sutraID, diffi
 		if err := s.seen.Reset(ctx, userID, sutraID); err != nil {
 			return nil, err
 		}
-		p = gen(difficulty)
+		if sutraID == 1 {
+			p = genSutra1WithLesson(difficulty, lessonID)
+		} else {
+			p = gen(difficulty)
+		}
 	}
 
 	p.ID = uuid.NewString()
+	p.Options = generateMCQOptionsForProblem(p.Answer)
 
 	if err := s.seen.Mark(ctx, userID, sutraID, p.DedupKey); err != nil {
 		return nil, err
@@ -84,7 +98,13 @@ func (s *Service) GetQuestions(ctx context.Context, userID string, sutraID, diff
 		var p domain.Problem
 		found := false
 		for attempt := 0; attempt < maxDedupAttempts; attempt++ {
-			candidate := gen(difficulty)
+			var candidate domain.Problem
+			if sutraID == 1 {
+				candidate = genSutra1WithLesson(difficulty, "")
+			} else {
+				candidate = gen(difficulty)
+			}
+
 			seenBefore, err := s.seen.Has(ctx, userID, sutraID, candidate.DedupKey)
 			if err != nil {
 				return nil, err
@@ -96,9 +116,14 @@ func (s *Service) GetQuestions(ctx context.Context, userID string, sutraID, diff
 			}
 		}
 		if !found {
-			p = gen(difficulty)
+			if sutraID == 1 {
+				p = genSutra1WithLesson(difficulty, "")
+			} else {
+				p = gen(difficulty)
+			}
 		}
 		p.ID = uuid.NewString()
+		p.Options = generateMCQOptionsForProblem(p.Answer)
 		_ = s.seen.Mark(ctx, userID, sutraID, p.DedupKey)
 		_ = s.answer.Put(ctx, p.ID, p, defaultAnswerTTL)
 		problems = append(problems, p)
@@ -147,15 +172,101 @@ func (s *Service) SubmitAnswerAndGetProblem(ctx context.Context, problemID strin
 	return res, &p, nil
 }
 
-// answersMatch normalizes both sides through JSON so int/float64/map-key-order
-// differences between what Go generated and what came in over the wire don't
-// cause false negatives. Note: this means float answers need exact-match
-// precision on the client side (fine for this app's 1-2 decimal answers).
 func answersMatch(expected, submitted interface{}) bool {
-	eb, err1 := json.Marshal(expected)
-	sb, err2 := json.Marshal(submitted)
-	if err1 != nil || err2 != nil {
-		return false
+	return normalizeValue(expected) == normalizeValue(submitted)
+}
+
+func normalizeValue(v interface{}) string {
+	if v == nil {
+		return ""
 	}
-	return bytes.Equal(eb, sb)
+	switch val := v.(type) {
+	case string:
+		return strings.TrimSpace(val)
+	case int:
+		return fmt.Sprintf("%d", val)
+	case int64:
+		return fmt.Sprintf("%d", val)
+	case float64:
+		return fmt.Sprintf("%g", val)
+	default:
+		b, err := json.Marshal(v)
+		if err != nil {
+			return ""
+		}
+		s := string(b)
+		if len(s) >= 2 && s[0] == '"' && s[len(s)-1] == '"' {
+			s = s[1 : len(s)-1]
+		}
+		return strings.TrimSpace(s)
+	}
+}
+
+func generateMCQOptionsForProblem(answer interface{}) []string {
+	var ansVal int
+	var isNumeric bool
+
+	switch val := answer.(type) {
+	case int:
+		ansVal = val
+		isNumeric = true
+	case int64:
+		ansVal = int(val)
+		isNumeric = true
+	case float64:
+		ansVal = int(val)
+		isNumeric = true
+	case string:
+		if parsed, err := strconv.Atoi(val); err == nil {
+			ansVal = parsed
+			isNumeric = true
+		} else {
+			isNumeric = false
+		}
+	default:
+		isNumeric = false
+	}
+
+	if !isNumeric {
+		ansStr := fmt.Sprintf("%v", answer)
+		return shuffleStrings([]string{ansStr, ansStr + ".5", "0.1428", "None of the above"})
+	}
+
+	set := make(map[string]bool)
+	ansStr := strconv.Itoa(ansVal)
+	set[ansStr] = true
+
+	offsets := []int{10, -10, 100, -100, 5, -5, 20, -20, 1, 2, 3}
+	rand.Shuffle(len(offsets), func(i, j int) {
+		offsets[i], offsets[j] = offsets[j], offsets[i]
+	})
+
+	for _, offset := range offsets {
+		val := ansVal + offset
+		if val > 0 && val != ansVal {
+			set[strconv.Itoa(val)] = true
+			if len(set) == 4 {
+				break
+			}
+		}
+	}
+
+	for len(set) < 4 {
+		val := ansVal + len(set) + 2
+		set[strconv.Itoa(val)] = true
+	}
+
+	var options []string
+	for k := range set {
+		options = append(options, k)
+	}
+
+	return shuffleStrings(options)
+}
+
+func shuffleStrings(slice []string) []string {
+	rand.Shuffle(len(slice), func(i, j int) {
+		slice[i], slice[j] = slice[j], slice[i]
+	})
+	return slice
 }

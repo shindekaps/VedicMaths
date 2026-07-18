@@ -53,11 +53,23 @@ export interface ProgressStats {
   }>;
 }
 
-export const fetchStats = (): Promise<{ success: boolean; data: { stats: UserStats } }> =>
-  api.get('/stats');
+export const fetchStats = async (): Promise<{ success: boolean; data: { stats: UserStats } }> => {
+  const res = await api.get<{ success: boolean; data: { stats: UserStats } }>('/stats');
+  if (res.success && res.data?.stats) {
+    const localXP = parseInt(localStorage.getItem('accumulated_xp') || '0', 10);
+    res.data.stats.totalXP += localXP;
+  }
+  return res;
+};
 
-export const fetchDailyStats = (): Promise<{ success: boolean; data: DailyStats }> =>
-  api.get('/stats/daily');
+export const fetchDailyStats = async (): Promise<{ success: boolean; data: DailyStats }> => {
+  const res = await api.get<{ success: boolean; data: DailyStats }>('/stats/daily');
+  if (res.success && res.data) {
+    const localXP = parseInt(localStorage.getItem('accumulated_xp') || '0', 10);
+    res.data.xp += localXP;
+  }
+  return res;
+};
 
 export const fetchProgress = (): Promise<{ success: boolean; data: ProgressStats }> =>
   api.get('/progress');
