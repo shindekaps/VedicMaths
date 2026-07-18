@@ -44,7 +44,7 @@ export const ProgressView = () => {
 
   if (isLoading) {
     return (
-      <div role="status" className="min-h-screen bg-[#F8F4FF] flex items-center justify-center">
+      <div role="status" className="min-h-screen bg-bg flex items-center justify-center">
         <VedicLoader message="Polishing your medals… 🎖️" />
       </div>
     );
@@ -59,12 +59,12 @@ export const ProgressView = () => {
   ];
 
   return (
-    <div className="bg-[#F8F4FF] min-h-screen pb-20 relative overflow-hidden font-['Nunito',sans-serif]">
+    <div className="bg-bg min-h-screen pb-20 relative overflow-hidden font-['Nunito',sans-serif]">
       <VedicBackground variant="light" />
 
       {/* ── HEADER BANNER ── */}
       <motion.div
-        className="bg-gradient-to-br from-indigo-950 via-[#4C1D95] to-violet-800 p-8 pt-16 pb-12 text-white rounded-b-[48px] shadow-2xl relative overflow-hidden text-center"
+        className="bg-gradient-to-br from-indigo-950 via-slate-900 to-slate-950 p-6 pt-10 pb-8 text-white shadow-2xl relative overflow-hidden text-center"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
@@ -75,7 +75,7 @@ export const ProgressView = () => {
         <div className="max-w-2xl mx-auto relative z-10 flex flex-col items-center">
           <div className="text-4xl animate-bounce mb-3" style={{ animationDuration: '3s' }}>🎖️</div>
           <h2 className="text-3xl font-serif font-black tracking-tight">{firstName}'s Achievements</h2>
-          <p className="text-xs text-violet-200 mt-1.5 opacity-80">Track your progress and climb the leaderboards!</p>
+          <p className="text-xs text-white/70 mt-1.5">Track your progress and climb the leaderboards!</p>
           
           {/* Stat Cards Row */}
           <div className="grid grid-cols-3 gap-4 mt-8 w-full">
