@@ -7,13 +7,13 @@
 /* ========== BASE LAYER ========== */
 @layer base {
   :root {
-    --color-primary: #7C3AED;
-    --color-primary-light: #8b5cf6;
-    --color-primary-dark: #6d28d9;
-    --color-bg: #f9fafb;
-    --color-card: #ffffff;
-    --color-ink: #1E1B4B;
-    --color-sub: #6B7280;
+    --color-primary: #854E17;
+    --color-primary-light: #A26A27;
+    --color-primary-dark: #663B10;
+    --color-bg: #F9F6ED;
+    --color-card: #FFFDFB;
+    --color-ink: #36200D;
+    --color-sub: #7C624D;
     --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
     --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
     --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);

@@ -7,19 +7,19 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Primary palette
-        violet: { DEFAULT: '#7C3AED', 50: '#f5f3ff', 100: '#ede9fe', 200: '#ddd6fe', 300: '#c4b5fd', 400: '#a78bfa', 500: '#8b5cf6', 600: '#7C3AED', 700: '#6d28d9', 800: '#5b21b6', 900: '#4c1d95' },
-        indigo: { DEFAULT: '#6366f1', 50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc', 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3', 900: '#312e81' },
+        // Primary palette (mapped from violet/indigo to warm sepia/terracotta/parchment)
+        violet: { DEFAULT: '#854E17', 50: '#FDFBF7', 100: '#F2E7CD', 200: '#EADBB8', 300: '#DCB680', 400: '#C89350', 500: '#A26A27', 600: '#854E17', 700: '#663B10', 800: '#4D2C0C', 900: '#331D08' },
+        indigo: { DEFAULT: '#A46029', 50: '#FCF5ED', 100: '#F4E2D0', 200: '#E7C6A6', 300: '#D6A579', 400: '#C5854C', 500: '#A46029', 600: '#8A4E20', 700: '#703E19', 800: '#552E12', 900: '#3B200C' },
 
         // App semantic colors
-        saffron: '#FF6B35',
-        gold: '#FFD700',
+        saffron: '#D9531E',
+        gold: '#D97706',
         teal: '#06B6D4',
-        navy: '#0F172A',
-        bg: '#f9fafb',
-        card: '#FFFFFF',
-        ink: '#1E1B4B',
-        sub: '#6B7280',
+        navy: '#231608',
+        bg: '#F9F6ED',
+        card: '#FFFDFB',
+        ink: '#36200D',
+        sub: '#7C624D',
 
         // Semantic
         success: '#10b981',

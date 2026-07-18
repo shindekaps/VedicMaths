@@ -5,6 +5,7 @@ import { VedicBackground } from '../components/VedicBackground';
 import { StatCard } from '../components/StatCard';
 import { BadgeCard } from '../components/BadgeCard';
 import { LeaderboardRow } from '../components/LeaderboardRow';
+import { VedicLoader } from '../components/VedicLoader';
 
 export const ProgressView = () => {
   const { user } = useAuthStore();
@@ -44,10 +45,7 @@ export const ProgressView = () => {
   if (isLoading) {
     return (
       <div role="status" className="min-h-screen bg-[#F8F4FF] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="animate-spin rounded-full h-10 w-10 border-4 border-violet/20 border-t-violet"></div>
-          <span className="text-sm font-bold text-sub">Polishing your medals… 🎖️</span>
-        </div>
+        <VedicLoader message="Polishing your medals… 🎖️" />
       </div>
     );
   }

@@ -14,6 +14,7 @@ import { LessonQuiz } from '../components/lesson/LessonQuiz';
 import { LessonComplete } from '../components/lesson/LessonComplete';
 import { LessonCard } from '../components/LessonCard';
 import { VedicBackground } from '../components/VedicBackground';
+import { VedicLoader } from '../components/VedicLoader';
 
 interface LessonViewProps {
   setActive: (id: string) => void;
@@ -103,10 +104,7 @@ export const LessonView = ({ setActive, sutraID }: LessonViewProps) => {
   if (isLoading) {
     return (
       <div role="status" className="min-h-screen bg-navy text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold mx-auto mb-4"></div>
-          <span className="text-sm font-bold text-slate-300">Waking up the math masters... ⏰</span>
-        </div>
+        <VedicLoader message="Waking up the math masters... ⏰" />
       </div>
     );
   }

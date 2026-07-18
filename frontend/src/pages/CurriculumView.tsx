@@ -8,6 +8,7 @@ import { RishiCharacter } from '../components/RishiCharacter';
 import { SutraCard } from '../components/SutraCard';
 import { useSutraStatus } from '../hooks/useSutraStatus';
 import { getDifficulty } from '../utils/mathUtils';
+import { VedicLoader } from '../components/VedicLoader';
 
 interface CurriculumViewProps {
   navigateToLesson: (sutraID: string) => void;
@@ -25,10 +26,6 @@ const RISHI_QUOTES = [
 ];
 
 export const CurriculumView = ({ navigateToLesson }: CurriculumViewProps) => {
-  const rishiQuote = useMemo(() => {
-    return RISHI_QUOTES[Math.floor(Math.random() * RISHI_QUOTES.length)];
-  }, []);
-
   const { data: sutras, isLoading: isSutrasLoading, error: sutrasError } = useSutras();
   const { data: progressRes, isLoading: isProgressLoading } = useProgress();
   const [activeTab, setActiveTab] = useState('All');
@@ -75,10 +72,7 @@ export const CurriculumView = ({ navigateToLesson }: CurriculumViewProps) => {
   if (isLoading) {
     return (
       <div role="status" className="min-h-screen bg-[#F8F4FF] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="animate-spin rounded-full h-10 w-10 border-4 border-violet/20 border-t-violet"></div>
-          <span className="text-sm font-bold text-sub">Waking up the math formulas… ⏰</span>
-        </div>
+        <VedicLoader message="Waking up the math formulas… ⏰" />
       </div>
     );
   }
