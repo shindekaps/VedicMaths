@@ -7,23 +7,44 @@ interface LessonTheoryProps {
   onNext: () => void;
 }
 
-const renderContent = (markdown: string) => {
-  const lines = markdown.split('\n');
+const renderContent = (content: string) => {
+  const isHtml = content.trim().startsWith('<') || content.includes('</');
+
+  if (isHtml) {
+    return (
+      <div 
+        className="space-y-4 text-left leading-relaxed text-slate-800 theory-html-content"
+        dangerouslySetInnerHTML={{ __html: content }} 
+      />
+    );
+  }
+
+  // Fallback: legacy line-by-line markdown parser (slightly enhanced)
+  const lines = content.split('\n');
   return (
     <div className="space-y-4 text-left leading-relaxed text-slate-800">
       {lines.map((line, idx) => {
         const trimmed = line.trim();
+        if (!trimmed) return null;
+
+        // Process simple bold & italics: **text** -> <strong>text</strong>, *text* -> <em>text</em>
+        const processInlineStyles = (txt: string) => {
+          let formatted = txt.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+          formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
+          return <span dangerouslySetInnerHTML={{ __html: formatted }} />;
+        };
+
         if (trimmed.startsWith('##')) {
           return (
             <h3 key={idx} className="text-base font-black text-violet mt-5 mb-2 border-b border-violet-100 pb-1.5">
-              {trimmed.replace('##', '').trim()}
+              {processInlineStyles(trimmed.replace(/^#+\s*/, ''))}
             </h3>
           );
         }
         if (trimmed.startsWith('#')) {
           return (
             <h2 key={idx} className="text-lg font-black text-ink mt-6 mb-3">
-              {trimmed.replace('#', '').trim()}
+              {processInlineStyles(trimmed.replace(/^#+\s*/, ''))}
             </h2>
           );
         }
@@ -31,15 +52,20 @@ const renderContent = (markdown: string) => {
           return (
             <div key={idx} className="flex gap-3 items-start my-2">
               <div className="w-1.5 h-1.5 rounded-full bg-violet mt-2 flex-shrink-0" />
-              <span className="font-extrabold text-sm text-slate-700">{trimmed.substring(1).trim()}</span>
+              <span className="font-extrabold text-sm text-slate-700">
+                {processInlineStyles(trimmed.substring(1).trim())}
+              </span>
             </div>
           );
         }
-        if (trimmed.startsWith('1.') || trimmed.startsWith('2.') || trimmed.startsWith('3.') || trimmed.startsWith('4.')) {
+        if (/^\d+\./.test(trimmed)) {
+          const dotIdx = trimmed.indexOf('.');
+          const num = trimmed.substring(0, dotIdx);
+          const rest = trimmed.substring(dotIdx + 1).trim();
           return (
             <div key={idx} className="flex gap-3 items-start my-2">
-              <span className="font-black text-violet text-sm">{trimmed.split('.')[0]}.</span>
-              <span className="font-extrabold text-sm text-slate-700">{trimmed.substring(trimmed.indexOf('.') + 1).trim()}</span>
+              <span className="font-black text-violet text-sm">{num}.</span>
+              <span className="font-extrabold text-sm text-slate-700">{processInlineStyles(rest)}</span>
             </div>
           );
         }
@@ -50,11 +76,11 @@ const renderContent = (markdown: string) => {
             </div>
           );
         }
-        return trimmed ? (
+        return (
           <p key={idx} className="text-sm text-slate-700 font-extrabold">
-            {trimmed}
+            {processInlineStyles(trimmed)}
           </p>
-        ) : null;
+        );
       })}
     </div>
   );

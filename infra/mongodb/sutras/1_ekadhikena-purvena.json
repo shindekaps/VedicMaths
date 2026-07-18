@@ -16,7 +16,7 @@
       "lessonNumber": 1,
       "title": "Squaring Numbers Ending in 5",
       "description": "When squaring a number ending in 5, multiply the digit before 5 by one more than itself",
-      "content": "## Theory\n- When squaring a number ending in 5, multiply the digit before 5 by one more than itself\n- Then append 25 to the result\n- Formula: (10a + 5)² = 100a(a+1) + 25\n",
+      "content": "<h3 class=\"theory-title\">Theory</h3><ul class=\"theory-list\"><li>When squaring a number ending in 5, multiply the digit before 5 by one more than itself.</li><li>Then append 25 to the result.</li><li><strong>Formula</strong>: (10a + 5)² = 100a(a+1) + 25</li></ul>",
       "examples": [
         {
           "problem": "25²",
@@ -74,7 +74,7 @@
       "lessonNumber": 2,
       "title": "Special Multiplication (Ekadhikena)",
       "description": "Multiply numbers when the last digits add up to 10 or 100, and the previous parts are identical.",
-      "content": "## Theory\n- This method is used when the last digits of two numbers add up to 10, 100, 1000, etc., and the remaining \"previous\" parts of the numbers are identical.\n- **Right-hand side (RHS)**: Multiply the last digits together (e.g., 4 × 6 = 24).\n- **Left-hand side (LHS)**: Take the identical \"previous\" part, multiply it by \"one more than itself\" (e.g., 2 × (2+1) = 6).\n- **Combine**: Concatenate LHS and RHS results to get the final answer (e.g., 624).\n",
+      "content": "<h3 class=\"theory-title\">Theory</h3><ul class=\"theory-list\"><li>This method is used when the last digits of two numbers add up to 10, 100, 1000, etc., and the remaining \"previous\" parts of the numbers are identical.</li><li><strong>Right-hand side (RHS)</strong>: Multiply the last digits together (e.g., 4 × 6 = 24).</li><li><strong>Left-hand side (LHS)</strong>: Take the identical \"previous\" part, multiply it by \"one more than itself\" (e.g., 2 × (2+1) = 6).</li><li><strong>Combine</strong>: Concatenate LHS and RHS results to get the final answer (e.g., 624).</li></ul>",
       "examples": [
         {
           "problem": "24 × 26",
@@ -135,54 +135,97 @@
     {
       "lessonId": "SUTRA_1_LESSON_3",
       "lessonNumber": 3,
-      "title": "Finding Recurring Decimals",
-      "description": "Convert fractions to recurring decimals using patterns",
-      "content": "## Theory\n- Convert fractions to recurring decimals using patterns\n- 1/7, 1/13, 1/19 have patterns that can be derived\n",
+      "title": "Divisibility Rules for Numbers Ending in 9",
+      "description": "Quickly test divisibility by prime numbers ending in 9 (19, 29, 39...) using positive osculators.",
+      "content": "<h3 class=\"theory-title\">Theory</h3><p>The first sutra, <strong>Ekadhikena Purvena</strong> (\"By one more than the previous one\"), provides a rapid mental shortcut to check if a large number is perfectly divisible by prime numbers or integers ending in 9 (such as 19, 29, 39, etc.).</p><h4 class=\"theory-subtitle\">🎯 The Core Rule: \"The Osculator\"</h4><p>To test divisibility, we find a specific multiplier called a <strong>positive osculator (P)</strong>:</p><ol class=\"theory-ordered-list\"><li>Look at the number ending in 9 (the divisor).</li><li>Take the digit(s) before the 9.</li><li>Add 1 to that digit. This is your osculator (P).</li></ol><table class=\"theory-table\"><thead><tr><th>Divisor</th><th>Digit Before 9</th><th>Add 1 (P)</th><th>Osculator (Multiplier)</th></tr></thead><tbody><tr><td>19</td><td>1</td><td>1 + 1</td><td>2</td></tr><tr><td>29</td><td>2</td><td>2 + 1</td><td>3</td></tr><tr><td>39</td><td>3</td><td>3 + 1</td><td>4</td></tr><tr><td>99</td><td>9</td><td>9 + 1</td><td>10</td></tr></tbody></table><h4 class=\"theory-subtitle\">🛠️ Step-by-Step Procedure</h4><ol class=\"theory-ordered-list\"><li><strong>Isolate</strong>: Separate the last digit (units digit) from the rest of the number.</li><li><strong>Multiply</strong>: Multiply this last digit by your osculator (P).</li><li><strong>Add</strong>: Add the result to the remaining truncated portion of the number.</li><li><strong>Repeat</strong>: Continue this cycle until you get a small, easily recognizable number.</li><li><strong>Check</strong>: If the final result is the divisor itself (or a multiple of it), the original number is divisible.</li></ol>",
       "examples": [
         {
-          "problem": "1/7",
-          "solution": "0.142857142857...",
+          "problem": "Is 4408 divisible by 19?",
+          "solution": "Yes",
           "steps": [
-            "6-digit cycle"
+            "Divisor: 19 → Digit before 9 is 1 → Osculator (P) = 1 + 1 = 2",
+            "Step 1: Isolate last digit of 4408: Remaining = 440, Last = 8. Multiply 8 × 2 = 16. Add: 440 + 16 = 456",
+            "Step 2: Isolate last digit of 456: Remaining = 45, Last = 6. Multiply 6 × 2 = 12. Add: 45 + 12 = 57",
+            "Step 3: Evaluate 57. 19 × 3 = 57. Yes, it is divisible by 19."
           ],
-          "explanation": "6-digit cycle"
+          "explanation": "Osculator P for 19 is 2. Progressively multiply the last digit by 2 and add to the remaining part: 4408 → 440 + 8×2 = 456 → 45 + 6×2 = 57. Since 57 is divisible by 19, 4408 is also divisible."
         },
         {
-          "problem": "1/11",
-          "solution": "0.090909...",
+          "problem": "Is 12354 divisible by 29?",
+          "solution": "Yes",
           "steps": [
-            "2-digit cycle"
+            "Divisor: 29 → Digit before 9 is 2 → Osculator (P) = 2 + 1 = 3",
+            "Step 1: Isolate last digit of 12354: Remaining = 1235, Last = 4. Multiply 4 × 3 = 12. Add: 1235 + 12 = 1247",
+            "Step 2: Isolate last digit of 1247: Remaining = 124, Last = 7. Multiply 7 × 3 = 21. Add: 124 + 21 = 145",
+            "Step 3: Isolate last digit of 145: Remaining = 14, Last = 5. Multiply 5 × 3 = 15. Add: 14 + 15 = 29",
+            "Conclusion: The final result is exactly 29. Yes, it is divisible by 29."
           ],
-          "explanation": "2-digit cycle"
+          "explanation": "Osculator P for 29 is 3. Progressively multiply the last digit by 3 and add: 12354 → 1235 + 4×3 = 1247 → 124 + 7×3 = 145 → 14 + 5×3 = 29. Since the final result is 29, 12354 is divisible by 29."
+        },
+        {
+          "problem": "Is 1435 divisible by 39?",
+          "solution": "No",
+          "steps": [
+            "Divisor: 39 → Digit before 9 is 3 → Osculator (P) = 3 + 1 = 4",
+            "Step 1: Isolate last digit of 1435: Remaining = 143, Last = 5. Multiply 5 × 4 = 20. Add: 143 + 20 = 163",
+            "Step 2: Isolate last digit of 163: Remaining = 16, Last = 3. Multiply 3 × 4 = 12. Add: 16 + 12 = 28",
+            "Conclusion: 28 is not a multiple of 39. No, it is not divisible by 39."
+          ],
+          "explanation": "Osculator P for 39 is 4. Progressively multiply the last digit by 4 and add: 1435 → 143 + 5×4 = 163 → 16 + 3×4 = 28. Since 28 is not a multiple of 39, 1435 is not divisible by 39."
         }
       ],
-      "difficulty": "hard",
-      "estimatedMinutes": 20,
+      "difficulty": "medium",
+      "estimatedMinutes": 15,
       "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
       "order": 3
     },
     {
       "lessonId": "SUTRA_1_LESSON_4",
       "lessonNumber": 4,
-      "title": "Divisibility Tests",
-      "description": "Quick methods to check divisibility by 3, 7, 9, 11",
-      "content": "## Theory\n- Quick methods to check divisibility by 3, 7, 9, 11\n- Sum of digits method\n- Alternating sum method\n",
+      "title": "Finding Recurring Decimals for Divisors Ending in 9",
+      "description": "Calculate recurring decimals of fractions like 1/19, 1/29, 1/49 entirely through single-digit mental multiplication.",
+      "content": "<h3 class=\"theory-title\">Theory</h3><p>The first sutra, <strong>Ekadhikena Purvena</strong> (\"By one more than the previous one\"), allows you to calculate the full repeating block of a fraction like 1/19 or 1/29 entirely through simple, single-digit mental math instead of painful long division.</p><h4 class=\"theory-subtitle\">🎯 The Core Rule: \"The Multiplier\"</h4><p>To find the recurring decimal digits, we establish a constant multiplier (<strong>M</strong>):</p><ol class=\"theory-ordered-list\"><li>Look at the denominator ending in 9.</li><li>Take the digit(s) before the 9.</li><li>Add 1 to that digit. This is your multiplier (M).</li></ol><table class=\"theory-table\"><thead><tr><th>Fraction</th><th>Digit Before 9</th><th>Add 1</th><th>Multiplier (M)</th></tr></thead><tbody><tr><td>1/19</td><td>1</td><td>1 + 1</td><td>2</td></tr><tr><td>1/29</td><td>2</td><td>2 + 1</td><td>3</td></tr><tr><td>1/49</td><td>4</td><td>4 + 1</td><td>5</td></tr></tbody></table><h4 class=\"theory-subtitle\">🛠️ Step-by-Step Procedure (Right-to-Left Method)</h4><p>Vedic Math generates the answer backwards from the very last digit up to the decimal point:</p><ol class=\"theory-ordered-list\"><li><strong>Last Digit</strong>: The very last digit of the recurring block for 1/N is always 1.</li><li><strong>Multiply</strong>: Multiply your current digit by the multiplier (M).</li><li><strong>Write & Carry</strong>: Write down the units digit of the result to the left of your current digit. Carry over any tens digit.</li><li><strong>Add Carry</strong>: In the next multiplication step, remember to add your carry-over value.</li><li><strong>Repeat</strong>: Continue building the number from right to left until the sequence starts repeating (you hit a 0 with no carry-over).</li></ol><h4 class=\"theory-subtitle\">⚡ The \"Nines Complement\" Trick</h4><p>You only ever need to calculate exactly half of the digits manually. The second half of the sequence is always the 9s complement (subtracting each found digit from 9) of the first half.</p><p>For example, for 1/19:</p><ol class=\"theory-ordered-list\"><li>Calculate the first 9 digits from right to left: <strong>947368421</strong>.</li><li>Subtract each digit from 9 to get the front half: <strong>052631578</strong>.</li><li>Concatenate: <strong>0.052631578947368421</strong>.</li></ol>",
       "examples": [
         {
-          "problem": "342 is divisible by 3 (3+4+2",
-          "solution": "9, divisible by 3)",
-          "steps": [],
-          "explanation": "Solve using the sutra technique."
+          "problem": "Calculate the decimal value of 1/19",
+          "solution": "0.052631578947368421...",
+          "steps": [
+            "Denominator: 19 → Multiplier (M) = 1 + 1 = 2",
+            "Step 1: Write down 1 as the final digit → 1",
+            "Step 2: Multiply by 2 → 1 × 2 = 2. Write 2 to the left → 21",
+            "Step 3: Multiply by 2 → 2 × 2 = 4. Write 4 to the left → 421",
+            "Step 4: Multiply by 2 → 4 × 2 = 8. Write 8 to the left → 8421",
+            "Step 5: Multiply by 2 → 8 × 2 = 16. Write 6, carry 1 → 68421 (Carry: 1)",
+            "Step 6: (6 × 2) + 1 = 13. Write 3, carry 1 → 368421 (Carry: 1)",
+            "Step 7: (3 × 2) + 1 = 7. Write 7 → 7368421",
+            "Step 8: 7 × 2 = 14. Write 4, carry 1 → 47368421 (Carry: 1)",
+            "Step 9: (4 × 2) + 1 = 9. Write 9 → 947368421",
+            "This gives the first 9 digits: 947368421. Now find the 9s complement for the front half: 052631578.",
+            "Combine: 0.052631578947368421"
+          ],
+          "explanation": "Multiplier is 2. Start from 1, multiply by 2 from right to left with carries. The sequence is 947368421, complement is 052631578. Combine to get 0.052631578947368421."
         },
         {
-          "problem": "121 is divisible by 11 (1-2+1",
-          "solution": "0, divisible by 11)",
-          "steps": [],
-          "explanation": "Solve using the sutra technique."
+          "problem": "Calculate the decimal value of 1/29",
+          "solution": "0.0344827586206896551724137931...",
+          "steps": [
+            "Denominator: 29 → Multiplier (M) = 2 + 1 = 3",
+            "Step 1: Write down 1 as the final digit → 1",
+            "Step 2: Multiply by 3 → 1 × 3 = 3. Write 3 to the left → 31",
+            "Step 3: Multiply by 3 → 3 × 3 = 9. Write 9 to the left → 931",
+            "Step 4: Multiply by 3 → 9 × 3 = 27. Write 7, carry 2 → 7931 (Carry: 2)",
+            "Step 5: (7 × 3) + 2 = 23. Write 3, carry 2 → 37931 (Carry: 2)",
+            "Step 6: (3 × 3) + 2 = 11. Write 1, carry 1 → 137931 (Carry: 1)",
+            "Step 7: (1 × 3) + 1 = 4. Write 4 → 4137931",
+            "This sequence continues for the first 14 digits from right to left: 6896551724137931.",
+            "Now find the 9s complement for the front 14 digits: 03448275862068.",
+            "Combine to get the full repeating block: 0.0344827586206896551724137931"
+          ],
+          "explanation": "Multiplier is 3. Start from 1, multiply by 3 from right to left. Second half of the repeating block is 6896551724137931. Its 9s complement is 03448275862068. Combine them to get 0.0344827586206896551724137931."
         }
       ],
-      "difficulty": "medium",
-      "estimatedMinutes": 15,
+      "difficulty": "hard",
+      "estimatedMinutes": 20,
       "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
       "order": 4
     }

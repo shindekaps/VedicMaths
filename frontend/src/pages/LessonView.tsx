@@ -228,7 +228,7 @@ export const LessonView = ({ setActive, sutraID }: LessonViewProps) => {
           <span>←</span>
           <span>{step === 0 ? 'Lessons' : 'Back'}</span>
         </button>
-        <span className="font-serif font-black text-white/90 text-xs tracking-wide uppercase truncate max-w-[100px] text-center">
+        <span className="font-serif font-black text-white/90 text-xs tracking-wide uppercase text-center mx-2">
           {selectedLesson.title}
         </span>
         <span className="bg-white/10 border border-white/15 px-2.5 py-1 rounded-full text-[8px] font-black text-gold/90 shadow-sm tracking-wider">

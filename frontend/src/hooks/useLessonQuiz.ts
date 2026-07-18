@@ -59,14 +59,16 @@ export const useLessonQuiz = (sutraID: string, lessonID: string, practiceSession
   const handleQuizTimeout = async () => {
     if (quizSubmitted || !practiceSessionID || !quizQuestions[currentQuizIndex]) return;
     try {
-      await submitAnswer({
+      const res = await submitAnswer({
         sessionId: practiceSessionID,
         problemId: quizQuestions[currentQuizIndex].id,
         answer: 0,
         sutraId: sutraID,
       });
       setQuizSubmitted(true);
-      setQuizSelectedOption(quizCorrectAnswerVal);
+      const correctAns = res.correctAnswer !== undefined ? res.correctAnswer.toString() : quizCorrectAnswerVal;
+      setQuizCorrectAnswerVal(correctAns);
+      setQuizSelectedOption(correctAns);
     } catch (err) {
       console.error('Quiz Timeout submit failed:', err);
       setQuizSubmitted(true);
@@ -101,6 +103,9 @@ export const useLessonQuiz = (sutraID: string, lessonID: string, practiceSession
       });
 
       setQuizSubmitted(true);
+      if (res.correctAnswer !== undefined) {
+        setQuizCorrectAnswerVal(res.correctAnswer.toString());
+      }
 
       if (res.correct) {
         setQuizCorrectCount((prev) => prev + 1);

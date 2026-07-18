@@ -4,7 +4,6 @@ import { useSutras } from '../api/lessons';
 import { useProgress } from '../api/stats';
 import { toast } from 'react-hot-toast';
 import { VedicBackground } from '../components/VedicBackground';
-import { RishiCharacter } from '../components/RishiCharacter';
 import { SutraCard } from '../components/SutraCard';
 import { useSutraStatus } from '../hooks/useSutraStatus';
 import { getDifficulty } from '../utils/mathUtils';
@@ -15,15 +14,6 @@ interface CurriculumViewProps {
 }
 
 const TABS = ['All', 'Easy', 'Medium', 'Hard'];
-
-const RISHI_QUOTES = [
-  "Math is just a game of patterns! 🧩",
-  "Calculate faster than a calculator! ⚡",
-  "Let's unlock the secrets of numbers! 🗝️",
-  "Vedic math is mental magic! 🪄",
-  "Ready to train your super brain? 🧠",
-  "Fun fact: Vedic math is thousands of years old! 📜"
-];
 
 export const CurriculumView = ({ navigateToLesson }: CurriculumViewProps) => {
   const { data: sutras, isLoading: isSutrasLoading, error: sutrasError } = useSutras();

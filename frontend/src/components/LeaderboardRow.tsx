@@ -44,8 +44,8 @@ export const LeaderboardRow: React.FC<LeaderboardRowProps> = ({
 
       {/* Profile info */}
       <div className="flex-grow min-w-0">
-        <div className="flex items-center gap-2">
-          <span className="font-serif text-sm font-black text-ink truncate">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="font-serif text-sm font-black text-ink">
             {name}
           </span>
           {streak > 0 && (

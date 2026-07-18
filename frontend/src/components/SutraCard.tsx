@@ -96,11 +96,11 @@ export const SutraCard: React.FC<SutraCardProps> = ({
           </span>
         </div>
 
-        <h3 className="font-serif text-sm font-black text-ink truncate mt-1">
+        <h3 className="font-serif text-sm font-black text-ink mt-1">
           {name}
         </h3>
         
-        <p className="text-[11px] text-sub font-bold italic mt-0.5 truncate">
+        <p className="text-[11px] text-sub font-bold italic mt-0.5">
           {sanskritName || description}
         </p>
 

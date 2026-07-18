@@ -64,8 +64,8 @@ export const LessonCard: React.FC<LessonCardProps> = ({
             ⏱️ {estimatedMinutes} min
           </span>
         </div>
-        <h3 className="font-serif text-sm font-black text-ink mt-1 truncate">{title}</h3>
-        <p className="text-[10px] text-sub font-semibold mt-0.5 truncate">{description || 'Learn mental math tricks'}</p>
+        <h3 className="font-serif text-sm font-black text-ink mt-1">{title}</h3>
+        <p className="text-[10px] text-sub font-semibold mt-0.5">{description || 'Learn mental math tricks'}</p>
       </div>
 
       {/* Lock or Chevron */}

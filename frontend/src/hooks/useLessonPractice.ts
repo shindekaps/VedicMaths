@@ -73,6 +73,9 @@ export const useLessonPractice = (sutraID: string, lessonID: string) => {
 
       setIsAnsCorrect(res.correct);
       setSubmitted(true);
+      if (res.correctAnswer !== undefined) {
+        setCorrectAnswerVal(res.correctAnswer.toString());
+      }
       setExplanationSteps(res.solutionSteps || []);
       setAttemptedCount((prev) => prev + 1);
 
@@ -96,9 +99,11 @@ export const useLessonPractice = (sutraID: string, lessonID: string) => {
       });
       setIsAnsCorrect(false);
       setSubmitted(true);
+      const correctAns = res.correctAnswer !== undefined ? res.correctAnswer.toString() : correctAnswerVal;
+      setCorrectAnswerVal(correctAns);
       setExplanationSteps(res.solutionSteps || []);
       setAttemptedCount((prev) => prev + 1);
-      setSelectedOption(correctAnswerVal);
+      setSelectedOption(correctAns);
     } catch (err) {
       console.error('Timeout submit failed:', err);
       setIsAnsCorrect(false);

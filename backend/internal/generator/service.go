@@ -75,7 +75,9 @@ func (s *Service) NextProblem(ctx context.Context, userID string, sutraID, diffi
 	}
 
 	p.ID = uuid.NewString()
-	p.Options = generateMCQOptionsForProblem(p.Answer)
+	if len(p.Options) == 0 {
+		p.Options = generateMCQOptionsForProblem(p.Answer)
+	}
 
 	if err := s.seen.Mark(ctx, userID, sutraID, p.DedupKey); err != nil {
 		return nil, err
@@ -123,7 +125,9 @@ func (s *Service) GetQuestions(ctx context.Context, userID string, sutraID, diff
 			}
 		}
 		p.ID = uuid.NewString()
-		p.Options = generateMCQOptionsForProblem(p.Answer)
+		if len(p.Options) == 0 {
+			p.Options = generateMCQOptionsForProblem(p.Answer)
+		}
 		_ = s.seen.Mark(ctx, userID, sutraID, p.DedupKey)
 		_ = s.answer.Put(ctx, p.ID, p, defaultAnswerTTL)
 		problems = append(problems, p)

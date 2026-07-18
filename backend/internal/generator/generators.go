@@ -130,17 +130,230 @@ func genSutra1Lesson2(difficulty int) domain.Problem {
 	}
 }
 
-func genSutra1WithLesson(difficulty int, lessonID string) domain.Problem {
-	if lessonID == "SUTRA_1_LESSON_2" {
-		return genSutra1Lesson2(difficulty)
+// Divisibility Rules for Numbers Ending in 9 (Lesson 3)
+func genSutra1Lesson3(difficulty int) domain.Problem {
+	var divisor int
+	switch difficulty {
+	case 1:
+		divisors := []int{19, 29}
+		divisor = divisors[rand.Intn(len(divisors))]
+	case 2:
+		divisors := []int{19, 29, 39, 49}
+		divisor = divisors[rand.Intn(len(divisors))]
+	default:
+		divisors := []int{19, 29, 39, 49, 59, 79, 89}
+		divisor = divisors[rand.Intn(len(divisors))]
 	}
+
+	isDivisible := rand.Intn(2) == 0
+	var num int
+	if isDivisible {
+		mult := 5 + rand.Intn(100)
+		num = divisor * mult
+	} else {
+		mult := 5 + rand.Intn(100)
+		num = divisor*mult + 1 + rand.Intn(divisor-1)
+	}
+
+	p := (divisor / 10) + 1 // positive osculator
+	ans := "No"
+	if isDivisible {
+		ans = "Yes"
+	}
+
+	steps := []string{
+		fmt.Sprintf("Divisor is %d. The digit before 9 is %d, so the positive osculator P = %d + 1 = %d", divisor, divisor/10, divisor/10, p),
+	}
+
+	current := num
+	for current > divisor*2 {
+		lastDigit := current % 10
+		remaining := current / 10
+		nextVal := remaining + lastDigit*p
+		steps = append(steps, fmt.Sprintf("Isolate last digit of %d: remaining part is %d, last digit is %d. Calculate %d + %d x %d = %d", current, remaining, lastDigit, remaining, lastDigit, p, nextVal))
+		current = nextVal
+	}
+
+	if current%divisor == 0 {
+		steps = append(steps, fmt.Sprintf("%d is a multiple of %d (since %d = %d x %d). Therefore, the original number %d is divisible.", current, divisor, current, divisor, current/divisor, num))
+	} else {
+		steps = append(steps, fmt.Sprintf("%d is not a multiple of %d. Therefore, the original number %d is not divisible.", current, divisor, num))
+	}
+
+	return domain.Problem{
+		SutraID:       1,
+		QuestionText:  fmt.Sprintf("Is %d divisible by %d?", num, divisor),
+		Difficulty:    difficulty,
+		DedupKey:      fmt.Sprintf("s1:L3:%d:%d", num, divisor),
+		Answer:        ans,
+		Options:       []string{"Yes", "No"},
+		SolutionSteps: steps,
+	}
+}
+
+// Finding Recurring Decimals for Divisors Ending in 9 (Lesson 4)
+func genSutra1Lesson4(difficulty int) domain.Problem {
+	qType := rand.Intn(3)
+	var denominators = []int{19, 29, 39, 49, 59, 79, 89}
+	denom := denominators[rand.Intn(len(denominators))]
+	m := (denom / 10) + 1
+
+	if qType == 0 {
+		ans := m
+		options := []string{
+			fmt.Sprintf("%d", m),
+			fmt.Sprintf("%d", m-1),
+			fmt.Sprintf("%d", m+1),
+			fmt.Sprintf("%d", m+2),
+		}
+		rand.Shuffle(len(options), func(i, j int) { options[i], options[j] = options[j], options[i] })
+
+		return domain.Problem{
+			SutraID:      1,
+			QuestionText: fmt.Sprintf("What is the constant multiplier (M) for the recurring decimal of 1/%d?", denom),
+			Difficulty:   difficulty,
+			DedupKey:     fmt.Sprintf("s1:L4:M:%d", denom),
+			Answer:       fmt.Sprintf("%d", ans),
+			Options:      options,
+			SolutionSteps: []string{
+				fmt.Sprintf("Denominator is %d.", denom),
+				fmt.Sprintf("Take the digit before the 9: %d.", denom/10),
+				fmt.Sprintf("Add 1: %d + 1 = %d.", denom/10, m),
+				fmt.Sprintf("So, the constant multiplier (M) is %d.", m),
+			},
+		}
+	} else if qType == 1 {
+		var d = 19
+		var mult = 2
+		if rand.Intn(2) == 0 {
+			d = 29
+			mult = 3
+		}
+
+		curr := 1
+		carry := 0
+		stepsCount := 1 + rand.Intn(4)
+
+		seq := "1"
+		for i := 0; i < stepsCount; i++ {
+			prod := curr*mult + carry
+			digit := prod % 10
+			carry = prod / 10
+			seq = fmt.Sprintf("%d%s", digit, seq)
+			curr = digit
+		}
+
+		prod := curr*mult + carry
+		nextDigit := prod % 10
+		nextCarry := prod / 10
+
+		var questionText string
+		if carry > 0 {
+			questionText = fmt.Sprintf("If the recurring sequence of 1/%d ends in ...%s (with a carry of %d), what is the next digit to the left?", d, seq, carry)
+		} else {
+			questionText = fmt.Sprintf("If the recurring sequence of 1/%d ends in ...%s, what is the next digit to the left?", d, seq)
+		}
+
+		options := []string{
+			fmt.Sprintf("%d", nextDigit),
+			fmt.Sprintf("%d", (nextDigit+3)%10),
+			fmt.Sprintf("%d", (nextDigit+7)%10),
+			fmt.Sprintf("%d", (nextDigit+1)%10),
+		}
+		optMap := make(map[string]bool)
+		uniqueOpts := []string{}
+		for _, o := range options {
+			if !optMap[o] {
+				optMap[o] = true
+				uniqueOpts = append(uniqueOpts, o)
+			}
+		}
+		for len(uniqueOpts) < 4 {
+			cand := fmt.Sprintf("%d", rand.Intn(10))
+			if !optMap[cand] {
+				optMap[cand] = true
+				uniqueOpts = append(uniqueOpts, cand)
+			}
+		}
+		rand.Shuffle(len(uniqueOpts), func(i, j int) { uniqueOpts[i], uniqueOpts[j] = uniqueOpts[j], uniqueOpts[i] })
+
+		return domain.Problem{
+			SutraID:      1,
+			QuestionText: questionText,
+			Difficulty:   difficulty,
+			DedupKey:     fmt.Sprintf("s1:L4:next:%d:%s", d, seq),
+			Answer:       fmt.Sprintf("%d", nextDigit),
+			Options:      uniqueOpts,
+			SolutionSteps: []string{
+				fmt.Sprintf("The fraction is 1/%d, so the multiplier (M) is %d.", d, mult),
+				fmt.Sprintf("The current leftmost digit is %d.", curr),
+				fmt.Sprintf("Multiply by the multiplier (M): %d x %d = %d.", curr, mult, curr*mult),
+				fmt.Sprintf("Add the previous carry-over (%d): %d + %d = %d.", carry, curr*mult, carry, prod),
+				fmt.Sprintf("The unit digit is %d, and the carry-over for the next step is %d.", nextDigit, nextCarry),
+				fmt.Sprintf("Therefore, the next digit to the left is %d.", nextDigit),
+			},
+		}
+	} else {
+		halfSeq := "947368421"
+		complement := "052631578"
+
+		options := []string{
+			complement,
+			"052631579",
+			"042631578",
+			"152631578",
+		}
+		rand.Shuffle(len(options), func(i, j int) { options[i], options[j] = options[j], options[i] })
+
+		return domain.Problem{
+			SutraID:      1,
+			QuestionText: fmt.Sprintf("If the last 9 digits of 1/19 are %s, what is its front half using the Nines Complement rule?", halfSeq),
+			Difficulty:   difficulty,
+			DedupKey:     "s1:L4:comp:19",
+			Answer:       complement,
+			Options:      options,
+			SolutionSteps: []string{
+				"According to the Nines Complement rule, the sum of corresponding digits of the first and second half is always 9.",
+				fmt.Sprintf("We subtract each digit of the second half (%s) from 9:", halfSeq),
+				"9 - 9 = 0",
+				"9 - 4 = 5",
+				"9 - 7 = 2",
+				"9 - 3 = 6",
+				"9 - 6 = 3",
+				"9 - 8 = 1",
+				"9 - 4 = 5",
+				"9 - 2 = 7",
+				"9 - 1 = 8",
+				fmt.Sprintf("This instantly gives the front half: %s.", complement),
+			},
+		}
+	}
+}
+
+func genSutra1WithLesson(difficulty int, lessonID string) domain.Problem {
 	if lessonID == "SUTRA_1_LESSON_1" {
 		return genSutra1Lesson1(difficulty)
 	}
-	if rand.Intn(2) == 0 {
+	if lessonID == "SUTRA_1_LESSON_2" {
 		return genSutra1Lesson2(difficulty)
 	}
-	return genSutra1Lesson1(difficulty)
+	if lessonID == "SUTRA_1_LESSON_3" {
+		return genSutra1Lesson3(difficulty)
+	}
+	if lessonID == "SUTRA_1_LESSON_4" {
+		return genSutra1Lesson4(difficulty)
+	}
+	// Fallback/Random: select from all 4 lessons
+	switch rand.Intn(4) {
+	case 0:
+		return genSutra1Lesson1(difficulty)
+	case 1:
+		return genSutra1Lesson2(difficulty)
+	case 2:
+		return genSutra1Lesson3(difficulty)
+	default:
+		return genSutra1Lesson4(difficulty)
+	}
 }
 
 func genSutra1(difficulty int) domain.Problem {

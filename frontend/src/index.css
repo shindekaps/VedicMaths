@@ -133,3 +133,58 @@
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
 }
+
+/* ========== Theory Content HTML Styling ========== */
+.theory-html-content {
+  text-align: left;
+}
+
+.theory-html-content h3.theory-title {
+  @apply text-base font-black text-violet mt-5 mb-2 border-b border-violet-100 pb-1.5;
+}
+
+.theory-html-content h4.theory-subtitle {
+  @apply text-sm font-black text-ink mt-4 mb-2;
+}
+
+.theory-html-content p {
+  @apply text-sm text-slate-700 font-extrabold my-2 leading-relaxed;
+}
+
+.theory-html-content ul.theory-list {
+  @apply list-none space-y-2 my-3;
+}
+
+.theory-html-content ul.theory-list li {
+  @apply flex gap-3 items-start my-2 text-sm text-slate-700 font-extrabold;
+}
+
+.theory-html-content ul.theory-list li::before {
+  content: "•";
+  @apply text-violet font-black mr-1 flex-shrink-0;
+}
+
+.theory-html-content ol.theory-ordered-list {
+  @apply list-decimal pl-5 space-y-2 my-3 text-sm text-slate-700 font-extrabold;
+}
+
+.theory-html-content ol.theory-ordered-list li {
+  @apply my-1;
+}
+
+/* Premium styled table for Vedic math rules */
+.theory-html-content table.theory-table {
+  @apply w-full border-collapse border-2 border-violet-100/50 rounded-2xl overflow-hidden my-4 text-xs;
+}
+
+.theory-html-content table.theory-table th {
+  @apply bg-violet-50 text-violet font-black px-3 py-2.5 border-b-2 border-violet-100/50 text-left;
+}
+
+.theory-html-content table.theory-table td {
+  @apply px-3 py-2.5 border-b border-violet-100/20 text-slate-700 font-extrabold bg-white;
+}
+
+.theory-html-content table.theory-table tr:last-child td {
+  @apply border-b-0;
+}

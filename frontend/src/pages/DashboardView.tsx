@@ -190,7 +190,7 @@ export const DashboardView = ({ setActive }: DashboardViewProps) => {
                     whileHover={{ scale: 1.05 }}
                   >
                     <span className="text-3xl filter drop-shadow-sm">{b.icon}</span>
-                    <span className="text-[10px] font-bold text-ink mt-2 truncate w-16">{b.name}</span>
+                    <span className="text-[10px] font-bold text-ink mt-2">{b.name}</span>
                   </motion.div>
                 ))
               ) : (
