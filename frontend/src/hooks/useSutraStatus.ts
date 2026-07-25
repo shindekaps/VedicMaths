@@ -15,13 +15,12 @@ export const useSutraStatus = (
     const map: SutraStatusMap = {};
     if (!sutras) return map;
 
-    // First pass: map existing statuses from database progress
+    // First pass: map existing statuses from database progress, but override 'locked' to 'in_progress'
     sutras.forEach((s) => {
       const match = progress?.sutraProgress?.find((p) => p.sutraId === s.sutraId);
       if (match) {
-        let status: 'completed' | 'in_progress' | 'locked' = 'locked';
+        let status: 'completed' | 'in_progress' | 'locked' = 'in_progress';
         if (match.status.toLowerCase() === 'completed') status = 'completed';
-        else if (match.status.toLowerCase() === 'in_progress') status = 'in_progress';
         
         map[s.sutraId] = {
           status,
@@ -30,25 +29,13 @@ export const useSutraStatus = (
       }
     });
 
-    // Second pass: apply lock/unlock rules sequentially if records are missing
+    // Second pass: all sutras without progress records are unlocked (in_progress)
     sutras
       .slice()
       .sort((a, b) => a.order - b.order)
-      .forEach((s, idx, sortedSutras) => {
+      .forEach((s) => {
         if (!map[s.sutraId]) {
-          // If it's the very first sutra, it's unlocked by default
-          if (idx === 0) {
-            map[s.sutraId] = { status: 'in_progress', percent: 0 };
-          } else {
-            // Check if previous sutra is completed
-            const prevSutra = sortedSutras[idx - 1];
-            const prevStatus = map[prevSutra.sutraId]?.status;
-            if (prevStatus === 'completed') {
-              map[s.sutraId] = { status: 'in_progress', percent: 0 };
-            } else {
-              map[s.sutraId] = { status: 'locked', percent: 0 };
-            }
-          }
+          map[s.sutraId] = { status: 'in_progress', percent: 0 };
         }
       });
 

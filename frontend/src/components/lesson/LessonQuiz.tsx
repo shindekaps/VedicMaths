@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { type Lesson } from '../../api/lessons';
 import { useLessonQuiz } from '../../hooks/useLessonQuiz';
+import { formatSuperscripts } from '../../utils/mathUtils';
 
 interface LessonQuizProps {
   sutraID: string;
@@ -55,7 +56,7 @@ export const LessonQuiz: React.FC<LessonQuizProps> = ({ sutraID, lesson, practic
               Question {currentQuizIndex + 1} · {lesson.title}
             </span>
             <div className="text-4xl font-black text-[#A78BFA] font-serif tracking-tight">
-              {(quizQuestions[currentQuizIndex].questionText || "").replace(/\^2/g, "²")}
+              {formatSuperscripts(quizQuestions[currentQuizIndex].questionText || "")}
             </div>
             <span className="text-[9px] text-white/45 font-bold block mt-3">
               Pick the correct answer
@@ -99,7 +100,7 @@ export const LessonQuiz: React.FC<LessonQuizProps> = ({ sutraID, lesson, practic
                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-black text-xs flex-shrink-0 ${badgeStyle}`}>
                     {optionLetter}
                   </div>
-                  <span className="font-serif text-xl font-bold flex-grow">{opt}</span>
+                  <span className="font-serif text-xl font-bold flex-grow">{formatSuperscripts(opt)}</span>
                   {showResult && isCorrectOpt && <span className="text-xs">✓</span>}
                   {showResult && isSelected && !isCorrectOpt && <span className="text-xs">✗</span>}
                 </motion.button>

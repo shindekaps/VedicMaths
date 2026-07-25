@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useLessonsBySutra, type Lesson } from '../api/lessons';
 import { useProgress } from '../api/stats';
-import { toast } from 'react-hot-toast';
+
 import { useQueryClient } from '@tanstack/react-query';
 import { api } from '../api/client';
 
@@ -93,8 +93,7 @@ export const LessonView = ({ setActive, sutraID }: LessonViewProps) => {
 
   const getLessonStatus = (index: number) => {
     if (index < lessonsCompletedCount) return 'completed';
-    if (index === lessonsCompletedCount) return 'in_progress';
-    return 'locked';
+    return 'in_progress';
   };
 
   const stepsNames = ['Intro', 'Theory', 'Examples', 'Practice', 'Quiz', 'Finish'];
@@ -169,23 +168,8 @@ export const LessonView = ({ setActive, sutraID }: LessonViewProps) => {
           >
             {lessons.map((les, idx) => {
               const status = getLessonStatus(idx);
-              const isLocked = status === 'locked';
 
               const handleLessonClick = () => {
-                if (isLocked) {
-                  toast.error(`Oops! 🔒 Lesson ${les.lessonNumber} is sleeping. Complete previous lessons to wake it up! ⏰`, {
-                    icon: '🔒',
-                    style: {
-                      borderRadius: '24px',
-                      background: '#FF6B35',
-                      color: '#fff',
-                      fontWeight: '900',
-                      fontSize: '13px',
-                      fontFamily: "'Nunito', sans-serif",
-                    },
-                  });
-                  return;
-                }
                 handleSelectLesson(les);
               };
 

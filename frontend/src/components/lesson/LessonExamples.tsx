@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { type Lesson } from '../../api/lessons';
-import { Sutra1PartitionVisualizer, Sutra3DigitGridVisualizer } from '../Visualizers';
+import { Sutra1PartitionVisualizer, Sutra3DigitGridVisualizer, Sutra2ComplementVisualizer } from '../Visualizers';
+import { formatSuperscripts } from '../../utils/mathUtils';
 
 interface LessonExamplesProps {
   lesson: Lesson;
@@ -72,7 +73,7 @@ export const LessonExamples: React.FC<LessonExamplesProps> = ({ lesson, onComple
           Step {exampleIndex + 1} of {lesson.examples.length} · Worked Example
         </div>
         <h2 className="font-serif text-lg font-black text-sky-200 mt-1.5 leading-tight">
-          Solve: {currentEx.problem}
+          Solve: {formatSuperscripts(currentEx.problem)}
         </h2>
         <p className="text-[10px] text-white/50 mt-1">Follow each step</p>
       </div>
@@ -82,6 +83,8 @@ export const LessonExamples: React.FC<LessonExamplesProps> = ({ lesson, onComple
         {/* Partition / Grid Visualizations */}
         {lesson.sutraNumber === 1 ? (
           <Sutra1PartitionVisualizer problem={currentEx.problem} />
+        ) : lesson.sutraNumber === 2 ? (
+          <Sutra2ComplementVisualizer problem={currentEx.problem} />
         ) : lesson.sutraNumber === 3 ? (
           <Sutra3DigitGridVisualizer problem={currentEx.problem} />
         ) : (
@@ -91,10 +94,10 @@ export const LessonExamples: React.FC<LessonExamplesProps> = ({ lesson, onComple
               Equation
             </div>
             <div className="text-3xl font-black text-[#1E1B4B] font-serif tracking-tight my-1">
-              {currentEx.problem}
+              {formatSuperscripts(currentEx.problem)}
             </div>
             <p className="text-xs text-slate-500 max-w-xs mt-2 leading-relaxed font-semibold">
-              {currentEx.explanation}
+              {formatSuperscripts(currentEx.explanation)}
             </p>
           </div>
         )}
@@ -124,7 +127,7 @@ export const LessonExamples: React.FC<LessonExamplesProps> = ({ lesson, onComple
                       Step {idx + 1}
                     </div>
                     <div className="text-[11px] text-slate-600 leading-snug font-mono">
-                      {stepText}
+                      {formatSuperscripts(stepText)}
                     </div>
                   </div>
                 </motion.div>
@@ -148,7 +151,7 @@ export const LessonExamples: React.FC<LessonExamplesProps> = ({ lesson, onComple
               <div className="flex-1">
                 <div className="text-[10px] font-extrabold" style={{ color: '#065F46' }}>Answer</div>
                 <div className="text-sm font-black text-[#065F46] font-mono">
-                  {currentEx.solution}
+                  {formatSuperscripts(currentEx.solution)}
                 </div>
               </div>
             </motion.div>

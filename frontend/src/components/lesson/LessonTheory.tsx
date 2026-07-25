@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { type Lesson } from '../../api/lessons';
+import { formatSuperscripts } from '../../utils/mathUtils';
 
 interface LessonTheoryProps {
   lesson: Lesson;
@@ -8,19 +9,20 @@ interface LessonTheoryProps {
 }
 
 const renderContent = (content: string) => {
-  const isHtml = content.trim().startsWith('<') || content.includes('</');
+  const formattedContent = formatSuperscripts(content);
+  const isHtml = formattedContent.trim().startsWith('<') || formattedContent.includes('</');
 
   if (isHtml) {
     return (
       <div 
         className="space-y-4 text-left leading-relaxed text-slate-800 theory-html-content"
-        dangerouslySetInnerHTML={{ __html: content }} 
+        dangerouslySetInnerHTML={{ __html: formattedContent }} 
       />
     );
   }
 
   // Fallback: legacy line-by-line markdown parser (slightly enhanced)
-  const lines = content.split('\n');
+  const lines = formattedContent.split('\n');
   return (
     <div className="space-y-4 text-left leading-relaxed text-slate-800">
       {lines.map((line, idx) => {

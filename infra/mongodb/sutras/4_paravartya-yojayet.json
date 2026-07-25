@@ -13,97 +13,182 @@
   "lessons": [
     {
       "lessonId": "SUTRA_4_LESSON_1",
+      "sutraId": 4,
       "lessonNumber": 1,
-      "title": "Division by Single Digit",
-      "description": "Simple division technique",
-      "content": "## Theory\n- Simple division technique\n- Flag technique for remainder\n",
-      "examples": [
-        {
-          "problem": "256 ÷ 8",
-          "solution": "32",
-          "steps": [],
-          "explanation": "Solve using the sutra technique."
-        },
-        {
-          "problem": "435 ÷ 5",
-          "solution": "87",
-          "steps": [],
-          "explanation": "Solve using the sutra technique."
-        }
-      ],
+      "title": "Division Above a Base Power of 10",
+      "description": "Use the 'Transpose and Apply' rule to divide numbers by divisors just above base powers of 10.",
       "difficulty": "easy",
       "estimatedMinutes": 15,
+      "order": 1,
       "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-      "order": 1
+      "content": "<h3 class=\"theory-title\">Transpose and Apply Concept</h3><p>The <strong>Paravartya Yojayet</strong> sutra translates to \"Transpose and Apply\". It is incredibly effective for division when the divisor is slightly above a base power of 10 (like 11, 12, 103, etc.).</p><h4 class=\"theory-subtitle\">Steps for Division</h4><ul class=\"theory-list\"><li><strong>Identify Base:</strong> Find the nearest power of 10 just below the divisor.</li><li><strong>Find Excess:</strong> Calculate the difference between the divisor and the base.</li><li><strong>Transpose:</strong> Change the sign of the excess digits. This becomes your flag multiplier.</li><li><strong>Split Dividend:</strong> Separate the dividend into a Quotient zone and a Remainder zone. The number of digits in the Remainder zone equals the number of zeros in the base.</li><li><strong>Calculate:</strong> Drop the first digit, multiply by the transposed flag, add symmetrically in the next column, and repeat.</li></ul>",
+      "examples": [
+        {
+          "problem": "135 ÷ 11",
+          "solution": "12 remainder 3",
+          "explanation": "Divide 135 by 11 using Paravartya Yojayet.",
+          "steps": [
+            "Identify the base as 10 (1 zero).",
+            "The excess of 11 over 10 is +1.",
+            "Transpose the sign of the excess to create the flag: -1.",
+            "Split the dividend 135 into Quotient (13) and Remainder (5) zones, separated by 1 digit.",
+            "Bring down the first digit: 1.",
+            "Multiply 1 by flag -1 to get -1. Place under the next digit (3).",
+            "Add column 2: 3 + (-1) = 2. This is the second digit of the quotient.",
+            "Multiply 2 by flag -1 to get -2. Place under the remainder zone digit (5).",
+            "Add the remainder column: 5 + (-2) = 3.",
+            "Final Result: Quotient is 12, Remainder is 3."
+          ]
+        },
+        {
+          "problem": "1432 ÷ 12",
+          "solution": "119 remainder 4",
+          "explanation": "Divide 1432 by 12 using Paravartya Yojayet.",
+          "steps": [
+            "Base is 10 (1 zero). Excess of 12 is +2. Transposed flag is -2.",
+            "Split dividend: 143 | 2.",
+            "Drop the first digit: 1.",
+            "Multiply 1 by -2 = -2. Place under 4.",
+            "Add: 4 + (-2) = 2.",
+            "Multiply 2 by -2 = -4. Place under 3.",
+            "Add: 3 + (-4) = -1.",
+            "Multiply -1 by -2 = 2. Place under 2 in remainder zone.",
+            "Add: 2 + 2 = 4 (Remainder).",
+            "Quotient digits are 1, 2, -1. Convert from vinculum: 120 - 1 = 119.",
+            "Final Result: Quotient is 119, Remainder is 4."
+          ]
+        }
+      ]
     },
     {
       "lessonId": "SUTRA_4_LESSON_2",
+      "sutraId": 4,
       "lessonNumber": 2,
-      "title": "Division by Two Digits",
-      "description": "Extended division method",
-      "content": "## Theory\n- Extended division method\n- Transpose and multiply technique\n",
-      "examples": [
-        {
-          "problem": "1234 ÷ 23",
-          "solution": "53 remainder 15",
-          "steps": [],
-          "explanation": "Solve using the sutra technique."
-        },
-        {
-          "problem": "5678 ÷ 42",
-          "solution": "135 remainder 8",
-          "steps": [],
-          "explanation": "Solve using the sutra technique."
-        }
-      ],
+      "title": "Algebraic Polynomial Division",
+      "description": "Divide polynomials by linear binomials (x ± k) at lightning speed by transposing coefficients.",
       "difficulty": "hard",
       "estimatedMinutes": 25,
+      "order": 2,
       "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-      "order": 2
+      "content": "<h3 class=\"theory-title\">Synthetic Division Layout</h3><p>The Paravartya Yojayet sutra can be elegantly applied to algebraic polynomial division, functioning similar to synthetic division. It allows you to divide polynomials by linear binomials of the form (x &plusmn; k) rapidly.</p><h4 class=\"theory-subtitle\">Methodology</h4><ol class=\"theory-ordered-list\"><li><strong>Order Terms:</strong> Ensure the dividend polynomial is ordered by descending powers of x. Insert zeros for any missing terms.</li><li><strong>Extract Coefficients:</strong> Write down the coefficients of the dividend.</li><li><strong>Transpose Constant:</strong> Take the constant from the divisor (x &plusmn; k) and transpose its sign. This acts as the flag multiplier.</li><li><strong>Calculate:</strong> Apply the same drop, multiply, and add process as in arithmetic division.</li></ol>",
+      "examples": [
+        {
+          "problem": "(x^2 + 5x + 6) ÷ (x + 2)",
+          "solution": "x + 3",
+          "explanation": "Divide the polynomial by binomial.",
+          "steps": [
+            "Divisor constant is +2. Transpose to get the flag: -2.",
+            "Dividend coefficients: [1, 5, 6].",
+            "Drop the first coefficient: 1.",
+            "Multiply 1 by -2 = -2. Place under 5.",
+            "Add: 5 + (-2) = 3.",
+            "Multiply 3 by -2 = -6. Place under 6.",
+            "Add: 6 + (-6) = 0 (Remainder).",
+            "Quotient coefficients are [1, 3], which corresponds to x + 3."
+          ]
+        },
+        {
+          "problem": "(2x^3 - 3x^2 - 8x - 5) ÷ (x - 3)",
+          "solution": "2x^2 + 3x + 1 remainder -2",
+          "explanation": "Divide a cubic polynomial.",
+          "steps": [
+            "Divisor constant is -3. Transpose to get the flag: +3.",
+            "Dividend coefficients: [2, -3, -8, -5].",
+            "Drop first coefficient: 2.",
+            "Multiply 2 by 3 = 6. Place under -3. Add: -3 + 6 = 3.",
+            "Multiply 3 by 3 = 9. Place under -8. Add: -8 + 9 = 1.",
+            "Multiply 1 by 3 = 3. Place under -5. Add: -5 + 3 = -2 (Remainder).",
+            "Quotient coefficients are [2, 3, 1], yielding 2x^2 + 3x + 1. Remainder is -2."
+          ]
+        }
+      ]
     },
     {
       "lessonId": "SUTRA_4_LESSON_3",
+      "sutraId": 4,
       "lessonNumber": 3,
-      "title": "Division by Larger Numbers",
-      "description": "Apply to three-digit and larger divisors",
-      "content": "## Theory\n- Apply to three-digit and larger divisors\n- Complex transpose patterns\n",
-      "examples": [
-        {
-          "problem": "123456 ÷ 123",
-          "solution": "1002.9...",
-          "steps": [],
-          "explanation": "Solve using the sutra technique."
-        }
-      ],
+      "title": "Multi-digit Divisor Division",
+      "description": "Apply Paravartya Yojayet to division problems with larger divisors by transposing multiple excess digits.",
       "difficulty": "hard",
       "estimatedMinutes": 25,
+      "order": 3,
       "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-      "order": 3
+      "content": "<h3 class=\"theory-title\">Multi-digit Transposition</h3><p>When the divisor is substantially larger (like 121 or 1003), the Paravartya rule can handle multiple digits of excess simultaneously. The transposition applies to all digits of the excess.</p><h4 class=\"theory-subtitle\">Procedure</h4><ul class=\"theory-list\"><li>Identify the base (e.g., 100 or 1000) and the excess digits.</li><li>Transpose the sign of <em>each</em> excess digit to form a multi-digit flag.</li><li>When multiplying a dropped digit by the flag, distribute the multiplication across all flag digits and place the results diagonally in subsequent columns.</li><li>Sum columns sequentially, dropping the result to multiply by the flag again.</li></ul>",
+      "examples": [
+        {
+          "problem": "1234 ÷ 121",
+          "solution": "10 remainder 24",
+          "explanation": "Divide 1234 by 121.",
+          "steps": [
+            "Base is 100 (2 zeros). Divisor 121 has excess +21.",
+            "Transpose excess to get multi-digit flag: -2, -1.",
+            "Split dividend with 2 digits for remainder: 12 | 34.",
+            "Drop first digit: 1.",
+            "Multiply 1 by (-2, -1) to get -2, -1. Place diagonally under columns 2 and 3.",
+            "Column 2 sum: 2 + (-2) = 0. Drop 0.",
+            "Multiply 0 by (-2, -1) to get 0, 0. Place under columns 3 and 4.",
+            "Column 3 sum: 3 + (-1) + 0 = 2.",
+            "Column 4 sum: 4 + 0 = 4.",
+            "Final Result: Quotient is 10, Remainder is 24."
+          ]
+        },
+        {
+          "problem": "10305 ÷ 103",
+          "solution": "100 remainder 5",
+          "explanation": "Divide 10305 by 103.",
+          "steps": [
+            "Base is 100 (2 zeros). Divisor 103 has excess +03.",
+            "Transpose excess: flag is 0, -3.",
+            "Split dividend: 103 | 05.",
+            "Drop 1. Multiply 1 by (0, -3) = 0, -3. Place under cols 2 and 3.",
+            "Column 2 sum: 0 + 0 = 0. Drop 0.",
+            "Multiply 0 by (0, -3) = 0, 0. Place under cols 3 and 4.",
+            "Column 3 sum: 3 + (-3) + 0 = 0. Drop 0.",
+            "Multiply 0 by (0, -3) = 0, 0. Place under cols 4 and 5.",
+            "Column 4 sum: 0. Column 5 sum: 5.",
+            "Final Result: Quotient is 100, Remainder is 5."
+          ]
+        }
+      ]
     },
     {
       "lessonId": "SUTRA_4_LESSON_4",
+      "sutraId": 4,
       "lessonNumber": 4,
       "title": "Solving Linear Equations",
-      "description": "Using paravartya for algebraic equations",
-      "content": "## Theory\n- Using paravartya for algebraic equations\n- ax + b = c type problems\n",
-      "examples": [
-        {
-          "problem": "3x + 5",
-          "solution": "20 → x = 5",
-          "steps": [],
-          "explanation": "Solve using the sutra technique."
-        },
-        {
-          "problem": "2x - 7",
-          "solution": "13 → x = 10",
-          "steps": [],
-          "explanation": "Solve using the sutra technique."
-        }
-      ],
+      "description": "Solve algebraic linear equations mentally using the direct transposition formula.",
       "difficulty": "medium",
       "estimatedMinutes": 20,
+      "order": 4,
       "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-      "order": 4
+      "content": "<h3 class=\"theory-title\">Solving Equations with Paravartya</h3><p>The principle of \"Transpose and Apply\" is perfectly suited for linear algebraic equations. It allows you to group variables and constants efficiently.</p><h4 class=\"theory-subtitle\">Direct Transposition Formula</h4><p>For a standard linear equation of the form <strong>ax + b = cx + d</strong>, we can transpose the terms directly to find the solution. Transpose constant terms to one side and variable coefficients to the other. This simplifies to <strong>x = (d - b) / (a - c)</strong>. This formula allows for rapid mental calculation of the variable's value.</p>",
+      "examples": [
+        {
+          "problem": "3x + 5 = 20",
+          "solution": "x = 5",
+          "explanation": "Solve the simple linear equation.",
+          "steps": [
+            "Identify components: a=3, b=5, c=0, d=20.",
+            "Transpose the constant 5 to the RHS by changing its sign: 20 - 5 = 15.",
+            "The equation is now 3x = 15.",
+            "Divide by the coefficient 3: 15 / 3 = 5.",
+            "Final Result: x = 5."
+          ]
+        },
+        {
+          "problem": "5x - 7 = 2x + 8",
+          "solution": "x = 5",
+          "explanation": "Solve an equation with variables on both sides.",
+          "steps": [
+            "Identify components: a=5, b=-7, c=2, d=8.",
+            "Transpose variables to LHS: (5 - 2)x = 3x.",
+            "Transpose constants to RHS: 8 - (-7) = 8 + 7 = 15.",
+            "The equation simplifies to 3x = 15.",
+            "Divide to find x: x = 15 / 3 = 5.",
+            "Final Result: x = 5."
+          ]
+        }
+      ]
     }
   ]
 }

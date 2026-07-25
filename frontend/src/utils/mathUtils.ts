@@ -147,3 +147,63 @@ export const getDifficulty = (index: number): 'Easy' | 'Medium' | 'Hard' => {
   return 'Hard';
 };
 
+// Parse Sutra 2 (Nikhilam) problem for complement visualization
+export const parseSutra2Problem = (problem: string): {
+  type: 'subtraction' | 'multiplication' | null;
+  base: number;
+  num1: number;
+  num2?: number;
+  deficiency1?: number;
+  deficiency2?: number;
+} | null => {
+  try {
+    // Subtraction: "1000 - 387"
+    const subMatch = problem.match(/(\d+)\s*[-−]\s*(\d+)/);
+    if (subMatch) {
+      const base = parseInt(subMatch[1], 10);
+      const num = parseInt(subMatch[2], 10);
+      // Check if base is a power of 10
+      if (base > 0 && Math.log10(base) % 1 === 0 && num < base) {
+        return { type: 'subtraction', base, num1: num };
+      }
+    }
+    // Multiplication: "94 × 92"
+    const mulMatch = problem.match(/(\d+)\s*[×x*]\s*(\d+)/i);
+    if (mulMatch) {
+      const num1 = parseInt(mulMatch[1], 10);
+      const num2 = parseInt(mulMatch[2], 10);
+      // Find closest base
+      const maxNum = Math.max(num1, num2);
+      let base = 10;
+      while (base < maxNum) base *= 10;
+      // Check if both are near this base (within 50%)
+      if (Math.abs(num1 - base) < base / 2 && Math.abs(num2 - base) < base / 2) {
+        return {
+          type: 'multiplication',
+          base,
+          num1,
+          num2,
+          deficiency1: base - num1,
+          deficiency2: base - num2,
+        };
+      }
+    }
+    return null;
+  } catch {
+    return null;
+  }
+};
+
+// Format caret notation to superscripts (e.g., x^2 -> x², (x+1)^3 -> (x+1)³)
+export const formatSuperscripts = (text: string): string => {
+  if (!text) return '';
+  return text
+    .replace(/\^2/g, '²')
+    .replace(/\^3/g, '³')
+    .replace(/\^4/g, '⁴')
+    .replace(/\^5/g, '⁵')
+    .replace(/\^x/g, 'ˣ')
+    .replace(/\^y/g, 'ʸ')
+    .replace(/\^n/g, 'ⁿ');
+};
+

@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { type Lesson } from '../../api/lessons';
 import { useLessonPractice } from '../../hooks/useLessonPractice';
+import { formatSuperscripts } from '../../utils/mathUtils';
 
 interface LessonPracticeProps {
   sutraID: string;
@@ -66,7 +67,7 @@ export const LessonPractice: React.FC<LessonPracticeProps> = ({ sutraID, lesson,
               Apply {lesson.title}
             </span>
             <div className="text-4xl font-black text-cyan-300 font-serif tracking-tight">
-              {(practiceProblem.questionText || "").replace(/\^2/g, "²")}
+              {formatSuperscripts(practiceProblem.questionText || "")}
             </div>
             <span className="text-[9px] text-white/45 font-bold block mt-3">
               💡 Tip: Find the deficit or multiply vertically!
@@ -101,7 +102,7 @@ export const LessonPractice: React.FC<LessonPracticeProps> = ({ sutraID, lesson,
                   className={`border-2 rounded-2xl py-4 text-center font-black text-lg transition-all active:scale-95 flex items-center justify-center gap-1.5 ${btnStyle}`}
                   whileHover={!submitted ? { scale: 1.02 } : {}}
                 >
-                  <span>{opt}</span>
+                  <span>{formatSuperscripts(opt)}</span>
                   {showResult && isCorrectOpt && <span className="text-xs">✓</span>}
                   {showResult && isSelected && !isCorrectOpt && <span className="text-xs">✗</span>}
                 </motion.button>
@@ -173,8 +174,8 @@ export const LessonPractice: React.FC<LessonPracticeProps> = ({ sutraID, lesson,
                 {isAnsCorrect
                   ? `Awesome speed! You've earned +15 XP. Keep up the streak! 🚀`
                   : selectedOption === correctAnswerVal && timeLeft === 0
-                    ? `You ran out of time! The correct answer was indeed ${correctAnswerVal}. Let's learn why:`
-                    : `The correct answer was ${correctAnswerVal}. Let's learn how to solve it!`}
+                    ? `You ran out of time! The correct answer was indeed ${formatSuperscripts(correctAnswerVal)}. Let's learn why:`
+                    : `The correct answer was ${formatSuperscripts(correctAnswerVal)}. Let's learn how to solve it!`}
               </p>
 
               {explanationSteps && explanationSteps.length > 0 && (
@@ -182,7 +183,7 @@ export const LessonPractice: React.FC<LessonPracticeProps> = ({ sutraID, lesson,
                   <div className="font-extrabold uppercase text-[8px] text-cyan-400">💡 Solution:</div>
                   <div className="mt-1 space-y-0.5">
                     {explanationSteps.map((stepText, sIdx) => (
-                      <div key={sIdx}>{stepText}</div>
+                      <div key={sIdx}>{formatSuperscripts(stepText)}</div>
                     ))}
                   </div>
                 </div>

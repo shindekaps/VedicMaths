@@ -4,6 +4,7 @@ import { usePracticeSession } from '../hooks/usePracticeSession';
 import { VedicBackground } from '../components/VedicBackground';
 import { useSutras, useLessonsBySutra } from '../api/lessons';
 import { VedicLoader } from '../components/VedicLoader';
+import { formatSuperscripts } from '../utils/mathUtils';
 
 interface PracticeViewProps {
   sutraID: string;
@@ -81,7 +82,7 @@ export const PracticeView = ({ sutraID, setActive }: PracticeViewProps) => {
     );
   }
 
-  const formattedQuestion = problem ? (problem.questionText || (problem as any).question || "").replace(/\^2/g, "²") : "";
+  const formattedQuestion = problem ? formatSuperscripts(problem.questionText || (problem as any).question || "") : "";
 
   return (
     <div className="min-h-screen bg-bg text-ink font-sans flex flex-col p-4 relative overflow-hidden pb-20 justify-center items-center">
@@ -248,7 +249,7 @@ export const PracticeView = ({ sutraID, setActive }: PracticeViewProps) => {
                     className={`border-2 rounded-2xl py-4 text-center font-black text-lg transition-all active:scale-95 flex items-center justify-center gap-1.5 ${btnStyle}`}
                     whileHover={!submitted ? { scale: 1.02 } : {}}
                   >
-                    <span>{opt}</span>
+                    <span>{formatSuperscripts(opt)}</span>
                     {showResult && isCorrectOpt && <span className="text-xs">✓</span>}
                     {showResult && isSelected && !isCorrectOpt && <span className="text-xs">✗</span>}
                   </motion.button>
@@ -320,8 +321,8 @@ export const PracticeView = ({ sutraID, setActive }: PracticeViewProps) => {
                   {isAnsCorrect
                     ? `Awesome speed! You've earned +15 XP. Keep up the streak! 🚀`
                     : selectedOption === correctAnswerVal && timeLeft === 0
-                      ? `You ran out of time! The correct answer was indeed ${correctAnswerVal}. Let's learn why:`
-                      : `The correct answer was ${correctAnswerVal}. Let's learn how to solve it!`}
+                      ? `You ran out of time! The correct answer was indeed ${formatSuperscripts(correctAnswerVal)}. Let's learn why:`
+                      : `The correct answer was ${formatSuperscripts(correctAnswerVal)}. Let's learn how to solve it!`}
                 </p>
 
                 {explanationSteps && explanationSteps.length > 0 && (
@@ -329,7 +330,7 @@ export const PracticeView = ({ sutraID, setActive }: PracticeViewProps) => {
                     <div className="font-extrabold uppercase text-[8px] text-saffron">💡 Solution:</div>
                     <div className="mt-1 space-y-0.5">
                       {explanationSteps.map((stepText, sIdx) => (
-                        <div key={sIdx}>{stepText}</div>
+                        <div key={sIdx}>{formatSuperscripts(stepText)}</div>
                       ))}
                     </div>
                   </div>

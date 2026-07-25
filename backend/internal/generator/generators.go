@@ -361,7 +361,33 @@ func genSutra1(difficulty int) domain.Problem {
 }
 
 // ---------- Sutra 2: Nikhilam (multiplication near a base) ----------
-func genSutra2(difficulty int) domain.Problem {
+func genSutra2Lesson1(difficulty int) domain.Problem {
+	var base int
+	switch {
+	case difficulty <= 1:
+		base = 100
+	case difficulty == 2:
+		base = 1000
+	default:
+		base = 10000
+	}
+	num := rand.Intn(base-1) + 1
+	ans := base - num
+	return domain.Problem{
+		SutraID:      2,
+		QuestionText: fmt.Sprintf("%d - %d", base, num),
+		Difficulty:   difficultyFromMagnitude(base),
+		DedupKey:     fmt.Sprintf("s2:L1:%d:%d", base, num),
+		Answer:       ans,
+		SolutionSteps: []string{
+			fmt.Sprintf("Base = %d", base),
+			"Methodology: All from 9, Last from 10",
+			fmt.Sprintf("Answer: %d", ans),
+		},
+	}
+}
+
+func genSutra2Lesson2(difficulty int) domain.Problem {
 	var base int
 	switch {
 	case difficulty <= 1:
@@ -371,9 +397,14 @@ func genSutra2(difficulty int) domain.Problem {
 	default:
 		base = 1000
 	}
-	span := base / 10
-	if span < 1 {
-		span = 1
+	var span int
+	if base == 10 {
+		span = 4
+	} else {
+		span = base / 10
+		if span < 1 {
+			span = 1
+		}
 	}
 	a := base - (rand.Intn(span) + 1)
 	b := base - (rand.Intn(span) + 1)
@@ -400,52 +431,531 @@ func genSutra2(difficulty int) domain.Problem {
 	}
 }
 
-// ---------- Sutra 3: Urdhva-Tiryagbhyam (general multiplication) ----------
-func genSutra3(difficulty int) domain.Problem {
-	var digits int
+func genSutra2Lesson3(difficulty int) domain.Problem {
+	var base int
+	var span int
 	switch {
 	case difficulty <= 1:
-		digits = 2
+		base = 10
+		span = 9
 	case difficulty == 2:
-		digits = 3
+		base = 100
+		span = 30
 	default:
-		digits = 4
+		base = 1000
+		span = 100
 	}
-	lo10, hi10 := pow10(digits-1), pow10(digits)-1
-	a := lo10 + rand.Intn(hi10-lo10+1)
-	b := lo10 + rand.Intn(hi10-lo10+1)
-	ans := a * b
+	
+	a := base + (rand.Intn(span) + 1)
+	b := base + (rand.Intn(span) + 1)
+	ea, eb := a-base, b-base
+	left := a + eb
+	right := ea * eb
+	ans := left*base + right
 	lo, hi := sortPair(a, b)
+	
 	return domain.Problem{
-		SutraID:      3,
+		SutraID:      2,
 		QuestionText: fmt.Sprintf("%d x %d", a, b),
-		Difficulty:   min(5, digits),
-		DedupKey:     fmt.Sprintf("s3:%d:%d", lo, hi),
+		Difficulty:   difficultyFromMagnitude(base),
+		DedupKey:     fmt.Sprintf("s2:L3:%d:%d", lo, hi),
 		Answer:       ans,
 		SolutionSteps: []string{
-			"Multiply digits vertically and crosswise (Urdhva-Tiryagbhyam)",
+			fmt.Sprintf("Base = %d", base),
+			fmt.Sprintf("Excess of %d = %d-%d = %d", a, a, base, ea),
+			fmt.Sprintf("Excess of %d = %d-%d = %d", b, b, base, eb),
+			fmt.Sprintf("Left: %d + %d = %d", a, eb, left),
+			fmt.Sprintf("Right: %d x %d = %d", ea, eb, right),
+			"Handle carry from RHS to LHS",
 			fmt.Sprintf("Answer: %d", ans),
 		},
 	}
 }
 
-// ---------- Sutra 4: Paravartya Yojayet (division near a base) ----------
-func genSutra4(difficulty int) domain.Problem {
-	divisors := []int{9, 11, 12, 13, 19, 21, 88, 89, 91, 111, 999, 1001, 98, 102}
-	d := divisors[rand.Intn(len(divisors))]
-	dividend := d*3 + rand.Intn(d*996)
-	q, r := dividend/d, dividend%d
+func genSutra2Lesson4(difficulty int) domain.Problem {
+	var divisors []int
+	switch {
+	case difficulty <= 1:
+		divisors = []int{9, 8, 7}
+	case difficulty == 2:
+		divisors = []int{89, 91, 98, 97}
+	default:
+		divisors = []int{997, 998, 999}
+	}
+	divisor := divisors[rand.Intn(len(divisors))]
+	quotient := 10 + rand.Intn(990)
+	remainder := rand.Intn(divisor)
+	dividend := divisor*quotient + remainder
+	
 	return domain.Problem{
-		SutraID:      4,
-		QuestionText: fmt.Sprintf("%d / %d", dividend, d),
+		SutraID:      2,
+		QuestionText: fmt.Sprintf("%d / %d", dividend, divisor),
 		Difficulty:   difficultyFromMagnitude(dividend),
-		DedupKey:     fmt.Sprintf("s4:%d:%d", dividend, d),
-		Answer:       map[string]int{"quotient": q, "remainder": r},
+		DedupKey:     fmt.Sprintf("s2:L4:%d:%d", dividend, divisor),
+		Answer:       quotient,
 		SolutionSteps: []string{
-			fmt.Sprintf("Use Paravartya Yojayet (transpose and apply) to divide by %d", d),
-			fmt.Sprintf("Quotient = %d, Remainder = %d", q, r),
+			fmt.Sprintf("Apply complement method for division near base %d", divisor),
+			fmt.Sprintf("Answer (Quotient): %d", quotient),
 		},
 	}
+}
+
+func genSutra2WithLesson(difficulty int, lessonID string) domain.Problem {
+	if lessonID == "SUTRA_2_LESSON_1" {
+		return genSutra2Lesson1(difficulty)
+	}
+	if lessonID == "SUTRA_2_LESSON_2" {
+		return genSutra2Lesson2(difficulty)
+	}
+	if lessonID == "SUTRA_2_LESSON_3" {
+		return genSutra2Lesson3(difficulty)
+	}
+	if lessonID == "SUTRA_2_LESSON_4" {
+		return genSutra2Lesson4(difficulty)
+	}
+	// Fallback: random lesson
+	switch rand.Intn(4) {
+	case 0:
+		return genSutra2Lesson1(difficulty)
+	case 1:
+		return genSutra2Lesson2(difficulty)
+	case 2:
+		return genSutra2Lesson3(difficulty)
+	default:
+		return genSutra2Lesson4(difficulty)
+	}
+}
+
+func genSutra2(difficulty int) domain.Problem {
+	return genSutra2WithLesson(difficulty, "")
+}
+
+// ---------- Sutra 3: Urdhva-Tiryagbhyam (general multiplication) ----------
+func genSutra3Lesson1(difficulty int) domain.Problem {
+	a := 10 + rand.Intn(90)
+	b := 10 + rand.Intn(90)
+	ans := a * b
+	
+	a1, a0 := a/10, a%10
+	b1, b0 := b/10, b%10
+	
+	step1Val := a0 * b0
+	step2Val := a1*b0 + a0*b1
+	step3Val := a1 * b1
+	
+	steps := []string{
+		fmt.Sprintf("Multiply right vertical column: %d x %d = %d", a0, b0, step1Val),
+		fmt.Sprintf("Cross-multiply and add: (%d x %d) + (%d x %d) = %d", a1, b0, a0, b1, step2Val),
+		fmt.Sprintf("Multiply left vertical column: %d x %d = %d", a1, b1, step3Val),
+	}
+	
+	carry1 := step1Val / 10
+	ans0 := step1Val % 10
+	steps = append(steps, fmt.Sprintf("Step 1 result: Write %d, carry %d", ans0, carry1))
+	
+	step2Sum := step2Val + carry1
+	carry2 := step2Sum / 10
+	ans1 := step2Sum % 10
+	steps = append(steps, fmt.Sprintf("Step 2 result (with carry): %d + %d = %d. Write %d, carry %d", step2Val, carry1, step2Sum, ans1, carry2))
+	
+	step3Sum := step3Val + carry2
+	steps = append(steps, fmt.Sprintf("Step 3 result (with carry): %d + %d = %d. Write %d", step3Val, carry2, step3Sum, step3Sum))
+	steps = append(steps, fmt.Sprintf("Combine parts: %d", ans))
+	
+	lo, hi := sortPair(a, b)
+	return domain.Problem{
+		SutraID:       3,
+		QuestionText:  fmt.Sprintf("%d x %d", a, b),
+		Difficulty:    2,
+		DedupKey:      fmt.Sprintf("s3:L1:%d:%d", lo, hi),
+		Answer:        ans,
+		SolutionSteps: steps,
+	}
+}
+
+func genSutra3Lesson2(difficulty int) domain.Problem {
+	isAsym := rand.Intn(2) == 0
+	a := 100 + rand.Intn(900)
+	var b int
+	var qText string
+	if isAsym {
+		b = 10 + rand.Intn(90)
+		qText = fmt.Sprintf("%d x %d", a, b)
+	} else {
+		b = 100 + rand.Intn(900)
+		qText = fmt.Sprintf("%d x %d", a, b)
+	}
+	ans := a * b
+	
+	paddedB := b
+	bStr := fmt.Sprintf("%d", b)
+	if len(bStr) == 2 {
+		bStr = "0" + bStr
+	}
+	
+	steps := []string{
+		fmt.Sprintf("Spatially align: \n  %d\n  %s", a, bStr),
+	}
+	
+	a2, a1, a0 := a/100, (a/10)%10, a%10
+	b2, b1, b0 := paddedB/100, (paddedB/10)%10, paddedB%10
+	
+	s1 := a0 * b0
+	s2 := a1*b0 + a0*b1
+	s3 := a2*b0 + a0*b2 + a1*b1
+	s4 := a2*b1 + a1*b2
+	s5 := a2 * b2
+	
+	steps = append(steps, fmt.Sprintf("Step 1 (Units): %d x %d = %d", a0, b0, s1))
+	steps = append(steps, fmt.Sprintf("Step 2 (Tens): (%d x %d) + (%d x %d) = %d", a1, b0, a0, b1, s2))
+	steps = append(steps, fmt.Sprintf("Step 3 (Hundreds): (%d x %d) + (%d x %d) + (%d x %d) = %d", a2, b0, a0, b2, a1, b1, s3))
+	steps = append(steps, fmt.Sprintf("Step 4 (Thousands): (%d x %d) + (%d x %d) = %d", a2, b1, a1, b2, s4))
+	steps = append(steps, fmt.Sprintf("Step 5 (Ten-Thousands): %d x %d = %d", a2, b2, s5))
+	
+	c1 := s1 / 10
+	r0 := s1 % 10
+	
+	c2 := (s2 + c1) / 10
+	r1 := (s2 + c1) % 10
+	
+	c3 := (s3 + c2) / 10
+	r2 := (s3 + c2) % 10
+	
+	c4 := (s4 + c3) / 10
+	r3 := (s4 + c3) % 10
+	
+	r45 := s5 + c4
+	
+	steps = append(steps, fmt.Sprintf("Apply carries right-to-left: Write %d, carry %d -> Write %d, carry %d -> Write %d, carry %d -> Write %d, carry %d -> final %d", r0, c1, r1, c2, r2, c3, r3, c4, r45))
+	steps = append(steps, fmt.Sprintf("Final Product: %d", ans))
+	
+	lo, hi := sortPair(a, b)
+	return domain.Problem{
+		SutraID:       3,
+		QuestionText:  qText,
+		Difficulty:    3,
+		DedupKey:      fmt.Sprintf("s3:L2:%d:%d", lo, hi),
+		Answer:        ans,
+		SolutionSteps: steps,
+	}
+}
+
+func genSutra3Lesson3(difficulty int) domain.Problem {
+	isThreeDigit := rand.Intn(2) == 0
+	var aInt, bInt int
+	var aFloat, bFloat float64
+	var aStr, bStr string
+	
+	if isThreeDigit {
+		aInt = 100 + rand.Intn(900)
+		bInt = 10 + rand.Intn(90)
+		aFloat = float64(aInt) / 100.0
+		bFloat = float64(bInt) / 10.0
+		aStr = fmt.Sprintf("%.2f", aFloat)
+		bStr = fmt.Sprintf("%.1f", bFloat)
+	} else {
+		aInt = 10 + rand.Intn(90)
+		bInt = 10 + rand.Intn(90)
+		aFloat = float64(aInt) / 10.0
+		bFloat = float64(bInt) / 10.0
+		aStr = fmt.Sprintf("%.1f", aFloat)
+		bStr = fmt.Sprintf("%.1f", bFloat)
+	}
+	
+	ansInt := aInt * bInt
+	ansFloat := aFloat * bFloat
+	ansStr := fmt.Sprintf("%g", ansFloat)
+	
+	steps := []string{
+		fmt.Sprintf("Ignore the decimal points and multiply as whole integers: %d x %d", aInt, bInt),
+		fmt.Sprintf("Standard Urdhva Tiryagbhyam result: %d", ansInt),
+		fmt.Sprintf("Count decimal places in inputs: %s (%d places) and %s (%d places). Total places = %d", aStr, len(aStr)-2, bStr, len(bStr)-2, len(aStr)+len(bStr)-4),
+		fmt.Sprintf("Place the decimal point from right to left in the integer result: %s", ansStr),
+	}
+	
+	return domain.Problem{
+		SutraID:       3,
+		QuestionText:  fmt.Sprintf("%s x %s", aStr, bStr),
+		Difficulty:    3,
+		DedupKey:      fmt.Sprintf("s3:L3:%s:%s", aStr, bStr),
+		Answer:        ansStr,
+		SolutionSteps: steps,
+	}
+}
+
+func genSutra3Lesson4(difficulty int) domain.Problem {
+	var num int
+	if rand.Intn(2) == 0 {
+		num = 10 + rand.Intn(90)
+	} else {
+		num = 100 + rand.Intn(30)
+	}
+	ans := num * num
+	
+	steps := []string{
+		fmt.Sprintf("Squaring %d is equivalent to multiplying %d x %d using Urdhva Tiryagbhyam.", num, num, num),
+	}
+	
+	if num < 100 {
+		a, b := num/10, num%10
+		steps = append(steps, fmt.Sprintf("Use the algebraic shortcut (10a + b)^2 = 100(a^2) + 10(2ab) + b^2:"))
+		steps = append(steps, fmt.Sprintf("Right part: b^2 = %d^2 = %d", b, b*b))
+		steps = append(steps, fmt.Sprintf("Middle part: 2 x a x b = 2 x %d x %d = %d", a, b, 2*a*b))
+		steps = append(steps, fmt.Sprintf("Left part: a^2 = %d^2 = %d", a, a*a))
+	} else {
+		steps = append(steps, fmt.Sprintf("Apply the 5-step star multiplication to %d x %d", num, num))
+	}
+	steps = append(steps, fmt.Sprintf("Add up column values and carries to get final answer: %d", ans))
+	
+	return domain.Problem{
+		SutraID:       3,
+		QuestionText:  fmt.Sprintf("%d^2", num),
+		Difficulty:    2,
+		DedupKey:      fmt.Sprintf("s3:L4:%d", num),
+		Answer:        ans,
+		SolutionSteps: steps,
+	}
+}
+
+func genSutra3WithLesson(difficulty int, lessonID string) domain.Problem {
+	if lessonID == "SUTRA_3_LESSON_1" {
+		return genSutra3Lesson1(difficulty)
+	}
+	if lessonID == "SUTRA_3_LESSON_2" {
+		return genSutra3Lesson2(difficulty)
+	}
+	if lessonID == "SUTRA_3_LESSON_3" {
+		return genSutra3Lesson3(difficulty)
+	}
+	if lessonID == "SUTRA_3_LESSON_4" {
+		return genSutra3Lesson4(difficulty)
+	}
+	// Fallback
+	switch rand.Intn(4) {
+	case 0:
+		return genSutra3Lesson1(difficulty)
+	case 1:
+		return genSutra3Lesson2(difficulty)
+	case 2:
+		return genSutra3Lesson3(difficulty)
+	default:
+		return genSutra3Lesson4(difficulty)
+	}
+}
+
+func genSutra3(difficulty int) domain.Problem {
+	return genSutra3WithLesson(difficulty, "")
+}
+
+func genSutra4Lesson1(difficulty int) domain.Problem {
+	var d int
+	switch {
+	case difficulty <= 1:
+		d = 11 + rand.Intn(3)
+	case difficulty == 2:
+		d = 111 + rand.Intn(3)
+	default:
+		d = 1001 + rand.Intn(3)
+	}
+	
+	q := 10 + rand.Intn(90)
+	r := rand.Intn(d)
+	dividend := d*q + r
+	
+	steps := []string{
+		fmt.Sprintf("Divisor is %d. Find its base and positive excess.", d),
+		fmt.Sprintf("Transpose the excess digits (invert their signs) to form the calculation flag."),
+		fmt.Sprintf("Apply transpositions column-by-column to calculate Quotient = %d", q),
+	}
+	
+	return domain.Problem{
+		SutraID:      4,
+		QuestionText: fmt.Sprintf("What is the quotient of %d ÷ %d?", dividend, d),
+		Difficulty:   difficulty,
+		DedupKey:     fmt.Sprintf("s4:L1:%d:%d", dividend, d),
+		Answer:       q,
+		SolutionSteps: steps,
+	}
+}
+
+func formatLinearTerm(x int) string {
+	if x > 0 {
+		return fmt.Sprintf("x + %d", x)
+	}
+	return fmt.Sprintf("x - %d", -x)
+}
+
+func genSutra4Lesson2(difficulty int) domain.Problem {
+	choices := []int{-5, -4, -3, -2, -1, 1, 2, 3, 4, 5}
+	a := choices[rand.Intn(len(choices))]
+	b := choices[rand.Intn(len(choices))]
+	for a+b == 0 || a*b == 0 {
+		a = choices[rand.Intn(len(choices))]
+		b = choices[rand.Intn(len(choices))]
+	}
+	
+	coeff1 := a + b
+	coeff0 := a * b
+	
+	var dividendStr string
+	if coeff1 > 0 {
+		dividendStr = fmt.Sprintf("x² + %dx", coeff1)
+	} else {
+		dividendStr = fmt.Sprintf("x² - %dx", -coeff1)
+	}
+	
+	if coeff0 > 0 {
+		dividendStr = fmt.Sprintf("%s + %d", dividendStr, coeff0)
+	} else {
+		dividendStr = fmt.Sprintf("%s - %d", dividendStr, -coeff0)
+	}
+	
+	divisorStr := formatLinearTerm(a)
+	quotientStr := formatLinearTerm(b)
+	
+	steps := []string{
+		fmt.Sprintf("Extract dividend coefficients: [1, %d, %d]", coeff1, coeff0),
+		fmt.Sprintf("Transpose the constant term of the divisor (%s) to get the flag: %d", divisorStr, -a),
+		fmt.Sprintf("Perform synthetic transposition addition to resolve coefficients: [1, %d]", b),
+		fmt.Sprintf("Re-attach polynomial variables to get Quotient: %s", quotientStr),
+	}
+	
+	options := []string{
+		quotientStr,
+		formatLinearTerm(-b),
+		formatLinearTerm(a),
+		formatLinearTerm(-a),
+	}
+	
+	optMap := make(map[string]bool)
+	var finalOptions []string
+	finalOptions = append(finalOptions, quotientStr)
+	optMap[quotientStr] = true
+	
+	for _, opt := range options {
+		if !optMap[opt] {
+			finalOptions = append(finalOptions, opt)
+			optMap[opt] = true
+		}
+	}
+	
+	distractorOffset := 1
+	for len(finalOptions) < 4 {
+		newOpt := formatLinearTerm(b + distractorOffset)
+		if !optMap[newOpt] {
+			finalOptions = append(finalOptions, newOpt)
+			optMap[newOpt] = true
+		}
+		distractorOffset++
+	}
+	
+	rand.Shuffle(len(finalOptions), func(i, j int) {
+		finalOptions[i], finalOptions[j] = finalOptions[j], finalOptions[i]
+	})
+	
+	return domain.Problem{
+		SutraID:      4,
+		QuestionText: fmt.Sprintf("What is the quotient of (%s) ÷ (%s)?", dividendStr, divisorStr),
+		Difficulty:   3,
+		DedupKey:     fmt.Sprintf("s4:L2:%d:%d", a, b),
+		Answer:       quotientStr,
+		Options:      finalOptions,
+		SolutionSteps: steps,
+	}
+}
+
+func genSutra4Lesson3(difficulty int) domain.Problem {
+	var d int
+	switch {
+	case difficulty <= 1:
+		d = 121
+	case difficulty == 2:
+		d = 112
+	default:
+		d = 103
+	}
+	
+	q := 10 + rand.Intn(40)
+	r := 5 + rand.Intn(d-10)
+	dividend := d*q + r
+	
+	steps := []string{
+		fmt.Sprintf("Divisor is %d. Base is 100 or 1000.", d),
+		fmt.Sprintf("Transpose the positive excess digits to form the flag."),
+		fmt.Sprintf("Carry out column-by-column division to get Remainder = %d", r),
+	}
+	
+	return domain.Problem{
+		SutraID:      4,
+		QuestionText: fmt.Sprintf("What is the remainder of %d ÷ %d?", dividend, d),
+		Difficulty:   difficulty,
+		DedupKey:     fmt.Sprintf("s4:L3:%d:%d", dividend, d),
+		Answer:       r,
+		SolutionSteps: steps,
+	}
+}
+
+func genSutra4Lesson4(difficulty int) domain.Problem {
+	x := 2 + rand.Intn(8)
+	a := 3 + rand.Intn(6)
+	c := 1 + rand.Intn(2)
+	b := 1 + rand.Intn(15)
+	
+	d := (a-c)*x + b
+	
+	var eqStr string
+	if b > 0 {
+		eqStr = fmt.Sprintf("%dx + %d = %dx + %d", a, b, c, d)
+	} else {
+		eqStr = fmt.Sprintf("%dx - %d = %dx + %d", a, -b, c, d)
+	}
+	
+	steps := []string{
+		fmt.Sprintf("Equation: %s", eqStr),
+		fmt.Sprintf("By Paravartya Yojayet (Transpose and Apply), group x terms on LHS and constants on RHS:"),
+		fmt.Sprintf("(%d - %d)x = %d - %d", a, c, d, b),
+		fmt.Sprintf("%dx = %d", a-c, d-b),
+		fmt.Sprintf("x = %d / %d = %d", d-b, a-c, x),
+	}
+	
+	return domain.Problem{
+		SutraID:      4,
+		QuestionText: fmt.Sprintf("Solve for x: %s", eqStr),
+		Difficulty:   2,
+		DedupKey:     fmt.Sprintf("s4:L4:%d:%d:%d", a, c, b),
+		Answer:       x,
+		SolutionSteps: steps,
+	}
+}
+
+func genSutra4WithLesson(difficulty int, lessonID string) domain.Problem {
+	if lessonID == "SUTRA_4_LESSON_1" {
+		return genSutra4Lesson1(difficulty)
+	}
+	if lessonID == "SUTRA_4_LESSON_2" {
+		return genSutra4Lesson2(difficulty)
+	}
+	if lessonID == "SUTRA_4_LESSON_3" {
+		return genSutra4Lesson3(difficulty)
+	}
+	if lessonID == "SUTRA_4_LESSON_4" {
+		return genSutra4Lesson4(difficulty)
+	}
+	// Fallback
+	switch rand.Intn(4) {
+	case 0:
+		return genSutra4Lesson1(difficulty)
+	case 1:
+		return genSutra4Lesson2(difficulty)
+	case 2:
+		return genSutra4Lesson3(difficulty)
+	default:
+		return genSutra4Lesson4(difficulty)
+	}
+}
+
+func genSutra4(difficulty int) domain.Problem {
+	return genSutra4WithLesson(difficulty, "")
 }
 
 // ---------- Sutra 5: Shunyam Saamyasamuccaye ----------

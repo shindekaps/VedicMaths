@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSutras } from '../api/lessons';
 import { useProgress } from '../api/stats';
-import { toast } from 'react-hot-toast';
+
 import { VedicBackground } from '../components/VedicBackground';
 import { SutraCard } from '../components/SutraCard';
 import { useSutraStatus } from '../hooks/useSutraStatus';
@@ -36,24 +36,7 @@ export const CurriculumView = ({ navigateToLesson }: CurriculumViewProps) => {
       .sort((a, b) => a.order - b.order);
   }, [sutras, activeTab]);
 
-  const handleSutraClick = (sutraId: number, id: string) => {
-    const statusInfo = sutraStatusMap[sutraId];
-    if (statusInfo?.status === 'locked') {
-      toast.error(`Oops! 🔒 Sutra ${sutraId} is sleeping. Complete preceding lessons to wake it up! ⏰`, {
-        icon: '🔒',
-        style: {
-          borderRadius: '24px',
-          background: '#FF6B35',
-          color: '#fff',
-          fontWeight: '900',
-          fontSize: '13px',
-          fontFamily: "'Nunito', sans-serif",
-          boxShadow: '0 10px 25px rgba(255, 107, 53, 0.25)',
-          border: '2px solid #fff',
-        },
-      });
-      return;
-    }
+  const handleSutraClick = (_sutraId: number, id: string) => {
     navigateToLesson(id);
   };
 
@@ -129,7 +112,7 @@ export const CurriculumView = ({ navigateToLesson }: CurriculumViewProps) => {
         >
           <AnimatePresence mode="popLayout">
             {filteredSutras.map((s) => {
-              const statusInfo = sutraStatusMap[s.sutraId] || { status: 'locked', percent: 0 };
+              const statusInfo = sutraStatusMap[s.sutraId] || { status: 'in_progress', percent: 0 };
               const difficulty = getDifficulty(s.sutraId);
 
               return (
