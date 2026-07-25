@@ -13,81 +13,159 @@
   "lessons": [
     {
       "lessonId": "SUTRA_5_LESSON_1",
+      "sutraId": 5,
       "lessonNumber": 1,
-      "title": "Finding Zero Solutions",
-      "description": "Identify when a solution is zero",
-      "content": "## Theory\n- Identify when a solution is zero\n- Use samuccaya principle\n",
-      "examples": [
-        {
-          "problem": "(x-3)(x-5)",
-          "solution": "0 → x = 3 or 5",
-          "steps": [],
-          "explanation": "Solve using the sutra technique."
-        }
-      ],
+      "title": "Identical Constant Ratios",
+      "description": "Solve simultaneous linear equations instantly when the constant ratio matches the coefficient ratio.",
       "difficulty": "medium",
       "estimatedMinutes": 18,
+      "order": 1,
       "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-      "order": 1
+      "content": "<div class=\"theory-section\"><p>The <strong>Sunyam Samyasamuccaye</strong> sutra applies beautifully to simultaneous linear equations of the form <em>ax + by = c</em>.</p><p>When solving a pair of simultaneous equations, compare the ratios of the coefficients of the variables and the constant terms. If the ratio of the coefficients of one variable exactly matches the ratio of the constant terms, then the other variable is equal to zero.</p><p>For example, if the ratio of the 'y' coefficients equals the ratio of the constant terms, then <strong>x = 0</strong>. Once we establish that x is 0, we can easily substitute it into either equation to solve for the remaining variable, 'y'.</p></div>",
+      "examples": [
+        {
+          "problem": "Solve: 2x + 3y = 6 and 5x + 4y = 8",
+          "steps": [
+            "Check ratios: y coefficient ratio = 3/4.",
+            "Constant ratio = 6/8 = 3/4.",
+            "Since the y ratio matches the constant ratio, x = 0.",
+            "Substitute x = 0 into the first equation: 3y = 6 -> y = 2."
+          ],
+          "solution": "x = 0, y = 2"
+        },
+        {
+          "problem": "Solve: 4x + 7y = 12 and 3x + 5y = 9",
+          "steps": [
+            "Check ratios: x coefficient ratio = 4/3.",
+            "Constant ratio = 12/9 = 4/3.",
+            "Since the x ratio matches the constant ratio, y = 0.",
+            "Substitute y = 0 into the first equation: 4x = 12 -> x = 3."
+          ],
+          "solution": "x = 3, y = 0"
+        },
+        {
+          "problem": "Solve: 7x - 2y = -10 and 3x + 5y = 25",
+          "steps": [
+            "Check ratios: y coefficient ratio = -2/5.",
+            "Constant ratio = -10/25 = -2/5.",
+            "Since the y ratio matches the constant ratio, x = 0.",
+            "Substitute x = 0 into the second equation: 5y = 25 -> y = 5."
+          ],
+          "solution": "x = 0, y = 5"
+        }
+      ]
     },
     {
       "lessonId": "SUTRA_5_LESSON_2",
+      "sutraId": 5,
       "lessonNumber": 2,
-      "title": "Quadratic Equations",
-      "description": "Apply to quadratic equations",
-      "content": "## Theory\n- Apply to quadratic equations\n- Finding roots quickly\n",
-      "examples": [
-        {
-          "problem": "x² - 7x + 12",
-          "solution": "0 → x = 3, 4",
-          "steps": [],
-          "explanation": "Solve using the sutra technique."
-        }
-      ],
+      "title": "Fraction Sums with Equal Numerators",
+      "description": "Equate the sum of denominators to zero when fractions with identical numerators sum to zero.",
       "difficulty": "hard",
       "estimatedMinutes": 22,
+      "order": 2,
       "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-      "order": 2
+      "content": "<div class=\"theory-section\"><p>This application of the sutra deals with multi-fraction equations where the numerators are identical constants, and the sum of the fractions equals zero.</p><p>When you encounter an equation of the form <em>a/D<sub>1</sub> + a/D<sub>2</sub> + ... + a/D<sub>n</sub> = 0</em>, where the numerators are all the same, the sutra provides a shortcut: simply sum the denominators and equate that sum directly to zero.</p><p>By setting <strong>D<sub>1</sub> + D<sub>2</sub> + ... + D<sub>n</sub> = 0</strong>, you completely bypass complex cross-multiplication and algebraic manipulation, reducing the problem to a simple linear equation.</p></div>",
+      "examples": [
+        {
+          "problem": "Solve for x: 5/(x + 2) + 5/(x + 4) = 0",
+          "steps": [
+            "Notice both numerators are equal to 5, and the right-hand side is 0.",
+            "According to the sutra, sum the denominators and equate to zero: (x + 2) + (x + 4) = 0.",
+            "Simplify: 2x + 6 = 0.",
+            "Solve for x: 2x = -6 -> x = -3."
+          ],
+          "solution": "x = -3"
+        },
+        {
+          "problem": "Solve for x: 12/(2x + 3) + 12/(3x + 7) = 0",
+          "steps": [
+            "Both numerators are equal to 12, and the right-hand side is 0.",
+            "Sum the denominators and equate to zero: (2x + 3) + (3x + 7) = 0.",
+            "Simplify: 5x + 10 = 0.",
+            "Solve for x: 5x = -10 -> x = -2."
+          ],
+          "solution": "x = -2"
+        },
+        {
+          "problem": "Solve for x: 1/(x + 1) + 1/(x + 2) + 1/(x + 3) = 0",
+          "steps": [
+            "All three numerators are equal to 1, and the right-hand side is 0.",
+            "Sum the denominators and equate to zero: (x + 1) + (x + 2) + (x + 3) = 0.",
+            "Simplify: 3x + 6 = 0.",
+            "Solve for x: 3x = -6 -> x = -2."
+          ],
+          "solution": "x = -2"
+        }
+      ]
     },
     {
       "lessonId": "SUTRA_5_LESSON_3",
+      "sutraId": 5,
       "lessonNumber": 3,
-      "title": "Solving Rational Equations",
-      "description": "When numerators and denominators have samuccaya",
-      "content": "## Theory\n- When numerators and denominators have samuccaya\n- Solution method\n",
-      "examples": [
-        {
-          "problem": "(2x+3)/(x+1)",
-          "solution": "",
-          "steps": [
-            "3x+2"
-          ],
-          "explanation": "3x+2"
-        }
-      ],
+      "title": "Symmetrical Fractional Expressions",
+      "description": "Solve symmetrical rational fraction equations by equating numerator or denominator sums to zero.",
       "difficulty": "hard",
       "estimatedMinutes": 22,
+      "order": 3,
       "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-      "order": 3
+      "content": "<div class=\"theory-section\"><p>For symmetrical fractional expressions of the form <em>(ax + b)/(ax + d) = (cx + e)/(cx + f)</em>, we can apply the \"Sunyam Samyasamuccaye\" principle by examining sums.</p><p>First, calculate the <strong>Numerator Sum (N_sum)</strong> by adding the numerators of both fractions. Next, calculate the <strong>Denominator Sum (D_sum)</strong> by adding the denominators.</p><p>If the resulting expressions for N_sum and D_sum are identical (or proportional), the sutra dictates that we can find the solution by setting either sum to zero: <strong>N_sum = 0</strong> or <strong>D_sum = 0</strong>. This instantly converts a complex rational equation into a basic linear one.</p></div>",
+      "examples": [
+        {
+          "problem": "Solve for x: (2x + 3)/(2x + 5) = (3x + 4)/(3x + 2)",
+          "steps": [
+            "Calculate Numerator Sum (N_sum): (2x + 3) + (3x + 4) = 5x + 7.",
+            "Calculate Denominator Sum (D_sum): (2x + 5) + (3x + 2) = 5x + 7.",
+            "Since N_sum = D_sum = 5x + 7, set this sum to zero.",
+            "5x + 7 = 0 -> 5x = -7 -> x = -7/5 = -1.4."
+          ],
+          "solution": "x = -1.4"
+        },
+        {
+          "problem": "Solve for x: (3x + 2)/(3x + 6) = (4x + 5)/(4x + 1)",
+          "steps": [
+            "Calculate Numerator Sum (N_sum): (3x + 2) + (4x + 5) = 7x + 7.",
+            "Calculate Denominator Sum (D_sum): (3x + 6) + (4x + 1) = 7x + 7.",
+            "Since N_sum = D_sum = 7x + 7, set this sum to zero.",
+            "7x + 7 = 0 -> 7x = -7 -> x = -1."
+          ],
+          "solution": "x = -1"
+        }
+      ]
     },
     {
       "lessonId": "SUTRA_5_LESSON_4",
+      "sutraId": 5,
       "lessonNumber": 4,
-      "title": "Systems of Equations",
-      "description": "Using samuccaya for system solving",
-      "content": "## Theory\n- Using samuccaya for system solving\n- Multiple variable equations\n",
+      "title": "Symmetrical Linear Combinations",
+      "description": "Solve simple equations where the sum of the constant terms on both sides matches, indicating x = 0.",
+      "difficulty": "medium",
+      "estimatedMinutes": 20,
+      "order": 4,
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "content": "<div class=\"theory-section\"><p>This application focuses on symmetrical linear combinations, typically equations in the form <em>a(x + b) + c(x + d) = e(x + f) + g(x + h)</em>.</p><p>To solve, expand the constant terms on both sides of the equation. Calculate the total sum of the constant terms on the Left Hand Side (LHS) and the total sum of the constant terms on the Right Hand Side (RHS).</p><p>If the <strong>LHS constant sum equals the RHS constant sum</strong>, and the coefficients of 'x' on both sides are not equal, then according to the sutra, the value of the variable <strong>x must be zero</strong>.</p></div>",
       "examples": [
         {
-          "problem": "x + y",
-          "solution": "5, xy = 6",
-          "steps": [],
-          "explanation": "Solve using the sutra technique."
+          "problem": "Solve for x: 3(x + 2) + 4(x + 3) = 2(x + 5) + 2(x + 4)",
+          "steps": [
+            "Calculate the sum of constants on the LHS: (3 * 2) + (4 * 3) = 6 + 12 = 18.",
+            "Calculate the sum of constants on the RHS: (2 * 5) + (2 * 4) = 10 + 8 = 18.",
+            "Check coefficients of x: LHS is 3 + 4 = 7. RHS is 2 + 2 = 4.",
+            "Since LHS constant sum (18) = RHS constant sum (18), and x coefficients are unequal (7 != 4), x = 0."
+          ],
+          "solution": "x = 0"
+        },
+        {
+          "problem": "Solve for x: 5(x + 1) + 2(x - 3) = 4(x - 2) + 1(x + 7)",
+          "steps": [
+            "Calculate the sum of constants on the LHS: (5 * 1) + (2 * -3) = 5 - 6 = -1.",
+            "Calculate the sum of constants on the RHS: (4 * -2) + (1 * 7) = -8 + 7 = -1.",
+            "Check coefficients of x: LHS is 5 + 2 = 7. RHS is 4 + 1 = 5.",
+            "Since LHS constant sum (-1) = RHS constant sum (-1), and x coefficients are unequal (7 != 5), x = 0."
+          ],
+          "solution": "x = 0"
         }
-      ],
-      "difficulty": "hard",
-      "estimatedMinutes": 20,
-      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-      "order": 4
+      ]
     }
   ]
 }

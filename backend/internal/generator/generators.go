@@ -958,28 +958,230 @@ func genSutra4(difficulty int) domain.Problem {
 	return genSutra4WithLesson(difficulty, "")
 }
 
-// ---------- Sutra 5: Shunyam Saamyasamuccaye ----------
-func genSutra5(difficulty int) domain.Problem {
-	s := 6 + rand.Intn(75)
-	a := 1 + rand.Intn(s-1)
-	b := s - a
-	c := 1 + rand.Intn(s-1)
-	d := s - c
-	x := float64(s) / 2
-	loAB, hiAB := sortPair(a, b)
-	loCD, hiCD := sortPair(c, d)
+func genSutra5Lesson1(difficulty int) domain.Problem {
+	base := 2 + rand.Intn(4)
+	mult := 2 + rand.Intn(3)
+	
+	k1 := 1 + rand.Intn(3)
+	k2 := 1 + rand.Intn(3)
+	for k1 == k2 {
+		k2 = 1 + rand.Intn(3)
+	}
+	
+	coeff1 := base * k1
+	coeff2 := base * k2
+	c1 := base * mult * k1
+	c2 := base * mult * k2
+	
+	other1 := 2 + rand.Intn(8)
+	other2 := 2 + rand.Intn(8)
+	for other1*coeff2 == other2*coeff1 {
+		other2 = 2 + rand.Intn(8)
+	}
+	
+	var questionText string
+	var steps []string
+	var dedupKey string
+	
+	if rand.Intn(2) == 0 {
+		questionText = fmt.Sprintf("Solve for x: %dx + %dy = %d and %dx + %dy = %d", other1, coeff1, c1, other2, coeff2, c2)
+		steps = []string{
+			fmt.Sprintf("Check coefficient ratio of y: %d/%d", coeff1, coeff2),
+			fmt.Sprintf("Check constant ratio: %d/%d", c1, c2),
+			"Since the ratios are identical, the other variable vanishes to 0.",
+			"Therefore, x = 0.",
+		}
+		dedupKey = fmt.Sprintf("s5:L1:x:%d:%d:%d:%d", other1, coeff1, other2, coeff2)
+	} else {
+		questionText = fmt.Sprintf("Solve for y: %dx + %dy = %d and %dx + %dy = %d", coeff1, other1, c1, coeff2, other2, c2)
+		steps = []string{
+			fmt.Sprintf("Check coefficient ratio of x: %d/%d", coeff1, coeff2),
+			fmt.Sprintf("Check constant ratio: %d/%d", c1, c2),
+			"Since the ratios are identical, the other variable vanishes to 0.",
+			"Therefore, y = 0.",
+		}
+		dedupKey = fmt.Sprintf("s5:L1:y:%d:%d:%d:%d", coeff1, other1, coeff2, other2)
+	}
+	
 	return domain.Problem{
 		SutraID:      5,
-		QuestionText: fmt.Sprintf("1/(x-%d) + 1/(x-%d) = 1/(x-%d) + 1/(x-%d)", a, b, c, d),
-		Difficulty:   3,
-		DedupKey:     fmt.Sprintf("s5:%d:%d:%d:%d", loAB, hiAB, loCD, hiCD),
-		Answer:       x,
-		SolutionSteps: []string{
-			fmt.Sprintf("Check: %d+%d = %d+%d = %d", a, b, c, d, s),
-			"By Shunyam Saamyasamuccaye, since the sums match, x = sum / 2",
-			fmt.Sprintf("x = %d/2 = %v", s, x),
-		},
+		QuestionText: questionText,
+		Difficulty:   difficulty,
+		DedupKey:     dedupKey,
+		Answer:       0,
+		Options:      []string{"0", "1", "2", "-2"},
+		SolutionSteps: steps,
 	}
+}
+
+func genSutra5Lesson2(difficulty int) domain.Problem {
+	a := 1 + rand.Intn(10)
+	b := 1 + rand.Intn(10)
+	for (a+b)%2 != 0 || a == b {
+		b = 1 + rand.Intn(10)
+	}
+	
+	n := 1 + rand.Intn(15)
+	ans := -(a + b) / 2
+	
+	questionText := fmt.Sprintf("Solve for x: %d/(x + %d) + %d/(x + %d) = 0", n, a, n, b)
+	steps := []string{
+		fmt.Sprintf("Numerators are equal to %d and equation equates to 0.", n),
+		"By Shunyam Samyasamuccaye, sum the denominators and set to 0:",
+		fmt.Sprintf("(x + %d) + (x + %d) = 0", a, b),
+		fmt.Sprintf("2x + %d = 0", a+b),
+		fmt.Sprintf("2x = -%d -> x = -%d", a+b, (a+b)/2),
+	}
+	
+	return domain.Problem{
+		SutraID:      5,
+		QuestionText: questionText,
+		Difficulty:   difficulty,
+		DedupKey:     fmt.Sprintf("s5:L2:%d:%d:%d", n, a, b),
+		Answer:       ans,
+		SolutionSteps: steps,
+	}
+}
+
+func genSutra5Lesson3(difficulty int) domain.Problem {
+	sCoeff := 2 + rand.Intn(4)
+	k := 1 + rand.Intn(4)
+	if rand.Intn(2) == 0 {
+		k = -k
+	}
+	sConst := sCoeff * k
+	
+	a := 1 + rand.Intn(sCoeff-1)
+	c := sCoeff - a
+	
+	b := 1 + rand.Intn(5)
+	if sConst < 0 {
+		b = -b
+	}
+	e := sConst - b
+	
+	d := b + 1 + rand.Intn(3)
+	if sConst < 0 {
+		d = b - 1 - rand.Intn(3)
+	}
+	f := sConst - d
+	
+	formatFraction := func(numCoeff, numConst, denCoeff, denConst int) (string, string) {
+		numStr := fmt.Sprintf("%dx", numCoeff)
+		if numConst > 0 {
+			numStr = fmt.Sprintf("%s + %d", numStr, numConst)
+		} else if numConst < 0 {
+			numStr = fmt.Sprintf("%s - %d", numStr, -numConst)
+		}
+		
+		denStr := fmt.Sprintf("%dx", denCoeff)
+		if denConst > 0 {
+			denStr = fmt.Sprintf("%s + %d", denStr, denConst)
+		} else if denConst < 0 {
+			denStr = fmt.Sprintf("%s - %d", denStr, -denConst)
+		}
+		return numStr, denStr
+	}
+	
+	numL, denL := formatFraction(a, b, a, d)
+	numR, denR := formatFraction(c, e, c, f)
+	
+	questionText := fmt.Sprintf("Solve for x: (%s)/(%s) = (%s)/(%s)", numL, denL, numR, denR)
+	steps := []string{
+		fmt.Sprintf("Find the sum of numerators N_sum = (%s) + (%s) = %dx + %d", numL, numR, sCoeff, sConst),
+		fmt.Sprintf("Find the sum of denominators D_sum = (%s) + (%s) = %dx + %d", denL, denR, sCoeff, sConst),
+		"Since N_sum = D_sum, set the sum to zero:",
+		fmt.Sprintf("%dx + %d = 0", sCoeff, sConst),
+		fmt.Sprintf("%dx = %d -> x = %d", sCoeff, -sConst, -k),
+	}
+	
+	return domain.Problem{
+		SutraID:      5,
+		QuestionText: questionText,
+		Difficulty:   difficulty,
+		DedupKey:     fmt.Sprintf("s5:L3:%d:%d:%d:%d", a, b, c, d),
+		Answer:       -k,
+		SolutionSteps: steps,
+	}
+}
+
+func genSutra5Lesson4(difficulty int) domain.Problem {
+	var a, b, c, d, e, g, f, h, k int
+	found := false
+	for attempt := 0; attempt < 100; attempt++ {
+		a = 2 + rand.Intn(5)
+		c = 2 + rand.Intn(5)
+		b = 1 + rand.Intn(6)
+		d = 1 + rand.Intn(6)
+		k = a*b + c*d
+		
+		e = 2 + rand.Intn(4)
+		g = e
+		
+		if k%e == 0 && (a+c) != (e+g) {
+			sumFH := k / e
+			if sumFH >= 3 {
+				f = 1 + rand.Intn(sumFH-2)
+				h = sumFH - f
+				found = true
+				break
+			}
+		}
+	}
+	
+	if !found {
+		a, b, c, d = 3, 2, 4, 3
+		e, g, f, h = 2, 2, 5, 4
+		k = 18
+	}
+	
+	questionText := fmt.Sprintf("Solve for x: %d(x + %d) + %d(x + %d) = %d(x + %d) + %d(x + %d)", a, b, c, d, e, f, g, h)
+	steps := []string{
+		fmt.Sprintf("Compute constant terms on LHS: %d*%d + %d*%d = %d", a, b, c, d, k),
+		fmt.Sprintf("Compute constant terms on RHS: %d*%d + %d*%d = %d", e, f, g, h, k),
+		"Since the constant sums match on both sides, and x coefficients are different,",
+		"by Shunyam Samyasamuccaye, the variable must be 0.",
+		"Therefore, x = 0.",
+	}
+	
+	return domain.Problem{
+		SutraID:      5,
+		QuestionText: questionText,
+		Difficulty:   difficulty,
+		DedupKey:     fmt.Sprintf("s5:L4:%d:%d:%d:%d", a, b, c, d),
+		Answer:       0,
+		Options:      []string{"0", "1", "-1", "2"},
+		SolutionSteps: steps,
+	}
+}
+
+func genSutra5WithLesson(difficulty int, lessonID string) domain.Problem {
+	if lessonID == "SUTRA_5_LESSON_1" {
+		return genSutra5Lesson1(difficulty)
+	}
+	if lessonID == "SUTRA_5_LESSON_2" {
+		return genSutra5Lesson2(difficulty)
+	}
+	if lessonID == "SUTRA_5_LESSON_3" {
+		return genSutra5Lesson3(difficulty)
+	}
+	if lessonID == "SUTRA_5_LESSON_4" {
+		return genSutra5Lesson4(difficulty)
+	}
+	switch rand.Intn(4) {
+	case 0:
+		return genSutra5Lesson1(difficulty)
+	case 1:
+		return genSutra5Lesson2(difficulty)
+	case 2:
+		return genSutra5Lesson3(difficulty)
+	default:
+		return genSutra5Lesson4(difficulty)
+	}
+}
+
+func genSutra5(difficulty int) domain.Problem {
+	return genSutra5WithLesson(difficulty, "")
 }
 
 // ---------- Sutra 6: Anurupye Shunyamanyat ----------

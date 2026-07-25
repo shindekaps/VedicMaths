@@ -51,6 +51,8 @@ func (s *Service) NextProblem(ctx context.Context, userID string, sutraID, diffi
 			candidate = genSutra3WithLesson(difficulty, lessonID)
 		} else if sutraID == 4 {
 			candidate = genSutra4WithLesson(difficulty, lessonID)
+		} else if sutraID == 5 {
+			candidate = genSutra5WithLesson(difficulty, lessonID)
 		} else {
 			candidate = gen(difficulty)
 		}
@@ -81,6 +83,8 @@ func (s *Service) NextProblem(ctx context.Context, userID string, sutraID, diffi
 			p = genSutra3WithLesson(difficulty, lessonID)
 		} else if sutraID == 4 {
 			p = genSutra4WithLesson(difficulty, lessonID)
+		} else if sutraID == 5 {
+			p = genSutra5WithLesson(difficulty, lessonID)
 		} else {
 			p = gen(difficulty)
 		}
@@ -121,6 +125,8 @@ func (s *Service) GetQuestions(ctx context.Context, userID string, sutraID, diff
 				candidate = genSutra3WithLesson(difficulty, "")
 			} else if sutraID == 4 {
 				candidate = genSutra4WithLesson(difficulty, "")
+			} else if sutraID == 5 {
+				candidate = genSutra5WithLesson(difficulty, "")
 			} else {
 				candidate = gen(difficulty)
 			}
@@ -144,6 +150,8 @@ func (s *Service) GetQuestions(ctx context.Context, userID string, sutraID, diff
 				p = genSutra3WithLesson(difficulty, "")
 			} else if sutraID == 4 {
 				p = genSutra4WithLesson(difficulty, "")
+			} else if sutraID == 5 {
+				p = genSutra5WithLesson(difficulty, "")
 			} else {
 				p = gen(difficulty)
 			}
