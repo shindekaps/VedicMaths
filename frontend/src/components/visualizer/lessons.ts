@@ -386,7 +386,7 @@ export function buildLesson3(p: any): LessonModel {
     const dv = cv, cyIn = cy, idx = i;
     frames.push({
       cap: `<b>${dv}</b>×${eka}${cyIn ? ' + ' + cyIn : ''} = <b>${t}</b> → write <span class="vvm-hl2">${nd}</span>${nc ? `, carry <span style="color:var(--warn);font-weight:700">${nc}</span>` : ''}`,
-      log: [String(idx), `${dv} × ${eka}${cyIn ? ' + ' + cyIn : ''} = ${t} → write <span class="vvm-v">${nd}</span>${nc ? ` c${nc}` : ''}`],
+      log: [[String(idx), `${dv} × ${eka}${cyIn ? ' + ' + cyIn : ''} = ${t} → write <span class="vvm-v">${nd}</span>${nc ? ` c${nc}` : ''}`]],
       lines: [
         { id: `d_${idx}`, label: 'digits', nodes: [strip(idx + 1, idx)] },
         { id: `w_${idx}`, label: 'working', nodes: [flowBox(dv, cyIn, eka, t, { d: nd, c: nc })] }
@@ -465,7 +465,7 @@ export function buildLesson4(p: any): LessonModel {
   ops.forEach((o, i) => {
     frames.push({
       cap: `Chop the last digit <span class="vvm-hl3">${o.last}</span> off <b>${o.from}</b>. Multiply it by the osculator (${o.last} × ${eka} = ${o.last * eka}) and add to what's left: <b>${o.rest} + ${o.last * eka} = <span class="vvm-v">${o.nxt}</span></b>.`,
-      log: [String(i + 1), `${o.rest} + ${o.last}×${eka} = <span class="vvm-v">${o.nxt}</span>`],
+      log: [[String(i + 1), `${o.rest} + ${o.last}×${eka} = <span class="vvm-v">${o.nxt}</span>`]],
       lines: [
         { id: `s_${i}`, label: 'split', nodes: [cell(String(o.rest), 'prev', { id: 'rest', tag: 'keep' }), cell(String(o.last), 'tail', { id: 'last', tag: 'chop' })] },
         { id: `o_${i}`, label: 'osculate', nodes: [cell(String(o.rest), 'prev', { id: 'r2' }), sym('+'), cell(String(o.last), 'tail', { id: 'l2' }), sym('x'), cell(String(eka), 'eka', { sm: true }), sym('='), cell(String(o.nxt), 'res', { id: 'nx', pop: true })] },
