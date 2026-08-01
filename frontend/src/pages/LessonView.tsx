@@ -8,6 +8,7 @@ import { api } from '../api/client';
 
 import { LessonIntro } from '../components/lesson/LessonIntro';
 import { LessonTheory } from '../components/lesson/LessonTheory';
+import { LessonTutorial } from '../components/lesson/LessonTutorial';
 import { LessonExamples } from '../components/lesson/LessonExamples';
 import { LessonPractice } from '../components/lesson/LessonPractice';
 import { LessonQuiz } from '../components/lesson/LessonQuiz';
@@ -28,7 +29,7 @@ export const LessonView = ({ setActive, sutraID }: LessonViewProps) => {
 
   // State to track active lesson and active step
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
-  const [step, setStep] = useState(0); // 0: Intro, 1: Theory, 2: Examples, 3: Practice, 4: Quiz, 5: Complete
+  const [step, setStep] = useState(0); // 0: Intro, 1: Theory, 2: Tutorial, 3: Examples, 4: Practice, 5: Quiz, 6: Complete
 
   // Shared states between components
   const [practiceSessionID, setPracticeSessionID] = useState<string | null>(null);
@@ -45,7 +46,7 @@ export const LessonView = ({ setActive, sutraID }: LessonViewProps) => {
   };
 
   const handleDeselectLesson = async () => {
-    if (step === 5 && selectedLesson) {
+    if (step === 6 && selectedLesson) {
       const hasPassed = quizCorrectCount >= 15;
       const xpEarned = hasPassed ? ((correctCount + quizCorrectCount) * 15 + 100) : 0;
       if (xpEarned > 0) {
@@ -96,7 +97,7 @@ export const LessonView = ({ setActive, sutraID }: LessonViewProps) => {
     return 'in_progress';
   };
 
-  const stepsNames = ['Intro', 'Theory', 'Examples', 'Practice', 'Quiz', 'Finish'];
+  const stepsNames = ['Intro', 'Theory', 'Tutorial', 'Examples', 'Practice', 'Quiz', 'Finish'];
 
   const isLoading = isLessonsLoading || isProgressLoading;
 
@@ -206,7 +207,7 @@ export const LessonView = ({ setActive, sutraID }: LessonViewProps) => {
         <button
           onClick={handlePrevStep}
           className={`bg-white/10 hover:bg-white/15 border border-white/10 px-3 py-1 rounded-full text-white/80 hover:text-white font-black flex items-center gap-1.5 transition-all text-[10px] active:scale-95 shadow-sm ${
-            step >= 4 ? 'opacity-0 pointer-events-none' : ''
+            step >= 5 ? 'opacity-0 pointer-events-none' : ''
           }`}
         >
           <span>←</span>
@@ -240,34 +241,35 @@ export const LessonView = ({ setActive, sutraID }: LessonViewProps) => {
       <main className="flex-1 flex flex-col overflow-y-auto custom-scrollbar relative z-10 items-center justify-start px-4 py-2 sm:px-6">
         {step === 0 && <LessonIntro lesson={selectedLesson} onStart={() => setStep(1)} />}
         {step === 1 && <LessonTheory lesson={selectedLesson} onNext={() => setStep(2)} />}
-        {step === 2 && <LessonExamples lesson={selectedLesson} onComplete={() => setStep(3)} />}
-        {step === 3 && (
+        {step === 2 && <LessonTutorial lesson={selectedLesson} onNext={() => setStep(3)} />}
+        {step === 3 && <LessonExamples lesson={selectedLesson} onComplete={() => setStep(4)} />}
+        {step === 4 && (
           <LessonPractice 
             sutraID={sutraID} 
             lesson={selectedLesson} 
             onSessionStart={(sid) => setPracticeSessionID(sid)}
             onComplete={(cnt) => {
               setCorrectCount(cnt);
-              setStep(4);
+              setStep(5);
             }} 
           />
         )}
-        {step === 4 && (
+        {step === 5 && (
           <LessonQuiz 
             sutraID={sutraID} 
             lesson={selectedLesson} 
             practiceSessionID={practiceSessionID} 
             onComplete={(cnt) => {
               setQuizCorrectCount(cnt);
-              setStep(5);
+              setStep(6);
             }} 
           />
         )}
-        {step === 5 && (
+        {step === 6 && (
           <LessonComplete 
             quizCorrectCount={quizCorrectCount} 
             correctCount={correctCount} 
-            onRetry={() => setStep(4)} 
+            onRetry={() => setStep(5)} 
             onFinish={handleDeselectLesson} 
           />
         )}

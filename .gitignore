@@ -8,3 +8,6 @@ VedicPath_Technical_Design_Document.pdf
 vedic-maths-ui-memory.skill
 go-mongo
 requirement
+.gitignore
+backend/*.exe
+

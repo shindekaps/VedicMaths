@@ -11,6 +11,7 @@ import { QuizView } from './pages/QuizView';
 import { GamesView } from './pages/GamesView';
 import { LessonView } from './pages/LessonView';
 import { PracticeView } from './pages/PracticeView';
+import { TutorialView } from './pages/TutorialView';
 import { useAuthStore } from './stores/authStore';
 import { Toaster } from 'react-hot-toast';
 
@@ -53,6 +54,7 @@ function App() {
           {view === 'dashboard' && <DashboardView setActive={setView} />}
           {(view === 'progress' || view === 'profile') && <ProgressView />}
           {view === 'quiz' && <QuizView />}
+          {view === 'tutorial' && <TutorialView />}
           {view === 'games' && <GamesView />}
           {view === 'lesson' && <LessonView setActive={setView} sutraID={selectedSutraID} />}
           {view === 'practice' && <PracticeView sutraID={selectedSutraID} setActive={setView} />}
