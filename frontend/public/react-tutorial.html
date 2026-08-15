@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>React JS Masterclass · Visual Tutorial</title>
+<style>
+  :root {
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c232c; --line:#2b3440;
+    --ink:#e6edf3; --dim:#8b98a5; --faint:#5b6672;
+    --accent:#61dafb; --accent2:#4cc2ff; --good:#3fb950; --warn:#ff7b72; --violet:#bc8cff;
+    --mono:ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin:0; padding:0; height: 100vh; overflow: hidden; }
+  body {
+    display: flex;
+    background:
+      radial-gradient(1200px 600px at 12% -10%, #1b2432 0%, transparent 60%),
+      var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  
+  /* Sidebar */
+  .sidebar {
+    width: 320px;
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+  }
+  .sidebar .logo {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding: 0 10px;
+  }
+  .sidebar .logo svg { width: 32px; height: 32px; color: var(--accent); animation: spin 10s linear infinite; }
+  @keyframes spin { 100% { transform: rotate(360deg); } }
+  .sidebar .logo h2 { margin: 0; font-size: 18px; color: var(--ink); line-height: 1.2; }
+  .nav-group { margin-bottom: 10px; overflow-y: auto; flex: 1; padding-right: 5px; }
+  .nav-group::-webkit-scrollbar { width: 6px; }
+  .nav-group::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
+  .nav-label { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); font-weight: 700; margin: 20px 10px 10px; }
+  .menu-item {
+    padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 13.5px; color: var(--dim);
+    transition: .2s; display: flex; align-items: center; gap: 10px; margin-bottom: 4px;
+  }
+  .menu-item:hover { background: #21262d; color: var(--ink); }
+  .menu-item.active { background: #61dafb15; color: var(--accent); font-weight: 600; border-left: 3px solid var(--accent); border-top-left-radius: 2px; border-bottom-left-radius: 2px; }
+  .menu-item .n { width: 22px; height: 22px; border-radius: 6px; background: #252d38; color: var(--dim); display: grid; place-items: center; font-size: 11px; font-weight: bold; flex-shrink: 0; }
+  .menu-item.active .n { background: var(--accent); color: #0d1117; }
+
+  /* Main Area */
+  .main-area {
+    flex: 1; overflow-y: auto; padding: 30px 40px; position: relative;
+  }
+  .wrap { max-width: 1050px; margin: 0 auto; }
+  .eyebrow { font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 8px; }
+  h1 { margin: 0 0 10px; font-size: clamp(24px, 2.5vw, 32px); letter-spacing: -.02em; }
+  .sub { color: var(--dim); margin-top: 0; font-size: 15px; line-height: 1.6; max-width: 76ch; margin-bottom: 25px; }
+
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: flex; flex-direction: column; min-height: 680px; }
+  .card h2 { margin: 0 0 6px; font-size: 18px; letter-spacing: -.01em; color: var(--ink); }
+  .card .rule { color: var(--dim); font-size: 13.5px; margin: 0 0 16px; line-height: 1.6; }
+  .card .rule code { background: #0e1620; border: 1px solid #23384a; padding: 1px 6px; border-radius: 5px; font-family: var(--mono); font-size: 13px; color: var(--accent); }
+
+  /* --------- main split --------- */
+  .split { display: grid; grid-template-columns: 1fr 340px; gap: 16px; flex: 1; }
+  @media(max-width:1100px) { .split { grid-template-columns: 1fr; } }
+
+  /* --------- worksheet --------- */
+  .board {
+    position: relative; background: linear-gradient(180deg, #10161e, #0c1117);
+    border: 1px solid var(--line); border-radius: 14px; min-height: 420px; padding: 22px 18px;
+    overflow: hidden; display: flex; align-items: center; justify-content: center; height: 100%;
+  }
+  .board::before { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background-image: linear-gradient(#ffffff05 1px, transparent 1px), linear-gradient(90deg, #ffffff05 1px, transparent 1px);
+    background-size: 26px 26px; }
+  #wires { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; overflow: visible; }
+  .sheet { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%; }
+
+  /* Elements for animations */
+  .box {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border-radius: 10px; border: 2px solid var(--line); background: #161b22;
+    padding: 12px 20px; font-family: var(--mono); color: var(--ink); font-weight: 600; font-size: 14px;
+    transition: all 0.4s ease; opacity: 0; transform: translateY(10px); text-align: center;
+  }
+  .box.in { opacity: 1; transform: none; }
+  .box.highlight { border-color: var(--accent); box-shadow: 0 0 15px rgba(97, 218, 251, 0.2); }
+  .box.success { border-color: var(--good); background: #0f2318; color: var(--good); }
+  .box.warn { border-color: var(--warn); background: #2a1416; color: var(--warn); }
+  .box.violet { border-color: var(--violet); background: #1b1428; color: var(--violet); }
+  .box.dim { opacity: 0.5; }
+  
+  .dom-node {
+    width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--dim);
+    display: grid; place-items: center; background: #131b25; z-index: 5;
+    transition: all 0.5s; position: absolute; font-size: 20px; font-weight: bold;
+  }
+  .dom-node.sm { width: 45px; height: 45px; font-size: 14px; }
+  .dom-node.vdom { border-color: var(--violet); color: var(--violet); background: #1b1428; }
+  .dom-node.real { border-color: var(--good); color: var(--good); background: #0f2318; }
+  .dom-node.update { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 15px var(--accent); background: #0c202a; transform: scale(1.1); }
+  .dom-node.del { border-color: var(--warn); color: var(--warn); background: #2a1416; opacity: 0.5; text-decoration: line-through; }
+
+  .tree { position: relative; width: 100%; height: 300px; display: none; }
+  .tree.active { display: block; animation: fadeIn 0.5s; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .label { font-size: 12px; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; font-weight: 700; text-align: center; width: 100%; }
+
+  /* --------- caption --------- */
+  .caption {
+    margin-top: 14px; color: var(--dim); font-size: 14.5px; line-height: 1.65; text-align: center;
+    min-height: 4em; display: flex; align-items: center; justify-content: center; padding: 0 8px;
+  }
+  .caption b { color: var(--ink); }
+  .caption .hl { color: var(--accent); font-weight: 700; }
+  .caption .hl2 { color: var(--good); font-weight: 700; }
+  .caption .hl3 { color: var(--violet); font-weight: 700; }
+  .caption .say { background: #61dafb1f; border-radius: 4px; box-shadow: 0 1px 0 var(--accent); transition: background .15s; }
+
+  /* --------- written log --------- */
+  .log {
+    background: #0e131a; border: 1px solid var(--line); border-radius: 14px; padding: 16px;
+    display: flex; flex-direction: column; max-height: 520px; overflow-y: auto; height: 100%;
+  }
+  .log h3 { margin: 0 0 12px; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--faint); }
+  .logbody { font-family: var(--mono); font-size: 13px; line-height: 1.5; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .lrow {
+    opacity: 0; transform: translateX(-6px); transition: .35s; color: #7d8b99;
+    padding: 6px 0; display: flex; gap: 8px; border-left: 2px solid transparent; padding-left: 8px;
+    border-bottom: 1px solid #161b22;
+  }
+  .lrow.in { opacity: 1; transform: none; }
+  .lrow.new { color: var(--ink); border-left-color: var(--accent); background: linear-gradient(90deg, #61dafb0a, transparent); }
+  .lrow .lk { color: var(--accent); font-weight: bold; min-width: 16px; }
+
+  /* --------- code panel --------- */
+  .code-panel {
+    background: #0d1117; border: 1px solid var(--line); border-radius: 14px; 
+    padding: 16px; margin-top: 16px; font-family: var(--mono); font-size: 13px;
+    color: #e6edf3; overflow-x: auto; display: none; line-height: 1.5;
+  }
+  .code-panel pre { margin: 0; }
+  .code-panel .kw { color: #ff7b72; } /* keyword */
+  .code-panel .fn { color: #d2a8ff; } /* function */
+  .code-panel .st { color: #a5d6ff; } /* string */
+  .code-panel .cm { color: #8b949e; font-style: italic; } /* comment */
+
+
+  /* --------- controls --------- */
+  .controls { display: flex; flex-wrap: wrap; gap: 9px; align-items: center; margin-top: 16px; }
+  button.btn { background: var(--panel2); border: 1px solid var(--line); color: var(--ink);
+    padding: 9px 15px; border-radius: 9px; cursor: pointer; font-size: 13px; font-weight: 600; transition: .16s; }
+  button.btn:hover:not(:disabled) { border-color: #46566b; background: #232c37; }
+  button.btn:disabled { opacity: .35; cursor: not-allowed; }
+  button.btn.primary { background: linear-gradient(180deg, #61dafb, #42b6d6); border-color: #61dafb; color: #0d1117; }
+  button.btn.primary:hover:not(:disabled) { filter: brightness(1.1); }
+
+  .spacer { flex: 1; }
+  .pill { font-size: 11.5px; color: var(--faint); font-family: var(--mono); border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; }
+  .progress { height: 3px; background: #1b222b; border-radius: 2px; margin-top: 14px; overflow: hidden; }
+  .progress i { display: block; height: 100%; background: linear-gradient(90deg, var(--accent2), var(--accent)); width: 0%; transition: width .35s; }
+
+  /* --------- voice bar --------- */
+  .voicebar { margin-top: 11px; padding-top: 13px; border-top: 1px solid var(--line); gap: 12px; }
+  .voicebar .vgroup { display: flex; align-items: center; gap: 7px; color: var(--faint); font-size: 12px; }
+  .voicebar label { letter-spacing: .1em; text-transform: uppercase; font-weight: 700; font-size: 10.5px; }
+  .voicebar select { background: #0e141b; border: 1px solid var(--line); color: var(--ink); padding: 7px 9px; border-radius: 8px; font-size: 12.5px; max-width: 160px; }
+  .voicebar select:focus { outline: none; border-color: var(--accent2); }
+  .voicebar input[type=range] { width: 80px; accent-color: var(--accent); }
+  .btn.speak { display: flex; align-items: center; gap: 7px; }
+  .btn.speak.on { background: linear-gradient(180deg, #123a20, #0f2a19); border-color: var(--good); color: var(--good); }
+  .vnote { font-size: 11.5px; color: var(--faint); font-style: italic; }
+
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo">
+    <svg viewBox="0 0 118 103" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M59.102 102.7c-7.92 0-15.54-1.39-22.38-4.04-6.85-2.65-12.79-6.42-17.47-11.08-4.68-4.66-8.47-10.59-11.13-17.43C5.46 63.3 4.06 55.7 4.06 47.78c0-7.93 1.4-15.53 4.06-22.38 2.66-6.84 6.45-12.77 11.13-17.43 4.68-4.66 10.62-8.43 17.47-11.08C43.56 1.4 51.18 0 59.1 0c7.93 0 15.54 1.4 22.39 4.04 6.84 2.65 12.78 6.42 17.46 11.08 4.67 4.66 8.46 10.59 11.13 17.43 2.65 6.85 4.05 14.45 4.05 22.38 0 7.92-1.4 15.52-4.05 22.37-2.67 6.84-6.46 12.77-11.13 17.43-4.68 4.66-10.62 8.43-17.46 11.08-6.85 2.65-14.46 4.04-22.39 4.04z" fill="#61DAFB" fill-opacity="0.1"/>
+      <ellipse cx="59.1" cy="47.8" rx="23.9" ry="55.8" transform="rotate(-60 59.1 47.8)" stroke="#61DAFB" stroke-width="4"/>
+      <ellipse cx="59.1" cy="47.8" rx="23.9" ry="55.8" transform="rotate(-120 59.1 47.8)" stroke="#61DAFB" stroke-width="4"/>
+      <ellipse cx="59.1" cy="47.8" rx="23.9" ry="55.8" stroke="#61DAFB" stroke-width="4"/>
+      <circle cx="59.1" cy="47.8" r="9.1" fill="#61DAFB"/>
+    </svg>
+    <h2>React Course<br>Masterclass</h2>
+  </div>
+  
+  <div class="nav-group">
+    <div class="nav-label">Foundations</div>
+    <div id="tabs-foundations"></div>
+    <div class="nav-label">Hooks & State</div>
+    <div id="tabs-hooks"></div>
+    <div class="nav-label">Architecture & Performance</div>
+    <div id="tabs-arch"></div>
+    <div class="nav-label">Components & APIs</div>
+    <div id="tabs-apis"></div>
+  </div>
+</div>
+
+<div class="main-area">
+  <div class="wrap">
+    <div class="eyebrow" id="pageSection">Section Name</div>
+    <h1 id="pageTitle">React Topic</h1>
+    <p class="sub" id="pageSub">Topic Description</p>
+
+    <div class="card">
+      <h2 id="lTitle"></h2>
+      <p class="rule" id="lRule"></p>
+
+      <div class="controls">
+        <span class="pill" id="counter"></span>
+        <div class="spacer"></div>
+        <button class="btn speak" id="bVoice" aria-pressed="true" title="Toggle Voiceover">
+          <span id="voiceIcon">🔊</span>
+        </button>
+        <button class="btn" id="bPrev">◀ Back</button>
+        <button class="btn primary" id="bPlay">▶ Play</button>
+        <button class="btn" id="bNext">Step ▶</button>
+        <button class="btn" id="bReset">↺ Reset</button>
+      </div>
+
+      <div class="progress" style="margin-top: 0; margin-bottom: 16px;"><i id="prog"></i></div>
+
+      <div class="split">
+        <div style="display:flex; flex-direction:column; flex: 1; min-width:0;">
+          <div class="board" id="board">
+            <svg id="wires"></svg>
+            <div class="sheet" id="sheet"></div>
+          </div>
+          <div class="caption" id="caption"></div>
+          <div class="code-panel" id="codePanel">
+            <pre><code id="codeBlock"></code></pre>
+          </div>
+        </div>
+
+        <div class="log">
+          <h3>Explanation Log</h3>
+          <div class="logbody" id="logbody"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const board = $('board'), sheet = $('sheet'), wires = $('wires'),
+      caption = $('caption'), logbody = $('logbody');
+
+function el(tag, cls, txt){
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (txt !== undefined) n.textContent = txt;
+  return n;
+}
+
+// Tree drawing helper
+function drawTree(nodes, offsetX = 0, offsetY = 0) {
+  const container = el('div', 'tree active');
+  nodes.forEach(n => {
+    const cls = n.sm ? `dom-node sm ${n.type}` : `dom-node ${n.type}`;
+    const nodeEl = el('div', cls + (n.update ? ' update' : '') + (n.del ? ' del' : ''), n.label);
+    nodeEl.style.left = `${150 + n.x + offsetX}px`;
+    nodeEl.style.top = `${20 + n.y + offsetY}px`;
+    nodeEl.id = n.id;
+    container.appendChild(nodeEl);
+  });
+  return container;
+}
+
+// Wire drawing for tree connections
+let pendingWires = [];
+function wire(fromId, toId, color = '#30363d', dash = false) { pendingWires.push({fromId, toId, color, dash}); }
+
+function drawWires(){
+  wires.innerHTML = '';
+  if (!pendingWires.length) return;
+  const bb = board.getBoundingClientRect();
+  wires.setAttribute('viewBox', `0 0 ${bb.width} ${bb.height}`);
+
+  pendingWires.forEach(w => {
+    const a = $(w.fromId);
+    const b = $(w.toId);
+    if (!a || !b) return;
+
+    const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
+    const x1 = ra.left - bb.left + ra.width / 2, y1 = ra.bottom - bb.top;
+    const x2 = rb.left - bb.left + rb.width / 2, y2 = rb.top - bb.top;
+
+    const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    p.setAttribute('d', `M ${x1} ${y1} L ${x2} ${y2}`);
+    p.setAttribute('stroke', w.color);
+    p.setAttribute('stroke-width', '2');
+    if (w.dash) p.setAttribute('stroke-dasharray', '5 5');
+    wires.appendChild(p);
+  });
+}
+
+// =========================================================================
+// 10 LESSONS FOR REACT COURSE
+// =========================================================================
+
+function lessonJSX() {
+  const F = [];
+  F.push({
+    cap: `Browsers don't understand <span class="hl">JSX</span> natively. It's syntax sugar written by developers to make React code look like HTML.`,
+    log: [['1', 'JSX looks like HTML markup']],
+    build: s => {
+      const b = el('div', 'box in highlight');
+      b.innerHTML = `const el = &lt;h1 className="title"&gt;Hello&lt;/h1&gt;;`;
+      s.appendChild(b);
+    }
+  });
+  F.push({
+    cap: `During the build process, a compiler like <span class="hl2">Babel</span> transforms this JSX into plain JavaScript function calls.`,
+    log: [['2', 'Babel compiles JSX to React.createElement()']],
+    build: s => {
+      const b = el('div', 'box in highlight'); b.innerHTML = `const el = &lt;h1 className="title"&gt;Hello&lt;/h1&gt;;`;
+      s.appendChild(b);
+      const b2 = el('div', 'box in success'); b2.style.marginTop = '20px';
+      b2.innerHTML = `React.createElement(<br>&nbsp;&nbsp;'h1',<br>&nbsp;&nbsp;{ className: 'title' },<br>&nbsp;&nbsp;'Hello'<br>);`;
+      s.appendChild(b2);
+    }
+  });
+  F.push({
+    cap: `These function calls execute at runtime to return <span class="hl3">React Elements</span>. A React Element is just a plain Javascript Object that describes a DOM node.`,
+    log: [['3', 'Returns a React Element (JS Object)']],
+    build: s => {
+      const b2 = el('div', 'box in dim'); b2.innerHTML = `React.createElement(...)`; s.appendChild(b2);
+      const b3 = el('div', 'box in violet'); b3.style.marginTop = '20px';
+      b3.innerHTML = `{<br>&nbsp;&nbsp;type: 'h1',<br>&nbsp;&nbsp;props: {<br>&nbsp;&nbsp;&nbsp;&nbsp;className: 'title',<br>&nbsp;&nbsp;&nbsp;&nbsp;children: 'Hello'<br>&nbsp;&nbsp;}<br>}`;
+      s.appendChild(b3);
+    }
+  });
+  return { F };
+}
+
+function lessonComponents() {
+  const F = [];
+  F.push({
+    cap: `In React, we build UIs using <span class="hl">Components</span>. A component is essentially a JavaScript function that returns JSX.`,
+    log: [['1', 'Components are functions returning JSX']],
+    build: s => {
+      const b = el('div', 'box in highlight');
+      b.innerHTML = `<span style="color:var(--violet)">function</span> Profile() {<br>&nbsp;&nbsp;return &lt;div&gt;User Profile&lt;/div&gt;;<br>}`;
+      s.appendChild(b);
+    }
+  });
+  F.push({
+    cap: `Components allow you to split the UI into independent, reusable pieces. You can pass data downwards into them using <span class="hl2">Props</span> (properties).`,
+    log: [['2', 'Data flows down via Props']],
+    build: s => {
+      const app = el('div', 'box in'); app.style.border = '2px dashed #61dafb';
+      app.innerHTML = '<div style="margin-bottom:10px; color:#61dafb;">&lt;App /&gt;</div>';
+      const b1 = el('div', 'box in success'); b1.textContent = '<Profile name="Alice" />';
+      const b2 = el('div', 'box in success'); b2.textContent = '<Profile name="Bob" />';
+      app.append(b1, el('br'), b2);
+      s.appendChild(app);
+    }
+  });
+  F.push({
+    cap: `Props are <span class="hl">strictly read-only</span>. Data in React flows one-way, from parent to child. A child component cannot modify the props it receives!`,
+    log: [['3', 'Props are Read-Only (One-way data flow)']],
+    build: s => {
+      const b = el('div', 'box in warn');
+      b.innerHTML = `<span style="color:var(--violet)">function</span> Profile(props) {<br>&nbsp;&nbsp;<span style="color:var(--warn); text-decoration:line-through">props.name = "Charlie"; // ERROR</span><br>&nbsp;&nbsp;return &lt;div&gt;{props.name}&lt;/div&gt;;<br>}`;
+      s.appendChild(b);
+    }
+  });
+  return { F };
+}
+
+function lessonStateBatching() {
+  const F = [];
+  
+  F.push({
+    cap: `Why can't we just use a normal javascript variable (<code>let count = 0</code>)? Because changing a normal variable does NOT tell React to update the UI!`,
+    log: [['1', 'Normal variables do not trigger renders']],
+    code: `<span class="kw">let</span> count = <span class="st">0</span>;\n\n<span class="kw">function</span> <span class="fn">Counter</span>() {\n  <span class="kw">return</span> (\n    &lt;<span class="fn">button</span> onClick={<span class="kw">() =&gt;</span> { count = <span class="st">1</span>; }}&gt;\n      Click me! (count is {count})\n    &lt;/<span class="fn">button</span>&gt;\n  );\n}`,
+    build: s => {
+      const b1 = el('div', 'box in warn'); b1.id = 'var'; b1.innerHTML = `let count = 0;<br>count = 1;`;
+      const b2 = el('div', 'box in error'); b2.id = 'ui'; b2.innerHTML = `UI Screen<br><small>Still shows 0!</small>`;
+      s.appendChild(b1); s.appendChild(b2);
+      b1.style.top = '50px'; b1.style.left = '100px';
+      b2.style.top = '150px'; b2.style.left = '100px';
+    },
+    after: () => wire('var','ui','red')
+  });
+
+  F.push({
+    cap: `A React component is just a normal JavaScript function! When it re-renders, the function is simply called again from the top. All inner variables (like <code>let count = 0</code>) completely reset, wiping out your data!`,
+    log: [['2', 'Normal variables reset on re-render']],
+    code: `<span class="kw">function</span> <span class="fn">Counter</span>() {\n  <span class="cm">// If re-render happens, this resets to 0!</span>\n  <span class="kw">let</span> count = <span class="st">0</span>;\n  <span class="cm">/* ... */</span>\n}`,
+    build: s => {
+      const b1 = el('div', 'box in'); b1.id = 'ren'; b1.innerHTML = `Component Re-renders<br><small>(Function called again)</small>`;
+      const b2 = el('div', 'box in error'); b2.id = 'var'; b2.innerHTML = `let count = 0;<br><small>(Data wiped out!)</small>`;
+      s.appendChild(b1); s.appendChild(b2);
+      b1.style.top = '50px'; b1.style.left = '90px';
+      b2.style.top = '150px'; b2.style.left = '100px';
+    },
+    after: () => wire('ren','var','red')
+  });
+
+  F.push({
+    cap: `<code>useState</code> solves this by acting like a closure. It tells React to safely preserve the data outside the component function, combining persistent memory with the superpower to trigger a re-render!`,
+    log: [['3', 'useState preserves local memory']],
+    code: `<span class="kw">import</span> { useState } <span class="kw">from</span> <span class="st">'react'</span>;\n\n<span class="kw">function</span> <span class="fn">Counter</span>() {\n  <span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="st">0</span>);\n  <span class="cm">/* ... */</span>\n}`,
+    build: s => {
+      const b1 = el('div', 'box in highlight'); b1.id = 'comp'; b1.innerHTML = `Component Function`;
+      const b2 = el('div', 'box in success'); b2.id = 'mem'; b2.innerHTML = `React Memory Vault<br><small>[ count: 1 ]</small>`;
+      s.appendChild(b1); s.appendChild(b2);
+      b1.style.top = '50px'; b1.style.left = '100px';
+      b2.style.top = '150px'; b2.style.left = '100px';
+    },
+    after: () => wire('mem','comp','#2ea043')
+  });
+
+  F.push({
+    cap: `Calling the setter function (<code>setCount</code>) updates the Memory Vault AND tells React: "The state changed. Please queue a <span class="hl2">re-render</span>."`,
+    log: [['4', 'Setter function queues a re-render']],
+    code: `<span class="kw">function</span> <span class="fn">Counter</span>() {\n  <span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="st">0</span>);\n  <span class="kw">return</span> &lt;<span class="fn">button</span> onClick={<span class="kw">() =&gt;</span> <span class="fn">setCount</span>(<span class="st">1</span>)}&gt;Click!&lt;/<span class="fn">button</span>&gt;;\n}`,
+    build: s => {
+      const b1 = el('div', 'box in'); b1.id = 'set'; b1.textContent = 'setCount(2)';
+      const b2 = el('div', 'box in warn'); b2.id = 'q'; b2.textContent = 'React Render Queue:<br>[ Update count to 2 ]';
+      s.appendChild(b1); s.appendChild(b2);
+      b1.style.top = '50px'; b1.style.left = '100px';
+      b2.style.top = '150px'; b2.style.left = '80px';
+    },
+    after: () => wire('set','q')
+  });
+
+  F.push({
+    cap: `A great optimization trick: What happens if you call <code>setCount</code> multiple times synchronously? React 18 uses <span class="hl">Automatic Batching</span>. It groups multiple state updates into a single re-render for performance!`,
+    log: [['5', 'Automatic Batching groups multiple updates']],
+    code: `<span class="kw">function</span> <span class="fn">handleClick</span>() {\n  <span class="cm">// React waits until this function finishes</span>\n  <span class="fn">setCount</span>(<span class="st">1</span>);\n  <span class="fn">setCount</span>(<span class="st">2</span>);\n  <span class="fn">setCount</span>(<span class="st">3</span>);\n  <span class="cm">// Only *then* does it trigger ONE re-render!</span>\n}`,
+    build: s => {
+      const b1 = el('div', 'box in'); b1.id = 'calls';
+      b1.innerHTML = `setCount(1);<br>setCount(2);<br>setCount(3);`;
+      const b2 = el('div', 'box in success'); b2.id = 'res';
+      b2.innerHTML = 'Result: Only ONE re-render happens<br>(count becomes 3)';
+      s.appendChild(b1); s.appendChild(b2);
+      b1.style.top = '30px'; b1.style.left = '100px';
+      b2.style.top = '160px'; b2.style.left = '50px';
+    },
+    after: () => wire('calls','res','#2ea043')
+  });
+
+  F.push({
+    cap: `If you need to update state based on its <i>previous</i> value, passing <code>count + 1</code> multiple times will fail due to batching. You must pass an <span class="hl">updater function</span>!`,
+    log: [['6', 'Updater functions queue state transforms']],
+    code: `<span class="kw">function</span> <span class="fn">handleClick</span>() {\n  <span class="cm">// WRONG: uses stale 'count' value</span>\n  <span class="fn">setCount</span>(count + <span class="st">1</span>); \n  <span class="fn">setCount</span>(count + <span class="st">1</span>);\n\n  <span class="cm">// RIGHT: queues based on previous state</span>\n  <span class="fn">setCount</span>(prev =&gt; prev + <span class="st">1</span>);\n  <span class="fn">setCount</span>(prev =&gt; prev + <span class="st">1</span>);\n}`,
+    build: s => {
+      const b1 = el('div', 'box in error'); 
+      b1.innerHTML = `setCount(count + 1);<br>setCount(count + 1);<br><small>Result: count is 1 (Bug!)</small>`;
+      const b2 = el('div', 'box in success'); b2.style.marginTop = '15px'; 
+      b2.innerHTML = `setCount(prev => prev + 1);<br>setCount(prev => prev + 1);<br><small>Result: count is 2 (Correct!)</small>`;
+      s.appendChild(b1); s.appendChild(b2);
+    }
+  });
+
+  return { F };
+}
+
+function lessonUseEffect() {
+  const F = [];
+  
+  F.push({
+    cap: `If your component needs to do external work (like fetching data or setting timers), doing it directly inside the function blocks React! The browser won't be able to paint the UI until the API finishes.`,
+    log: [['1', 'Synchronous side-effects block rendering']],
+    code: `<span class="kw">function</span> <span class="fn">Profile</span>() {\n  <span class="cm">// BAD: Blocks React render and UI paint!</span>\n  <span class="kw">const</span> data = <span class="fn">fetchDataSync</span>();\n\n  <span class="kw">return</span> &lt;<span class="fn">div</span>&gt;{data}&lt;/<span class="fn">div</span>&gt;;\n}`,
+    build: s => {
+      const b1 = el('div', 'box in error'); b1.id = 'render'; b1.innerHTML = `Component Render<br><small>fetchData() (Waiting...)</small>`;
+      const b2 = el('div', 'box in'); b2.id = 'paint'; b2.innerHTML = `Browser Paint<br><small>(Blocked! Screen is blank)</small>`;
+      s.appendChild(b1); s.appendChild(b2);
+      b1.style.top = '50px'; b1.style.left = '100px';
+      b2.style.top = '150px'; b2.style.left = '100px';
+    },
+    after: () => wire('render','paint','red')
+  });
+
+  F.push({
+    cap: `The <span class="hl">useEffect</span> hook fixes this! It pushes the side-effect <i>outside</i> the render cycle. The browser paints the UI instantly, and <i>then</i> the Effect runs in the background.`,
+    log: [['2', 'useEffect runs after browser paint']],
+    code: `<span class="kw">import</span> { useEffect } <span class="kw">from</span> <span class="st">'react'</span>;\n\n<span class="kw">function</span> <span class="fn">Profile</span>() {\n  <span class="cm">// GOOD: Runs in background after paint!</span>\n  <span class="fn">useEffect</span>(<span class="kw">() =&gt;</span> {\n    <span class="fn">fetchData</span>();\n  });\n\n  <span class="kw">return</span> &lt;<span class="fn">div</span>&gt;Loading...&lt;/<span class="fn">div</span>&gt;;\n}`,
+    build: s => {
+      const b1 = el('div', 'box in'); b1.id = 'render'; b1.innerHTML = `Component Render`;
+      const b2 = el('div', 'box in success'); b2.id = 'paint'; b2.innerHTML = `Browser Paint<br><small>(UI is visible!)</small>`;
+      const b3 = el('div', 'box in highlight'); b3.id = 'eff'; b3.innerHTML = `useEffect()<br><small>fetchData()</small>`;
+      s.appendChild(b1); s.appendChild(b2); s.appendChild(b3);
+      b1.style.top = '20px'; b1.style.left = '100px';
+      b2.style.top = '100px'; b2.style.left = '100px';
+      b3.style.top = '180px'; b3.style.left = '100px';
+    },
+    after: () => { wire('render','paint','#2ea043'); wire('paint','eff'); }
+  });
+
+  F.push({
+    cap: `The <span class="hl3">Dependency Array</span> (the second argument) controls when the effect runs. If you pass an empty array <code>[]</code>, it runs exactly once when the component Mounts.`,
+    log: [['3', 'Empty array runs once on mount']],
+    code: `<span class="kw">function</span> <span class="fn">Profile</span>() {\n  <span class="fn">useEffect</span>(<span class="kw">() =&gt;</span> {\n    <span class="fn">console</span>.log(<span class="st">"Component Mounted!"</span>);\n  }, []); <span class="cm">// &lt;- Empty array means runs ONLY once</span>\n}`,
+    build: s => {
+      const b1 = el('div', 'box in'); b1.id = 'ren1'; b1.innerHTML = `Initial Mount`;
+      const b2 = el('div', 'box in success'); b2.id = 'eff1'; b2.innerHTML = `useEffect(() => {}, [])<br><small>(Executes)</small>`;
+      const b3 = el('div', 'box in'); b3.id = 'ren2'; b3.innerHTML = `Re-render`;
+      const b4 = el('div', 'box in warn'); b4.id = 'eff2'; b4.innerHTML = `useEffect(() => {}, [])<br><small>(Skipped)</small>`;
+      s.appendChild(b1); s.appendChild(b2); s.appendChild(b3); s.appendChild(b4);
+      b1.style.top = '30px'; b1.style.left = '30px';
+      b2.style.top = '30px'; b2.style.left = '200px';
+      b3.style.top = '130px'; b3.style.left = '30px';
+      b4.style.top = '130px'; b4.style.left = '200px';
+    },
+    after: () => { wire('ren1','eff1','#2ea043'); wire('ren2','eff2','orange'); }
+  });
+
+  F.push({
+    cap: `If you pass variables into the array like <code>[id]</code>, React checks if the <code>id</code> changed since the last render. If it did, the effect runs again! If omitted completely, it runs on <i>every</i> render.`,
+    log: [['4', 'Dependency Array triggers on value change']],
+    code: `<span class="kw">function</span> <span class="fn">Profile</span>({ id }) {\n  <span class="fn">useEffect</span>(<span class="kw">() =&gt;</span> {\n    <span class="fn">fetchUser</span>(id);\n  }, [id]); <span class="cm">// &lt;- Runs when 'id' changes</span>\n}`,
+    build: s => {
+      const b1 = el('div', 'box'); b1.id = 'ren1'; b1.innerHTML = `Re-render<br><small>id: 5</small>`;
+      const b2 = el('div', 'box success'); b2.id = 'eff1'; b2.innerHTML = `useEffect(() => {}, [id])<br><small>(Executes - ID changed)</small>`;
+      s.appendChild(b1); s.appendChild(b2);
+      b1.style.top = '80px'; b1.style.left = '30px';
+      b2.style.top = '80px'; b2.style.left = '200px';
+    },
+    after: () => { wire('ren1','eff1','#2ea043'); }
+  });
+
+  F.push({
+    cap: `You can optionally return a <span class="hl2">Cleanup Function</span>. React runs this before the component unmounts, or before running the effect again. Crucial for destroying WebSockets or Timers to prevent memory leaks!`,
+    log: [['5', 'Cleanup function prevents memory leaks']],
+    code: `<span class="kw">function</span> <span class="fn">Timer</span>() {\n  <span class="fn">useEffect</span>(<span class="kw">() =&gt;</span> {\n    <span class="kw">const</span> id = <span class="fn">setInterval</span>(tick, <span class="st">1000</span>);\n    <span class="kw">return</span> <span class="kw">() =&gt;</span> <span class="fn">clearInterval</span>(id); <span class="cm">// Cleanup!</span>\n  }, []);\n}`,
+    build: s => {
+      const comp = el('div', 'box in warn');
+      comp.innerHTML = `useEffect(() => {<br>&nbsp;&nbsp;const timer = setInterval(...);<br>&nbsp;&nbsp;<span style="color:var(--accent)">return () => clearInterval(timer);</span><br>}, []);`;
+      s.appendChild(comp);
+      comp.style.top = '80px'; comp.style.left = '60px';
+    }
+  });
+
+  return { F };
+}
+
+function lessonReconciliation() {
+  const F = [];
+  const vdomTree1 = [
+    {id:'v1', sm:true, type:'vdom', label:'div', x:0, y:0},
+    {id:'v2', sm:true, type:'vdom', label:'h1', x:-50, y:60},
+    {id:'v3', sm:true, type:'vdom', label:'p', x:50, y:60},
+  ];
+  const rdomTree1 = [
+    {id:'r1', sm:true, type:'real', label:'div', x:0, y:0},
+    {id:'r2', sm:true, type:'real', label:'h1', x:-50, y:60},
+    {id:'r3', sm:true, type:'real', label:'p', x:50, y:60},
+  ];
+  F.push({
+    cap: `Updating the browser's Real DOM is slow. React uses a <span class="hl">Virtual DOM</span> tree to figure out what needs to change in memory first.`,
+    log: [['1', 'Virtual DOM is synced with Real DOM']],
+    build: s => {
+      s.appendChild(el('div', 'label', 'Virtual DOM'));
+      s.appendChild(drawTree(vdomTree1, -100));
+      s.appendChild(el('div', 'label', 'Real DOM'));
+      s.appendChild(drawTree(rdomTree1, 100, -320));
+    },
+    after: () => {
+      wire('v1','v2','#bc8cff'); wire('v1','v3','#bc8cff');
+      wire('r1','r2','#3fb950'); wire('r1','r3','#3fb950');
+      wire('v1','r1','#46566b',true); wire('v2','r2','#46566b',true); wire('v3','r3','#46566b',true);
+    }
+  });
+
+  const vdomTree2 = [
+    {id:'v1', sm:true, type:'vdom', label:'div', x:0, y:0},
+    {id:'v2', sm:true, type:'vdom', label:'h1', x:-50, y:60},
+    {id:'v3', sm:true, type:'vdom update', label:'p*', x:50, y:60, update:true},
+  ];
+  F.push({
+    cap: `Upon state change, React creates a new VDOM tree and compares it to the old one. This Diffing algorithm is called <span class="hl3">Reconciliation</span>.`,
+    log: [['2', 'Reconciliation: Diffing New VDOM vs Old VDOM']],
+    build: s => {
+      s.appendChild(el('div', 'label', 'Diffing...'));
+      s.appendChild(drawTree(vdomTree2, -100));
+      s.appendChild(el('div', 'label', 'Real DOM'));
+      s.appendChild(drawTree(rdomTree1, 100, -320));
+    },
+    after: () => {
+      wire('v1','v2','#bc8cff'); wire('v1','v3','#bc8cff');
+      wire('r1','r2','#3fb950'); wire('r1','r3','#3fb950');
+      wire('v3','r3','#61dafb',true); // highlight change
+    }
+  });
+
+  const listTree1 = [
+    {id:'l1', sm:true, type:'vdom', label:'ul', x:0, y:0},
+    {id:'l2', sm:true, type:'vdom', label:'A', x:-50, y:60},
+    {id:'l3', sm:true, type:'vdom', label:'B', x:50, y:60},
+  ];
+  const listTree2 = [
+    {id:'l1', sm:true, type:'vdom', label:'ul', x:0, y:0},
+    {id:'l2', sm:true, type:'vdom update', label:'C', x:-50, y:60, update:true},
+    {id:'l3', sm:true, type:'vdom update', label:'A', x:0, y:90, update:true},
+    {id:'l4', sm:true, type:'vdom update', label:'B', x:50, y:60, update:true},
+  ];
+  F.push({
+    cap: `Important Concept: <b>Keys in Lists</b>. If you add an element to the TOP of a list without a <code>key</code> prop, React thinks every single child changed and re-renders them all!`,
+    log: [['3', 'Without keys, inserting at top mutates every child']],
+    build: s => {
+      s.appendChild(el('div', 'label', 'List without keys (Prepending "C")'));
+      s.appendChild(drawTree(listTree1, -120));
+      s.appendChild(drawTree(listTree2, 120, -320));
+    },
+    after: () => {
+      wire('l1','l2','#bc8cff'); wire('l1','l3','#bc8cff'); wire('l1','l4','#bc8cff');
+    }
+  });
+
+  const listTree3 = [
+    {id:'l1', sm:true, type:'vdom', label:'ul', x:0, y:0},
+    {id:'l2', sm:true, type:'vdom update', label:'C', x:-50, y:60, update:true},
+    {id:'l3', sm:true, type:'vdom', label:'A', x:0, y:90},
+    {id:'l4', sm:true, type:'vdom', label:'B', x:50, y:60},
+  ];
+  F.push({
+    cap: `With <span class="hl2">Keys</span>, React matches the unique IDs. It realizes "A" and "B" just moved, and only creates "C", drastically boosting performance.`,
+    log: [['4', 'With keys, React preserves existing DOM nodes']],
+    build: s => {
+      s.appendChild(el('div', 'label', 'List WITH keys (Prepending "C")'));
+      s.appendChild(drawTree(listTree1, -120));
+      s.appendChild(drawTree(listTree3, 120, -320));
+    },
+    after: () => {
+      wire('l1','l2','#bc8cff'); wire('l1','l3','#bc8cff'); wire('l1','l4','#bc8cff');
+    }
+  });
+  return { F };
+}
+
+function lessonContext() {
+  const F = [];
+  F.push({
+    cap: `Passing props through multiple nested components just to reach a child at the bottom is known as <span class="hl">Prop Drilling</span>. It makes code hard to maintain.`,
+    log: [['1', 'Prop Drilling across components']],
+    build: s => {
+      const tree = [
+        {id:'r1', sm:true, type:'real update', label:'App', x:0, y:0},
+        {id:'r2', sm:true, type:'real', label:'Nav', x:-50, y:60},
+        {id:'r3', sm:true, type:'real', label:'Mid', x:50, y:60},
+        {id:'r4', sm:true, type:'real update', label:'Btn', x:50, y:120, update:true},
+      ];
+      s.appendChild(drawTree(tree));
+    },
+    after: () => {
+      wire('r1','r2','#3fb950'); wire('r1','r3','#3fb950'); wire('r3','r4','#3fb950');
+      wire('r1','r3','#61dafb',true); wire('r3','r4','#61dafb',true); // highlight data flow
+    }
+  });
+  F.push({
+    cap: `The <span class="hl3">Context API</span> solves this by creating a global Provider. Any component inside can consume the data directly, bypassing the middle layers!`,
+    log: [['2', 'Context Provider bypasses the middle components']],
+    build: s => {
+      const tree = [
+        {id:'r1', sm:true, type:'vdom update', label:'Prov', x:0, y:0},
+        {id:'r2', sm:true, type:'real', label:'Nav', x:-50, y:60},
+        {id:'r3', sm:true, type:'real', label:'Mid', x:50, y:60},
+        {id:'r4', sm:true, type:'vdom update', label:'Btn', x:50, y:120, update:true},
+      ];
+      s.appendChild(drawTree(tree));
+    },
+    after: () => {
+      wire('r1','r2','#3fb950'); wire('r1','r3','#3fb950'); wire('r3','r4','#3fb950');
+      wire('r1','r4','#bc8cff',true); // direct highlight data flow
+    }
+  });
+  return { F };
+}
+
+function lessonMemo() {
+  const F = [];
+  F.push({
+    cap: `By default, when a parent component's state changes, <span class="hl">React re-renders ALL of its child components</span>, even if their props didn't change!`,
+    log: [['1', 'Parent state change forces child to re-render']],
+    build: s => {
+      const tree = [
+        {id:'r1', sm:true, type:'vdom update', label:'Parent', x:0, y:0, update:true},
+        {id:'r2', sm:true, type:'vdom update', label:'Child1', x:-50, y:60, update:true},
+        {id:'r3', sm:true, type:'vdom update', label:'Child2', x:50, y:60, update:true},
+      ];
+      s.appendChild(drawTree(tree));
+    },
+    after: () => { wire('r1','r2','#bc8cff'); wire('r1','r3','#bc8cff'); }
+  });
+  F.push({
+    cap: `Wrapping a component in <span class="hl2">React.memo</span> tells React: "Only re-render this child if its props actually change."`,
+    log: [['2', 'React.memo prevents unnecessary re-renders']],
+    build: s => {
+      const tree = [
+        {id:'r1', sm:true, type:'vdom update', label:'Parent', x:0, y:0, update:true},
+        {id:'r2', sm:true, type:'real', label:'Memo1', x:-50, y:60},
+        {id:'r3', sm:true, type:'vdom update', label:'Child2', x:50, y:60, update:true},
+      ];
+      s.appendChild(drawTree(tree));
+    },
+    after: () => { wire('r1','r2','#3fb950'); wire('r1','r3','#bc8cff'); }
+  });
+  F.push({
+    cap: `Important note: Functions are recreated every render. If you pass a function to a memoized child, it breaks memoization! Use <span class="hl">useCallback</span> to cache it. <br><br><b>React 19 Note:</b> The new React Compiler automates this, making <code>useMemo</code> and <code>useCallback</code> mostly unnecessary!`,
+    log: [['3', 'useCallback caches function references']],
+    build: s => {
+      const b = el('div', 'box in success');
+      b.innerHTML = `const handleClick = useCallback(() => {<br>&nbsp;&nbsp;console.log("clicked");<br>}, []);<br><br>&lt;MemoChild onClick={handleClick} /&gt;`;
+      s.appendChild(b);
+    }
+  });
+  return { F };
+}
+
+function lessonUseRef() {
+  const F = [];
+  F.push({
+    cap: `<code>useState</code> causes a re-render when updated. What if you want to store a mutable value but <span class="hl">NOT</span> trigger a render? Use <span class="hl2">useRef</span>.`,
+    log: [['1', 'useRef holds mutable data without re-rendering']],
+    build: s => {
+      const b = el('div', 'box in highlight');
+      b.innerHTML = `const timerRef = useRef(null);<br><br>timerRef.current = setInterval(...);`;
+      s.appendChild(b);
+    }
+  });
+  F.push({
+    cap: `Another massive use case for <code>useRef</code> is accessing <span class="hl3">underlying DOM nodes</span> directly, for example, to focus an input field programmatically.`,
+    log: [['2', 'useRef accesses direct DOM elements']],
+    build: s => {
+      const b = el('div', 'box in violet');
+      b.innerHTML = `const inputRef = useRef(null);<br><br>&lt;input ref={inputRef} /&gt;<br><br>inputRef.current.focus();`;
+      s.appendChild(b);
+    }
+  });
+  return { F };
+}
+
+function lessonCustomHooks() {
+  const F = [];
+  F.push({
+    cap: `When multiple components share the same stateful logic (like fetching data or tracking mouse position), you can extract it into a <span class="hl">Custom Hook</span>.`,
+    log: [['1', 'Extracting stateful logic into Custom Hooks']],
+    build: s => {
+      const b = el('div', 'box in highlight');
+      b.innerHTML = `function useFetch(url) {<br>&nbsp;&nbsp;const [data, setData] = useState(null);<br>&nbsp;&nbsp;useEffect(() => { ...fetch... }, [url]);<br>&nbsp;&nbsp;return data;<br>}`;
+      s.appendChild(b);
+    }
+  });
+  F.push({
+    cap: `Now, any component can use this logic simply by calling <code>useFetch()</code>. It keeps your components exceptionally clean and readable.`,
+    log: [['2', 'Consuming the Custom Hook cleanly']],
+    build: s => {
+      const b = el('div', 'box in success');
+      b.innerHTML = `function App() {<br>&nbsp;&nbsp;const data = useFetch('/api/users');<br>&nbsp;&nbsp;return &lt;div&gt;{data}&lt;/div&gt;;<br>}`;
+      s.appendChild(b);
+    }
+  });
+  return { F };
+}
+
+function lessonConcurrent() {
+  const F = [];
+  F.push({
+    cap: `Before React 18, all state updates were urgent. Heavy calculations would freeze the UI, preventing the user from typing.`,
+    log: [['1', 'Blocking Rendering (React 15/16)']],
+    build: s => {
+      const thread = el('div', 'box in'); thread.style.width = '100%'; thread.style.height = '40px'; thread.style.flexDirection = 'row';
+      const block = el('div', 'box in warn'); block.style.width = '80%'; block.style.height = '20px'; block.textContent = 'Heavy List Filter (Blocks Browser)';
+      thread.appendChild(block);
+      s.appendChild(el('div','label','Main Thread'));
+      s.appendChild(thread);
+    }
+  });
+  F.push({
+    cap: `React 18 introduces <span class="hl3">Concurrent Features</span> like <code>useTransition</code>. It allows you to mark a state update as non-urgent.`,
+    log: [['2', 'useTransition marks updates as non-urgent']],
+    build: s => {
+      const b = el('div', 'box in highlight');
+      b.innerHTML = `const [isPending, startTransition] = useTransition();<br><br>startTransition(() => {<br>&nbsp;&nbsp;setFilterList(hugeDataset);<br>});`;
+      s.appendChild(b);
+    }
+  });
+  F.push({
+    cap: `React's <span class="hl2">Fiber Engine</span> will now pause the heavy filtering work to handle high-priority tasks (like typing in an input box), keeping the app fluid!`,
+    log: [['3', 'Yielding to Browser for high priority tasks']],
+    build: s => {
+      const thread = el('div', 'box in'); thread.style.width = '100%'; thread.style.height = '40px'; thread.style.flexDirection = 'row'; thread.style.gap = '5px';
+      for(let i=0; i<3; i++) {
+        const block = el('div', 'box in violet'); block.style.width = '10%'; block.style.height = '20px'; thread.appendChild(block);
+      }
+      const user = el('div', 'box in success'); user.style.width = '20%'; user.style.height = '20px'; user.textContent = 'Typing...'; thread.appendChild(user);
+      for(let i=0; i<4; i++) {
+        const block = el('div', 'box in violet'); block.style.width = '10%'; block.style.height = '20px'; thread.appendChild(block);
+      }
+      s.appendChild(el('div','label','Interruptible Rendering in action'));
+      s.appendChild(thread);
+    }
+  });
+  return { F };
+}
+
+
+function lessonUseReducer() {
+  const F = [];
+  F.push({
+    cap: `<code>useReducer</code> is an alternative to useState for complex state logic. It takes a reducer function and an initial state, returning the state and a dispatch function.`,
+    log: [['1', 'useReducer manages complex state transitions']],
+    build: s => {
+      const b = el('div', 'box in'); b.innerHTML = `const [state, dispatch] = useReducer(reducer, {count: 0})`; s.appendChild(b);
+    }
+  });
+  return { F };
+}
+
+function lessonUseLayoutEffect() {
+  const F = [];
+  F.push({
+    cap: `<code>useLayoutEffect</code> fires synchronously BEFORE the browser repaints. Use it to measure DOM elements and avoid UI flicker, but prefer useEffect normally!`,
+    log: [['1', 'Runs synchronously before paint']],
+    build: s => {
+      const b = el('div', 'box in success'); b.innerHTML = `useLayoutEffect(() => measureDOM(), [])`; s.appendChild(b);
+    }
+  });
+  return { F };
+}
+
+function lessonUseId() {
+  const F = [];
+  F.push({
+    cap: `<code>useId</code> generates unique IDs that are stable across server and client rendering, perfect for accessibility attributes (like aria-describedby).`,
+    log: [['1', 'Generates stable, unique IDs']],
+    build: s => {
+      const b = el('div', 'box in highlight'); b.innerHTML = `const id = useId();<br>&lt;label htmlFor={id}&gt;Name&lt;/label&gt;<br>&lt;input id={id} /&gt;`; s.appendChild(b);
+    }
+  });
+  return { F };
+}
+
+function lessonUseDeferredValue() {
+  const F = [];
+  F.push({
+    cap: `<code>useDeferredValue</code> lets you defer updating a non-critical part of the UI (like a heavy search list) so the main interface stays responsive.`,
+    log: [['1', 'Defers non-urgent updates']],
+    build: s => {
+      const b = el('div', 'box in warn'); b.innerHTML = `const deferredText = useDeferredValue(text);`; s.appendChild(b);
+    }
+  });
+  return { F };
+}
+
+function lessonUseImperativeHandle() {
+  const F = [];
+  F.push({
+    cap: `<code>useImperativeHandle</code> customizes the instance value exposed when using <code>forwardRef</code>, hiding the raw DOM node and only exposing specific methods.`,
+    log: [['1', 'Customizes exposed refs']],
+    build: s => {
+      const b = el('div', 'box in'); b.innerHTML = `useImperativeHandle(ref, () => ({ focus: myCustomFocus }))`; s.appendChild(b);
+    }
+  });
+  return { F };
+}
+
+function lessonUseActionState() {
+  const F = [];
+  F.push({
+    cap: `React 19 introduces <code>useActionState</code> to handle async form actions. It automatically manages pending states, errors, and the current form state!`,
+    log: [['1', 'Manages async form state (React 19)']],
+    build: s => {
+      const b = el('div', 'box in highlight'); b.innerHTML = `const [state, action, isPending] = useActionState(submitFn, null)`; s.appendChild(b);
+    }
+  });
+  return { F };
+}
+
+function lessonUseOptimistic() {
+  const F = [];
+  F.push({
+    cap: `React 19's <code>useOptimistic</code> lets you instantly show a predicted UI state while an async background mutation (like a network request) is still running.`,
+    log: [['1', 'Optimistic UI updates (React 19)']],
+    build: s => {
+      const b = el('div', 'box in success'); b.innerHTML = `const [optState, addOpt] = useOptimistic(state, updateFn)`; s.appendChild(b);
+    }
+  });
+  return { F };
+}
+
+function lessonUse() {
+  const F = [];
+  F.push({ cap: `React 19 introduces the <code>use</code> API. It allows you to read the value of a Promise directly inside render.`, log: [['1', 'Reads Promises directly in render']], build: s => {
+    const b = el('div', 'box in'); b.id = 'c'; b.innerHTML = `&lt;User /&gt;`;
+    const p = el('div', 'box in warn'); p.id = 'p'; p.innerHTML = `fetchUser() (Pending)`;
+    s.appendChild(b); s.appendChild(p); b.style.top='50px'; b.style.left='100px'; p.style.top='150px'; p.style.left='100px';
+  }, after: () => wire('c','p') });
+  F.push({ cap: `If the Promise is pending, <code>use</code> automatically triggers a <code>&lt;Suspense&gt;</code> fallback higher in the tree.`, log: [['2', 'Suspends execution while pending']], build: s => {
+    const b = el('div', 'box in highlight'); b.innerHTML = `&lt;Suspense&gt;<br>&nbsp;&nbsp;Loading...`;
+    const p = el('div', 'box'); p.innerHTML = `fetchUser() (Pending)`;
+    s.appendChild(b); s.appendChild(p); b.style.top='50px'; b.style.left='100px'; p.style.top='150px'; p.style.left='100px';
+  }});
+  F.push({ cap: `Once the Promise resolves, React re-renders the component, and <code>use</code> returns the resolved data seamlessly!`, log: [['3', 'Returns resolved data directly']], build: s => {
+    const b = el('div', 'box in success'); b.innerHTML = `&lt;User name="Alice" /&gt;`;
+    const p = el('div', 'box'); p.innerHTML = `fetchUser() (Resolved)`;
+    s.appendChild(b); s.appendChild(p); b.style.top='50px'; b.style.left='100px'; p.style.top='150px'; p.style.left='100px';
+  }});
+  return { F };
+}
+
+function lessonUseSyncExternalStore() {
+  const F = [];
+  F.push({
+    cap: `<code>useSyncExternalStore</code> lets you subscribe to an external data store (like Redux or browser APIs) in a way that is compatible with Concurrent React.`,
+    log: [['1', 'Subscribes to external stores safely']],
+    build: s => {
+      const b = el('div', 'box in highlight'); b.innerHTML = `const state = useSyncExternalStore(subscribe, getSnapshot);`; s.appendChild(b);
+    }
+  });
+  return { F };
+}
+
+function lessonUseDebugValue() {
+  const F = [];
+  F.push({
+    cap: `<code>useDebugValue</code> lets you display a custom label for your custom hooks inside the React DevTools extension to make debugging easier.`,
+    log: [['1', 'Adds labels in React DevTools']],
+    build: s => {
+      const b = el('div', 'box in warn'); b.innerHTML = `useDebugValue(isOnline ? 'Online' : 'Offline');`; s.appendChild(b);
+    }
+  });
+  return { F };
+}
+
+function lessonUseInsertionEffect() {
+  const F = [];
+  F.push({
+    cap: `<code>useInsertionEffect</code> is a specialized hook for CSS-in-JS libraries. It fires synchronously BEFORE any DOM mutations, allowing you to safely inject styles.`,
+    log: [['1', 'Fires before DOM mutations for CSS-in-JS']],
+    build: s => {
+      const b = el('div', 'box in success'); b.innerHTML = `useInsertionEffect(() => { injectCSS(rule); }, []);`; s.appendChild(b);
+    }
+  });
+  return { F };
+}
+
+function lessonUseEffectEvent() {
+  const F = [];
+  
+  F.push({
+    cap: `Imagine a Chat component with a <code>useEffect</code> that connects to a room. When it connects, it shows a notification using the current <code>theme</code>.`,
+    log: [['1', 'Effect depends on roomId and theme']],
+    build: s => {
+      const b1 = el('div', 'box in'); b1.id = 'chat'; b1.innerHTML = `Chat Room<br><small>roomId: 'general'</small>`;
+      const b2 = el('div', 'box in warn'); b2.id = 'eff'; b2.innerHTML = `useEffect(() => {<br>&nbsp;&nbsp;connect(roomId);<br>&nbsp;&nbsp;showNotif(theme);<br>}, [roomId, theme])`;
+      const b3 = el('div', 'box in'); b3.id = 'th'; b3.innerHTML = `Theme: dark`;
+      s.appendChild(b1); s.appendChild(b2); s.appendChild(b3);
+      b1.style.top = '20px'; b1.style.left = '150px';
+      b2.style.top = '120px'; b2.style.left = '100px';
+      b3.style.top = '220px'; b3.style.left = '150px';
+    },
+    after: () => { wire('chat','eff'); wire('th','eff'); }
+  });
+
+  F.push({
+    cap: `Because <code>theme</code> is a reactive dependency, every time the user toggles dark mode, the Effect re-runs! This causes the chat to completely disconnect and reconnect just because the theme changed.`,
+    log: [['2', 'Theme change causes reconnect']],
+    build: s => {
+      const b1 = el('div', 'box'); b1.id = 'chat'; b1.innerHTML = `Chat Room<br><small>roomId: 'general'</small>`;
+      const b2 = el('div', 'box error'); b2.id = 'eff'; b2.innerHTML = `<b>Disconnecting!</b><br>Connecting...<br>showNotif(light)`;
+      const b3 = el('div', 'box highlight'); b3.id = 'th'; b3.innerHTML = `Theme: light`;
+      s.appendChild(b1); s.appendChild(b2); s.appendChild(b3);
+      b1.style.top = '20px'; b1.style.left = '150px';
+      b2.style.top = '120px'; b2.style.left = '100px';
+      b3.style.top = '220px'; b3.style.left = '150px';
+    },
+    after: () => { wire('th','eff', 'red'); }
+  });
+
+  F.push({
+    cap: `<code>useEffectEvent</code> fixes this! It lets you wrap the non-reactive part (reading the theme) into an "Event".`,
+    log: [['3', 'Wrap theme read in useEffectEvent']],
+    build: s => {
+      const b1 = el('div', 'box in'); b1.id = 'ev'; b1.innerHTML = `const onConnect = useEffectEvent(() => {<br>&nbsp;&nbsp;showNotif(theme);<br>});`;
+      const b2 = el('div', 'box in warn'); b2.id = 'eff'; b2.innerHTML = `useEffect(() => {<br>&nbsp;&nbsp;connect(roomId);<br>&nbsp;&nbsp;onConnect();<br>}, [roomId])`;
+      s.appendChild(b1); s.appendChild(b2);
+      b1.style.top = '40px'; b1.style.left = '80px';
+      b2.style.top = '160px'; b2.style.left = '80px';
+    },
+    after: () => { wire('ev','eff'); }
+  });
+
+  F.push({
+    cap: `Now, <code>theme</code> is safely read when needed, but it is NO LONGER a dependency of the Effect! Toggling the theme updates the Event, but doesn't re-run the connection logic.`,
+    log: [['4', 'Effect only runs when roomId changes']],
+    build: s => {
+      const b1 = el('div', 'box'); b1.id = 'chat'; b1.innerHTML = `Chat Room<br><small>roomId: 'general'</small>`;
+      const b2 = el('div', 'box success'); b2.id = 'eff'; b2.innerHTML = `Connected ✅`;
+      const b3 = el('div', 'box highlight'); b3.id = 'th'; b3.innerHTML = `Theme: dark`;
+      s.appendChild(b1); s.appendChild(b2); s.appendChild(b3);
+      b1.style.top = '20px'; b1.style.left = '150px';
+      b2.style.top = '120px'; b2.style.left = '150px';
+      b3.style.top = '220px'; b3.style.left = '150px';
+    }
+  });
+
+  return { F };
+}
+
+function lessonUseCallback() {
+  const F = [];
+  F.push({ cap: `Imagine a parent component passing a function down to an optimized child (wrapped in <code>React.memo</code>).`, log: [['1', 'Parent passes callback to child']], build: s => {
+    const b1 = el('div', 'box in'); b1.id='p'; b1.innerHTML = `Parent`;
+    const b2 = el('div', 'box in warn'); b2.id='fn'; b2.innerHTML = `handleClick = () => {}`;
+    const b3 = el('div', 'box in'); b3.id='c'; b3.innerHTML = `Child (Memoized)`;
+    s.append(b1, b2, b3); b1.style.top='20px'; b1.style.left='100px'; b2.style.top='100px'; b2.style.left='80px'; b3.style.top='180px'; b3.style.left='100px';
+  }, after: () => { wire('p','fn'); wire('fn','c'); }});
+  F.push({ cap: `By default, React recreates the <code>handleClick</code> function on every render. The child receives a *new* function reference and re-renders anyway!`, log: [['2', 'New function reference breaks memoization']], build: s => {
+    const b1 = el('div', 'box'); b1.id='p'; b1.innerHTML = `Parent (Re-renders)`;
+    const b2 = el('div', 'box in error'); b2.id='fn'; b2.innerHTML = `NEW handleClick`;
+    const b3 = el('div', 'box error'); b3.id='c'; b3.innerHTML = `Child (Forced Re-render)`;
+    s.append(b1, b2, b3); b1.style.top='20px'; b1.style.left='100px'; b2.style.top='100px'; b2.style.left='100px'; b3.style.top='180px'; b3.style.left='100px';
+  }, after: () => { wire('fn','c','red'); }});
+  F.push({ cap: `Wrapping it in <code>useCallback</code> caches the function reference! The child receives the exact same reference and successfully skips rendering.`, log: [['3', 'useCallback preserves reference equality']], build: s => {
+    const b1 = el('div', 'box'); b1.id='p'; b1.innerHTML = `Parent (Re-renders)`;
+    const b2 = el('div', 'box in success'); b2.id='fn'; b2.innerHTML = `useCallback(() => {})`;
+    const b3 = el('div', 'box success'); b3.id='c'; b3.innerHTML = `Child (Render Skipped!)`;
+    s.append(b1, b2, b3); b1.style.top='20px'; b1.style.left='100px'; b2.style.top='100px'; b2.style.left='80px'; b3.style.top='180px'; b3.style.left='100px';
+  }, after: () => { wire('fn','c','#2ea043'); }});
+  return { F };
+}
+
+function lessonUseContext() {
+  const F = [];
+  F.push({ cap: `Normally, to pass data down a deeply nested tree, you have to pass props through every single intermediate component ("prop drilling").`, log: [['1', 'Prop drilling passes data manually']], build: s => {
+    const p = el('div', 'box in highlight'); p.id='p'; p.innerHTML = `Parent<br>theme="dark"`;
+    const m = el('div', 'box in'); m.id='m'; m.innerHTML = `Middle<br>theme="dark"`;
+    const c = el('div', 'box in'); c.id='c'; c.innerHTML = `Child<br>theme="dark"`;
+    s.append(p, m, c); p.style.top='20px'; p.style.left='100px'; m.style.top='120px'; m.style.left='100px'; c.style.top='220px'; c.style.left='100px';
+  }, after: () => { wire('p','m'); wire('m','c'); }});
+  F.push({ cap: `<code>useContext</code> solves this! You wrap the parent in a Provider, and the child can teleport the data directly, bypassing the middle components entirely.`, log: [['2', 'Context teleports data directly']], build: s => {
+    const p = el('div', 'box in highlight'); p.id='p'; p.innerHTML = `Provider<br>value="dark"`;
+    const m = el('div', 'box in'); m.id='m'; m.innerHTML = `Middle (Ignores Theme)`;
+    const c = el('div', 'box in success'); c.id='c'; c.innerHTML = `useContext(Theme)<br>returns "dark"`;
+    s.append(p, m, c); p.style.top='20px'; p.style.left='100px'; m.style.top='120px'; m.style.left='100px'; c.style.top='220px'; c.style.left='100px';
+  }, after: () => { wire('p','c','#2ea043'); }});
+  return { F };
+}
+
+function lessonUseMemo() {
+  const F = [];
+  F.push({ cap: `If your component calculates something expensive (like filtering 10,000 items), it will re-run that heavy calculation on every single render!`, log: [['1', 'Expensive calculations run on every render']], build: s => {
+    const r = el('div', 'box in'); r.id='r'; r.innerHTML = `Render`;
+    const c = el('div', 'box in error'); c.id='c'; c.innerHTML = `filterTodos()<br>Processing 10k items...`;
+    s.append(r, c); r.style.top='50px'; r.style.left='100px'; c.style.top='150px'; c.style.left='70px';
+  }, after: () => wire('r','c','red')});
+  F.push({ cap: `Wrap it in <code>useMemo</code>! React executes it once, caches the result, and simply returns the cached result on future renders (unless dependencies change).`, log: [['2', 'useMemo caches the result']], build: s => {
+    const r = el('div', 'box'); r.id='r'; r.innerHTML = `Render (Next)`;
+    const m = el('div', 'box in success'); m.id='m'; m.innerHTML = `useMemo Cache`;
+    const c = el('div', 'box in'); c.id='c'; c.innerHTML = `Return Cached Value<br>(Instant)`;
+    s.append(r, m, c); r.style.top='20px'; r.style.left='100px'; m.style.top='120px'; m.style.left='100px'; c.style.top='220px'; c.style.left='100px';
+  }, after: () => { wire('r','m','#2ea043'); wire('m','c','#2ea043'); }});
+  return { F };
+}
+
+function lessonUseTransition() {
+  const F = [];
+  F.push({ cap: `Imagine a heavy UI update (like filtering a massive list). Normally, this blocks the main thread, freezing the screen and ignoring user inputs.`, log: [['1', 'Heavy updates block the UI thread']], build: s => {
+    const u = el('div', 'box in error'); u.id='u'; u.innerHTML = `Screen Frozen<br><small>Processing heavy list...</small>`;
+    const i = el('div', 'box in'); i.id='i'; i.innerHTML = `User clicks button<br>(Ignored!)`;
+    s.append(u, i); u.style.top='50px'; u.style.left='100px'; i.style.top='180px'; i.style.left='100px';
+  }, after: () => wire('i','u','red') });
+  F.push({ cap: `By wrapping the update in <code>startTransition</code>, React treats it as non-blocking background work, keeping the UI instantly responsive to clicks!`, log: [['2', 'Transitions keep UI responsive']], build: s => {
+    const u = el('div', 'box in highlight'); u.id='u'; u.innerHTML = `Background Render<br><small>Yielding to browser...</small>`;
+    const i = el('div', 'box in success'); i.id='i'; i.innerHTML = `User clicks button<br>(Handled instantly!)`;
+    s.append(u, i); u.style.top='50px'; u.style.left='100px'; i.style.top='180px'; i.style.left='100px';
+  }, after: () => wire('i','u','#2ea043') });
+  return { F };
+}
+
+function lessonFragment() {
+  const F = [];
+  F.push({
+    cap: `<code>&lt;Fragment&gt;</code> (often written as <code>&lt;&gt;&lt;/&gt;</code>) lets you group multiple elements without adding an extra node to the DOM!`,
+    log: [['1', 'Groups elements without a wrapper div']],
+    build: s => {
+      const b = el('div', 'box in highlight'); b.innerHTML = `&lt;&gt;<br>&nbsp;&nbsp;&lt;ChildA /&gt;<br>&nbsp;&nbsp;&lt;ChildB /&gt;<br>&lt;/&gt;`; s.appendChild(b);
+    }
+  });
+  return { F };
+}
+
+function lessonSuspense() {
+  const F = [];
+  F.push({ cap: `When a child component isn't ready to render (e.g. it's fetching data or lazy-loading code), it "Suspends".`, log: [['1', 'Child component suspends']], build: s => {
+    const p = el('div', 'box in highlight'); p.id='p'; p.innerHTML = `&lt;Suspense&gt;`;
+    const c = el('div', 'box in warn'); c.id='c'; c.innerHTML = `&lt;LazyProfile /&gt;<br>(Suspended...)`;
+    s.append(p, c); p.style.top='50px'; p.style.left='100px'; c.style.top='150px'; c.style.left='100px';
+  }, after: () => wire('c','p','orange') });
+  F.push({ cap: `React intercepts this, pauses the child, and renders the <code>fallback</code> UI (like a spinner) provided by the nearest <code>&lt;Suspense&gt;</code> boundary.`, log: [['2', 'Suspense renders fallback UI']], build: s => {
+    const p = el('div', 'box highlight'); p.id='p'; p.innerHTML = `&lt;Suspense&gt;`;
+    const f = el('div', 'box in success'); f.id='f'; f.innerHTML = `&lt;Spinner /&gt;`;
+    s.append(p, f); p.style.top='50px'; p.style.left='100px'; f.style.top='150px'; f.style.left='100px';
+  }, after: () => wire('p','f','#2ea043') });
+  F.push({ cap: `When the background work finishes, React automatically swaps out the fallback UI and renders the fully loaded component.`, log: [['3', 'React swaps fallback for component']], build: s => {
+    const p = el('div', 'box highlight'); p.id='p'; p.innerHTML = `&lt;Suspense&gt;`;
+    const c = el('div', 'box in'); c.id='c'; c.innerHTML = `&lt;LazyProfile /&gt;<br>(Loaded!)`;
+    s.append(p, c); p.style.top='50px'; p.style.left='100px'; c.style.top='150px'; c.style.left='100px';
+  }, after: () => wire('p','c') });
+  return { F };
+}
+
+function lessonLazy() {
+  const F = [];
+  F.push({ cap: `In a standard app, all components are bundled into one massive JavaScript file. Users have to download the whole file even for pages they never visit.`, log: [['1', 'Massive initial bundle']], build: s => {
+    const b = el('div', 'box in error'); b.innerHTML = `bundle.js (2 MB)<br><small>App, Home, Profile, Settings...</small>`;
+    s.append(b); b.style.top='100px'; b.style.left='50px';
+  }});
+  F.push({ cap: `<code>lazy()</code> allows you to code-split. The main bundle stays tiny, and heavy components are dynamically downloaded as separate chunks only when needed!`, log: [['2', 'Dynamic chunk loading with lazy()']], build: s => {
+    const b1 = el('div', 'box in success'); b1.innerHTML = `bundle.js (50 KB)<br><small>App, Home</small>`;
+    const b2 = el('div', 'box in highlight'); b2.innerHTML = `profile.chunk.js<br>(Downloaded on demand)`;
+    s.append(b1, b2); b1.style.top='50px'; b1.style.left='100px'; b2.style.top='180px'; b2.style.left='100px';
+  }});
+  return { F };
+}
+
+function lessonForwardRef() {
+  const F = [];
+  F.push({
+    cap: `<code>forwardRef</code> lets your component expose a DOM node to a parent component using a ref. By default, custom components don't expose their internal DOM nodes!`,
+    log: [['1', 'Forwards a ref to an inner DOM node']],
+    build: s => {
+      const b = el('div', 'box in'); b.innerHTML = `const MyInput = forwardRef((props, ref) => {<br>&nbsp;&nbsp;return &lt;input {...props} ref={ref} /&gt;;<br>});`; s.appendChild(b);
+    }
+  });
+  return { F };
+}
+
+function lessonCreateContext() {
+  const F = [];
+  F.push({
+    cap: `<code>createContext</code> creates a Context object. Components call <code>useContext()</code> to read it, and you wrap parents in <code>&lt;Context.Provider value={...}&gt;</code> to provide it.`,
+    log: [['1', 'Creates a global data pipeline']],
+    build: s => {
+      const b = el('div', 'box in highlight'); b.innerHTML = `const ThemeContext = createContext('light');`; s.appendChild(b);
+    }
+  });
+  return { F };
+}
+
+// =========================================================================
+// Registry
+// =========================================================================
+const LESSONS = [
+  { id:'jsx', group: 'foundations', tab:'JSX & Elements', title:'JSX & React Elements',
+    sub:'Understand how React describes the UI.',
+    rule:'<code>JSX</code> is syntax sugar that compiles to <code>React.createElement</code> function calls, producing plain JS objects.',
+    build:lessonJSX },
+  { id:'components', group: 'foundations', tab:'Components & Props', title:'Component Architecture',
+    sub:'UI composition and one-way data flow.',
+    rule:'Build encapsulated <code>Components</code> and pass data strictly downwards via read-only <code>Props</code>.',
+    build:lessonComponents },
+  { id:'vdom', group: 'foundations', tab:'VDOM & Keys', title:'Reconciliation & Keys',
+    sub:'Learn how React efficiently diffs and updates the browser DOM.',
+    rule:'React diffs a <code>Virtual DOM</code> tree. <code>Keys</code> are critical for React to identify which items in a list changed, moved, or were added.',
+    build:lessonReconciliation },
+    
+  { id:'usestate', group: 'hooks', tab:'State (useState)', title:'State & Batching',
+    sub:'Managing memory and understanding React 18 automatic batching.',
+    rule:'<code>useState</code> holds memory. React efficiently batches multiple state updates into a single re-render.',
+    build:lessonStateBatching },
+  { id:'useeffect', group: 'hooks', tab:'useEffect', title:'Side Effects',
+    sub:'Handling side effects like data fetching and subscriptions.',
+    rule:'<code>useEffect</code> runs side effect functions after paint. Dependency arrays control execution, and cleanup functions prevent leaks.',
+    build:lessonUseEffect },
+  { id:'useeffectevent', group: 'hooks', tab:'useEffectEvent', title:'Effect Events',
+    sub:'Extracting non-reactive logic.',
+    rule:'Use <code>useEffectEvent</code> to read the latest props/state inside an Effect without re-triggering it.',
+    build:lessonUseEffectEvent },
+  { id:'usecontext', group: 'hooks', tab:'useContext', title:'Context Subscription',
+    sub:'Reading Context values.',
+    rule:'Use <code>useContext</code> to read values provided by a Context Provider higher up in the tree.',
+    build:lessonUseContext },
+  { id:'usecallback', group: 'hooks', tab:'useCallback', title:'Caching Functions',
+    sub:'Preserving function references.',
+    rule:'Use <code>useCallback</code> to avoid recreating functions on every render when passing them down to optimized children.',
+    build:lessonUseCallback },
+  { id:'usememo', group: 'hooks', tab:'useMemo', title:'Caching Values',
+    sub:'Preserving calculation results.',
+    rule:'Use <code>useMemo</code> to skip expensive recalculations unless the dependencies change.',
+    build:lessonUseMemo },
+  { id:'usetransition', group: 'hooks', tab:'useTransition', title:'UI Transitions',
+    sub:'Keeping the app responsive.',
+    rule:'Use <code>useTransition</code> to mark UI updates as non-blocking, so the user can interact while the tree is rendering.',
+    build:lessonUseTransition },
+  { id:'useref', group: 'hooks', tab:'useRef', title:'Refs & DOM Access',
+    sub:'Holding mutable data without rendering.',
+    rule:'<code>useRef</code> holds values that persist across renders without triggering a re-render. It is also used to access DOM elements directly.',
+    build:lessonUseRef },
+  { id:'customhooks', group: 'hooks', tab:'Custom Hooks', title:'Custom Hooks',
+    sub:'Abstracting stateful logic.',
+    rule:'Extract shared stateful logic into <code>Custom Hooks</code> (e.g. useFetch) to keep components clean and DRY.',
+    build:lessonCustomHooks },
+  { id:'usereducer', group: 'hooks', tab:'useReducer', title:'Complex State Management',
+    sub:'Alternative to useState.',
+    rule:'Use <code>useReducer</code> when you have complex state logic that involves multiple sub-values or when the next state depends on the previous one.',
+    build:lessonUseReducer },
+  { id:'uselayouteffect', group: 'hooks', tab:'useLayoutEffect', title:'Synchronous Effects',
+    sub:'Fires before the browser repaints.',
+    rule:'Use <code>useLayoutEffect</code> only when you need to read layout from the DOM and synchronously re-render to prevent UI flicker.',
+    build:lessonUseLayoutEffect },
+  { id:'useid', group: 'hooks', tab:'useId', title:'Stable IDs',
+    sub:'Generating unique identifiers.',
+    rule:'Use <code>useId</code> to generate stable, unique IDs for accessibility attributes. Do not use it to generate keys in a list!',
+    build:lessonUseId },
+  { id:'usedeferredvalue', group: 'hooks', tab:'useDeferredValue', title:'Deferring Updates',
+    sub:'Keeping the UI responsive.',
+    rule:'Use <code>useDeferredValue</code> to intentionally delay updating a slow part of the screen so that other inputs stay snappy.',
+    build:lessonUseDeferredValue },
+  { id:'useimperativehandle', group: 'hooks', tab:'useImperativeHandle', title:'Customizing Refs',
+    sub:'Exposing specific methods.',
+    rule:'Use <code>useImperativeHandle</code> with forwardRef to hide the raw DOM node and expose only a specific API (like focus() or scroll()) to the parent.',
+    build:lessonUseImperativeHandle },
+  { id:'useactionstate', group: 'hooks', tab:'useActionState (v19)', title:'React 19 Forms',
+    sub:'Handling async actions seamlessly.',
+    rule:'Use <code>useActionState</code> to handle async mutations in forms, automatically exposing a pending state and returned data.',
+    build:lessonUseActionState },
+  { id:'useoptimistic', group: 'hooks', tab:'useOptimistic (v19)', title:'React 19 Optimistic UI',
+    sub:'Instant UI feedback for mutations.',
+    rule:'Use <code>useOptimistic</code> to optimistically update the UI while a background mutation is pending.',
+    build:lessonUseOptimistic },
+  { id:'useapi', group: 'hooks', tab:'use API (v19)', title:'React 19 use API',
+    sub:'Reading Promises in render.',
+    rule:'The <code>use</code> API allows you to read Promises and Contexts anywhere in a component, cleanly suspending the UI until data is ready.',
+    build:lessonUse },
+  { id:'usesyncexternalstore', group: 'hooks', tab:'useSyncExternalStore', title:'External Stores',
+    sub:'Subscribing to external data safely.',
+    rule:'Use <code>useSyncExternalStore</code> to read and subscribe from external data sources in a concurrent-safe way.',
+    build:lessonUseSyncExternalStore },
+  { id:'usedebugvalue', group: 'hooks', tab:'useDebugValue', title:'DevTools Debugging',
+    sub:'Labeling custom hooks.',
+    rule:'Use <code>useDebugValue</code> inside custom hooks to display helpful labels in React DevTools.',
+    build:lessonUseDebugValue },
+  { id:'useinsertioneffect', group: 'hooks', tab:'useInsertionEffect', title:'CSS-in-JS styling',
+    sub:'Injecting styles before paint.',
+    rule:'Use <code>useInsertionEffect</code> strictly for CSS-in-JS libraries to inject global styles into the DOM before any layout effects run.',
+    build:lessonUseInsertionEffect },
+
+  { id:'context', group: 'arch', tab:'Context API', title:'Context API',
+    sub:'Avoiding prop drilling for global data.',
+    rule:'<code>Context API</code> lets you beam data directly to deep components without passing props manually through every level.',
+    build:lessonContext },
+  { id:'memo', group: 'arch', tab:'Memoization', title:'Performance & Memoization',
+    sub:'Preventing unnecessary re-renders in large trees.',
+    rule:'Use <code>React.memo</code> to skip rendering unchanged children, and <code>useCallback</code> to cache functions passed as props.',
+    build:lessonMemo },
+  { id:'concurrent', group: 'arch', tab:'Concurrent React', title:'Fiber & Concurrent Features',
+    sub:'The interruptible engine powering modern React.',
+    rule:'React 18 uses <code>useTransition</code> and the Fiber architecture to yield the thread during heavy renders, keeping the UI perfectly fluid.',
+    build:lessonConcurrent },
+
+  { id:'fragment', group: 'apis', tab:'<Fragment>', title:'React Fragments',
+    sub:'Grouping elements seamlessly.',
+    rule:'Use <code>&lt;Fragment&gt;</code> to return multiple elements from a component without cluttering the DOM with extra wrappers.',
+    build:lessonFragment },
+  { id:'suspense', group: 'apis', tab:'<Suspense>', title:'Suspense Boundaries',
+    sub:'Declarative loading states.',
+    rule:'Wrap your component trees in <code>&lt;Suspense&gt;</code> to easily display a loading fallback while background processes finish.',
+    build:lessonSuspense },
+  { id:'lazy', group: 'apis', tab:'lazy()', title:'Lazy Loading',
+    sub:'Code-splitting components.',
+    rule:'Use <code>lazy</code> to delay loading non-critical component code until the user actually interacts with it or sees it.',
+    build:lessonLazy },
+  { id:'forwardref', group: 'apis', tab:'forwardRef()', title:'Forwarding Refs',
+    sub:'Exposing internal DOM nodes.',
+    rule:'Wrap a component in <code>forwardRef</code> if you need to let a parent component grab a reference to one of its inner DOM elements.',
+    build:lessonForwardRef },
+  { id:'createcontext', group: 'apis', tab:'createContext()', title:'Context Creation',
+    sub:'Defining a Context object.',
+    rule:'Use <code>createContext</code> outside your components to define a global container that can hold shared data.',
+    build:lessonCreateContext }
+];
+
+// =========================================================================
+// Player Engine
+// =========================================================================
+const LESSON_CODES = {
+  jsx: `<span class="kw">function</span> <span class="fn">App</span>() {\\n  <span class="kw">return</span> &lt;<span class="fn">h1</span> className=<span class="st">"title"</span>&gt;Hello JSX!&lt;/<span class="fn">h1</span>&gt;;\\n}`,
+  components: `<span class="kw">function</span> <span class="fn">Button</span>({ label }) {\\n  <span class="kw">return</span> &lt;<span class="fn">button</span>&gt;{label}&lt;/<span class="fn">button</span>&gt;;\\n}\\n\\n<span class="kw">function</span> <span class="fn">App</span>() {\\n  <span class="kw">return</span> &lt;<span class="fn">Button</span> label=<span class="st">"Click Me"</span> /&gt;;\\n}`,
+  vdom: `<span class="cm">// React uses the Virtual DOM under the hood</span>\\n<span class="kw">const</span> vdomNode = {\\n  type: <span class="st">'h1'</span>,\\n  props: { className: <span class="st">'title'</span> },\\n  children: [<span class="st">'Hello VDOM!'</span>]\\n};`,
+  usestate: `<span class="kw">import</span> { useState } <span class="kw">from</span> <span class="st">'react'</span>;\\n\\n<span class="kw">function</span> <span class="fn">Counter</span>() {\\n  <span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="st">0</span>);\\n  <span class="kw">return</span> &lt;<span class="fn">button</span> onClick={<span class="kw">() =&gt;</span> <span class="fn">setCount</span>(prev =&gt; prev + <span class="st">1</span>)}&gt;{count}&lt;/<span class="fn">button</span>&gt;;\\n}`,
+  useeffect: `<span class="kw">import</span> { useEffect } <span class="kw">from</span> <span class="st">'react'</span>;\\n\\n<span class="kw">function</span> <span class="fn">DataFetcher</span>({ id }) {\\n  <span class="fn">useEffect</span>(<span class="kw">() =&gt;</span> {\\n    <span class="kw">const</span> sub = <span class="fn">api.subscribe</span>(id);\\n    <span class="kw">return</span> <span class="kw">() =&gt;</span> sub.unsubscribe();\\n  }, [id]);\\n}`,
+  useref: `<span class="kw">import</span> { useRef } <span class="kw">from</span> <span class="st">'react'</span>;\\n\\n<span class="kw">function</span> <span class="fn">InputFocus</span>() {\\n  <span class="kw">const</span> inputRef = <span class="fn">useRef</span>(<span class="kw">null</span>);\\n  <span class="kw">return</span> &lt;<span class="fn">input</span> ref={inputRef} /&gt;;\\n}`,
+  customhooks: `<span class="kw">function</span> <span class="fn">useWindowWidth</span>() {\\n  <span class="kw">const</span> [width, setWidth] = <span class="fn">useState</span>(<span class="fn">window</span>.innerWidth);\\n  <span class="fn">useEffect</span>(<span class="kw">() =&gt;</span> { <span class="cm">/* ... */</span> }, []);\\n  <span class="kw">return</span> width;\\n}`,
+  usereducer: `<span class="kw">const</span> <span class="fn">reducer</span> = (state, action) =&gt; {\\n  <span class="kw">if</span> (action.type === <span class="st">'increment'</span>) <span class="kw">return</span> { count: state.count + <span class="st">1</span> };\\n};\\n\\n<span class="kw">const</span> [state, dispatch] = <span class="fn">useReducer</span>(reducer, { count: <span class="st">0</span> });`,
+  usecontext: `<span class="kw">const</span> ThemeContext = <span class="fn">createContext</span>(<span class="st">'light'</span>);\\n\\n<span class="kw">function</span> <span class="fn">Child</span>() {\\n  <span class="kw">const</span> theme = <span class="fn">useContext</span>(ThemeContext);\\n  <span class="kw">return</span> &lt;<span class="fn">div</span> className={theme}&gt;Themed!&lt;/<span class="fn">div</span>&gt;;\\n}`,
+  usememo: `<span class="kw">const</span> expensiveResult = <span class="fn">useMemo</span>(<span class="kw">() =&gt;</span> {\\n  <span class="kw">return</span> <span class="fn">computeHeavyData</span>(items);\\n}, [items]);`,
+  usecallback: `<span class="kw">const</span> memoizedCallback = <span class="fn">useCallback</span>(<span class="kw">() =&gt;</span> {\\n  <span class="fn">doSomething</span>(data);\\n}, [data]);`,
+  usetransition: `<span class="kw">const</span> [isPending, startTransition] = <span class="fn">useTransition</span>();\\n\\n<span class="kw">function</span> <span class="fn">handleClick</span>() {\\n  <span class="fn">startTransition</span>(<span class="kw">() =&gt;</span> {\\n    <span class="fn">setHeavyList</span>(newList);\\n  });\\n}`,
+  useactionstate: `<span class="kw">const</span> [state, formAction] = <span class="fn">useActionState</span>(updateUser, { error: <span class="kw">null</span> });\\n\\n&lt;<span class="fn">form</span> action={formAction}&gt;\\n  &lt;<span class="fn">button</span> type=<span class="st">"submit"</span>&gt;Save&lt;/<span class="fn">button</span>&gt;\\n&lt;/<span class="fn">form</span>&gt;`,
+  useoptimistic: `<span class="kw">const</span> [optimisticName, setOptimisticName] = <span class="fn">useOptimistic</span>(name);\\n\\n<span class="cm">// UI updates instantly before server confirms!</span>`,
+  use: `<span class="kw">function</span> <span class="fn">Profile</span>({ userPromise }) {\\n  <span class="kw">const</span> user = <span class="fn">use</span>(userPromise); <span class="cm">// Suspends if pending!</span>\\n  <span class="kw">return</span> &lt;<span class="fn">h1</span>&gt;{user.name}&lt;/<span class="fn">h1</span>&gt;;\\n}`,
+  suspense: `&lt;<span class="fn">Suspense</span> fallback={&lt;<span class="fn">Spinner</span> /&gt;}&gt;\\n  &lt;<span class="fn">LazyProfile</span> /&gt;\\n&lt;/<span class="fn">Suspense</span>&gt;`,
+  lazy: `<span class="kw">const</span> LazyProfile = <span class="fn">lazy</span>(<span class="kw">() =&gt;</span> <span class="fn">import</span>(<span class="st">'./Profile'</span>));`,
+  createcontext: `<span class="kw">export const</span> ThemeContext = <span class="fn">createContext</span>(<span class="st">'dark'</span>);\\n\\n&lt;<span class="fn">ThemeContext.Provider</span> value=<span class="st">"light"</span>&gt;\\n  &lt;<span class="fn">App</span> /&gt;\\n&lt;/<span class="fn">ThemeContext.Provider</span>&gt;`
+};
+
+let current = 0, model = null, ix = 0, timer = null;
+
+function buildTabs(){
+  $('tabs-foundations').innerHTML = '';
+  $('tabs-hooks').innerHTML = '';
+  $('tabs-arch').innerHTML = '';
+  $('tabs-apis').innerHTML = '';
+
+  LESSONS.forEach((L, i) => {
+    const b = el('div', 'menu-item' + (i === current ? ' active' : ''));
+    b.appendChild(el('span','n',String(i+1)));
+    b.appendChild(el('span','',L.tab));
+    b.onclick = () => selectLesson(i);
+    
+    if (L.group === 'foundations') $('tabs-foundations').appendChild(b);
+    if (L.group === 'hooks') $('tabs-hooks').appendChild(b);
+    if (L.group === 'arch') $('tabs-arch').appendChild(b);
+    if (L.group === 'apis') $('tabs-apis').appendChild(b);
+  });
+}
+
+function selectLesson(i){
+  stop(); current = i;
+  buildTabs(); rebuild();
+}
+
+function getGroupName(group) {
+  if (group === 'foundations') return 'Foundations';
+  if (group === 'hooks') return 'Hooks & State';
+  if (group === 'arch') return 'Architecture & Performance';
+  if (group === 'apis') return 'Components & APIs';
+  return '';
+}
+
+function rebuild(){
+  stop();
+  const L = LESSONS[current];
+  $('pageSection').textContent = getGroupName(L.group);
+  $('pageTitle').textContent = L.title;
+  $('pageSub').textContent = L.sub;
+  $('lTitle').textContent = L.tab + ' Workflow';
+  $('lRule').innerHTML = L.rule;
+
+  model = L.build();
+  ix = 0;
+  
+  sheet.innerHTML = '';
+  wires.innerHTML = '';
+  pendingWires = [];
+  caption.innerHTML = '<b>Click ▶ Play to start</b>';
+  logbody.innerHTML = '';
+  $('prog').style.width = '0%';
+  $('counter').textContent = `step 0 / ${model.F.length}`;
+  
+  const cp = $('codePanel');
+  const code = LESSON_CODES[L.id] || (model.F.find(f => f.code) || {}).code;
+  if (code) {
+    cp.style.display = 'block';
+    $('codeBlock').innerHTML = code;
+  } else {
+    cp.style.display = 'none';
+    $('codeBlock').innerHTML = '';
+  }
+
+  $('bPrev').disabled = true;
+  $('bNext').disabled = false;
+  $('bPlay').disabled = false;
+  $('bReset').disabled = true;
+}
+
+function draw(){
+  if (!model) return;
+  const f = model.F[ix];
+
+  sheet.innerHTML = '';
+  wires.innerHTML = '';
+  pendingWires = [];
+
+  caption.innerHTML = f.cap;
+  if(f.build) f.build(sheet);
+  const boxes = [...sheet.querySelectorAll('.box, .dom-node')];
+  boxes.forEach((b,i) => setTimeout(() => b.classList.add('in'), i * 80));
+
+  setTimeout(() => { drawWires(); if (f.after) f.after(); }, boxes.length * 80 + 50);
+
+  renderLog();
+  $('prog').style.width = ((ix+1) / model.F.length * 100) + '%';
+  $('counter').textContent = `step ${ix+1} / ${model.F.length}`;
+  setButtons();
+}
+
+function renderLog(){
+  logbody.innerHTML = '';
+  for (let i = 0; i <= ix; i++){
+    const f = model.F[i];
+    if (!f.log) continue;
+    f.log.forEach(([k, text]) => {
+      const r = el('div', 'lrow' + (i === ix ? ' new' : ''));
+      if (k) r.appendChild(el('span','lk', k+'.'));
+      const v = el('span'); v.textContent = text; r.appendChild(v);
+      logbody.appendChild(r);
+      requestAnimationFrame(() => r.classList.add('in'));
+    });
+  }
+  logbody.scrollTop = logbody.scrollHeight;
+}
+
+function setButtons(){
+  const isStarted = !caption.innerHTML.includes('start');
+  $('bPrev').disabled = !model || ix === 0 || !isStarted;
+  $('bNext').disabled = !model || (isStarted && ix >= model.F.length - 1);
+  $('bPlay').disabled = !model;
+  $('bReset').disabled = !isStarted;
+}
+
+// =========================================================================
+// Voiceover API & Audio Control
+// =========================================================================
+const speech = {
+  supported: typeof window !== 'undefined' && 'speechSynthesis' in window,
+  on: true, 
+  voice: null, 
+  rate: 0.95, 
+  token: 0
+};
+
+function speakableText(html){
+  let t = html.replace(/<[^>]+>/g, '');
+  t = t.replace(/&nbsp;/g, ' ').replace(/&lt;/g, 'less than').replace(/&gt;/g, 'greater than');
+  t = t.replace(/JSX/g, 'J S X').replace(/DOM/g, 'dom').replace(/VDOM/g, 'V dom').replace(/useFetch/g, 'use fetch');
+  return t.trim();
+}
+
+function loadVoice(){
+  if (!speech.supported) return;
+  const all = speechSynthesis.getVoices();
+  if (!all.length) return;
+  // Pick best available English voice automatically
+  speech.voice = all.find(v => v.name.includes('Google US English')) || all.find(v => /^en/i.test(v.lang)) || all[0];
+}
+
+function say(html, onEnd){
+  if (!speech.supported || !speech.on){ if (onEnd) onEnd(); return; }
+  speechSynthesis.cancel();
+
+  const text = speakableText(html);
+  if (!text){ if (onEnd) onEnd(); return; }
+
+  const myToken = ++speech.token;
+  const u = new SpeechSynthesisUtterance(text);
+  if (speech.voice) u.voice = speech.voice;
+  u.rate = speech.rate;
+  u.onend = () => { if (myToken === speech.token && onEnd) onEnd(); };
+  u.onerror = e => { if (myToken === speech.token && onEnd) onEnd(); };
+  speechSynthesis.speak(u);
+}
+
+function shutUp(){
+  speech.token++;
+  if (speech.supported) speechSynthesis.cancel();
+}
+
+function initVoice(){
+  if (!speech.supported) return;
+  loadVoice();
+  speechSynthesis.onvoiceschanged = loadVoice;
+}
+
+$('bVoice').onclick = () => {
+  speech.on = !speech.on;
+  $('bVoice').setAttribute('aria-pressed', speech.on);
+  $('voiceIcon').textContent = speech.on ? '🔊' : '🔇';
+  if(!speech.on){
+    shutUp();
+  } else {
+    // Only speak if a lesson frame is actively playing/shown
+    if (!caption.innerHTML.includes('start') && model && model.F[ix]) {
+      say(model.F[ix].cap);
+    }
+  }
+};
+
+initVoice();
+
+
+// =========================================================================
+// Controls
+// =========================================================================
+function next(){
+  if (!model) return;
+  if (caption.innerHTML.includes('start')) {
+    draw();
+  } else if (ix < model.F.length - 1) {
+    ix++; draw();
+  }
+  if (!playing && speech.on) say(model.F[ix].cap);
+}
+function prev(){
+  if (!model || ix === 0 || caption.innerHTML.includes('start')) return;
+  ix--; draw();
+  if (!playing && speech.on) say(model.F[ix].cap);
+}
+
+let playing = false;
+function advance(){
+  if (!playing) return;
+  if (ix >= model.F.length - 1){ stop(); return; }
+  ix++; draw();
+  narrateThenContinue();
+}
+
+function narrateThenContinue(){
+  if (!playing) return;
+  if (speech.on && speech.supported){
+    say(model.F[ix].cap, () => { timer = setTimeout(advance, 800); });
+  } else {
+    timer = setTimeout(advance, 3000);
+  }
+}
+
+function play(){
+  if (!model) return;
+  if (playing){ stop(); return; }
+  playing = true;
+  
+  if (caption.innerHTML.includes('start')) {
+    draw();
+  } else if (ix >= model.F.length-1){ 
+    ix = 0; draw(); 
+  }
+  
+  $('bPlay').textContent = '⏸ Pause';
+  narrateThenContinue();
+}
+
+function stop(){
+  playing = false;
+  if (timer) clearTimeout(timer);
+  timer = null;
+  shutUp();
+  $('bPlay').textContent = '▶ Play';
+}
+
+$('bNext').onclick  = () => { stop(); next(); };
+$('bPrev').onclick  = () => { stop(); prev(); };
+$('bPlay').onclick  = play;
+$('bReset').onclick = () => { stop(); ix = 0; draw(); if (speech.on) say(model.F[ix].cap); };
+
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+  if (e.key === 'ArrowRight'){ stop(); next(); }
+  if (e.key === 'ArrowLeft'){ stop(); prev(); }
+  if (e.key === ' '){ e.preventDefault(); play(); }
+  if (e.key === 'v' || e.key === 'V'){ setVoiceOn(!speech.on); }
+  if (e.key === 'r' || e.key === 'R'){ $('bRepeat').onclick(); }
+});
+window.addEventListener('resize', () => { if (model) drawWires(); });
+document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); });
+window.addEventListener('beforeunload', shutUp);
+
+initVoice();
+selectLesson(0);
+</script>
+</body>
+</html>

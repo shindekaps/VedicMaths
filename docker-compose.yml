@@ -1,4 +1,3 @@
-version: "3.9"
 
 services:
   mongodb:
@@ -9,9 +8,10 @@ services:
       - mongodbdata:/data/db
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 5s
-      timeout: 5s
+      interval: 10s
+      timeout: 10s
       retries: 5
+      start_period: 30s
 
   redis:
     image: redis:7-alpine
@@ -24,7 +24,7 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: ../infra/docker/Dockerfile.backend
+      dockerfile: ../infra/docker/Dockerfile.backend.dev
     ports:
       - "8080:8080"
     environment:

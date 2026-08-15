@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sutra 1 - Ekādhikena Pūrveṇa · Visual Vedic Maths</title>
+<style>
+  :root {
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c232c; --line:#2b3440;
+    --ink:#e6edf3; --dim:#8b98a5; --faint:#5b6672;
+    --accent:#f0b429; --accent2:#4cc2ff; --good:#3fb950; --warn:#ff7b72; --violet:#bc8cff;
+    --mono:ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin:0; padding:0; }
+  body {
+    background:
+      radial-gradient(1200px 600px at 12% -10%, #1b2432 0%, transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, #241f16 0%, transparent 55%),
+      var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    min-height: 100vh; padding: 26px 20px 60px;
+  }
+  header { max-width: 1280px; margin: 0 auto 20px; }
+  .eyebrow { font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 8px; }
+  h1 { margin: 0; font-size: clamp(24px, 3.6vw, 36px); letter-spacing: -.02em; }
+  h1 .sk { color: var(--accent); font-style: italic; }
+  .sub { color: var(--dim); margin-top: 9px; font-size: 14.5px; line-height: 1.6; max-width: 76ch; }
+  .sub b { color: var(--ink); font-weight: 600; }
+
+  nav.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  .tab { background: var(--panel); border: 1px solid var(--line); color: var(--dim);
+    padding: 10px 15px; border-radius: 10px; cursor: pointer; font-size: 13px; font-weight: 600;
+    transition: .18s; display: flex; align-items: center; gap: 8px; }
+  .tab:hover { border-color: #3d4a5c; color: var(--ink); }
+  .tab.on { background: linear-gradient(180deg, #2a2013, #1d1a14); border-color: var(--accent); color: var(--accent); }
+  .tab .n { width: 20px; height: 20px; border-radius: 6px; background: #252d38; color: var(--dim);
+    display: grid; place-items: center; font-size: 11px; }
+  .tab.on .n { background: var(--accent); color: #1a1206; }
+
+  .wrap { max-width: 1280px; margin: 0 auto; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; }
+  .card h2 { margin: 0 0 6px; font-size: 18px; letter-spacing: -.01em; }
+  .card .rule { color: var(--accent2); font-size: 13px; margin: 0 0 16px; line-height: 1.6; }
+  .card .rule code { background: #0e1620; border: 1px solid #23384a; padding: 1px 6px; border-radius: 5px;
+    font-family: var(--mono); font-size: 12px; color: #9fdcff; }
+
+  /* --------- main split --------- */
+  .split { display: grid; grid-template-columns: 1fr 300px; gap: 16px; }
+  @media(max-width:900px) { .split { grid-template-columns: 1fr; } }
+
+  /* --------- worksheet --------- */
+  .board {
+    position: relative; background: linear-gradient(180deg, #10161e, #0c1117);
+    border: 1px solid var(--line); border-radius: 14px; min-height: 430px; padding: 22px 18px;
+    overflow: hidden;
+  }
+  .board::before { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background-image: linear-gradient(#ffffff07 1px, transparent 1px), linear-gradient(90deg, #ffffff07 1px, transparent 1px);
+    background-size: 26px 26px; mask-image: radial-gradient(circle at 50% 35%, #000 35%, transparent 80%);
+    -webkit-mask-image: radial-gradient(circle at 50% 35%, #000 35%, transparent 80%); }
+  #wires { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; overflow: visible; }
+  .sheet { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 0; }
+
+  /* a worksheet line */
+  .line {
+    display: flex; align-items: center; justify-content: center; gap: 9px; flex-wrap: wrap;
+    padding: 9px 4px; opacity: 0; transform: translateY(-6px);
+    transition: opacity .4s ease, transform .4s ease;
+  }
+  .line.in { opacity: 1; transform: none; }
+  .line.muted { opacity: .42; }
+  .line-label {
+    font-size: 11px; letter-spacing: .13em; text-transform: uppercase; color: var(--faint);
+    font-weight: 700; min-width: 74px; text-align: right;
+  }
+  .divider { width: min(440px, 86%); height: 1px; background: var(--line); margin: 6px 0; }
+
+  /* digits / cells */
+  .cell {
+    display: inline-grid; place-items: center; position: relative;
+    min-width: 46px; height: 56px; padding: 0 8px; border-radius: 11px;
+    border: 1.5px solid #2e3947; background: #131b25;
+    font-family: var(--mono); font-size: 30px; font-weight: 700; color: var(--ink);
+    transition: border-color .35s, background .35s, color .35s, transform .35s, box-shadow .35s;
+  }
+  .cell.sm { min-width: 36px; height: 44px; font-size: 22px; }
+  .cell.prev { border-color: var(--accent); background: #241c0f; color: var(--accent); box-shadow: 0 0 4px #f0b42918; }
+  .cell.eka { border-color: var(--good); background: #0f2318; color: var(--good); box-shadow: 0 0 4px #3fb95018; }
+  .cell.tail { border-color: var(--accent2); background: #0f2231; color: var(--accent2); }
+  .cell.res { border-color: var(--violet); background: #1b1428; color: var(--violet); }
+  .cell.slot { border-style: dashed; border-color: #39434f; color: #39434f; background: transparent; }
+  .cell.pop { animation: pop .45s cubic-bezier(.34, 1.56, .64, 1); }
+  @keyframes pop {
+    0% { transform: scale(.55); opacity: 0; }
+    60% { transform: scale(1.12); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .cell .tag {
+    position: absolute; top: -9px; left: 50%; transform: translateX(-50%);
+    font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; font-weight: 800;
+    padding: 1px 6px; border-radius: 5px; white-space: nowrap;
+  }
+  .cell.prev .tag { background: var(--accent); color: #1a1206; }
+  .cell.eka .tag { background: var(--good); color: #04140a; }
+  .cell.tail .tag { background: var(--accent2); color: #04202f; }
+  .cell .carry {
+    position: absolute; top: -10px; right: -8px; font-size: 11px; color: var(--warn);
+    background: #2a1416; border: 1px solid #5c2b2b; border-radius: 6px; padding: 0 4px; font-weight: 800;
+  }
+  .sym { font-family: var(--mono); font-size: 26px; color: var(--dim); font-weight: 400; padding: 0 2px; }
+  .sym.big { font-size: 30px; color: var(--ink); }
+
+  /* the flying digit */
+  .flyer {
+    position: absolute; z-index: 9; display: grid; place-items: center;
+    min-width: 46px; height: 56px; padding: 0 8px; border-radius: 11px;
+    font-family: var(--mono); font-size: 30px; font-weight: 700;
+    border: 1.5px solid var(--violet); background: #241a33; color: var(--violet);
+    box-shadow: 0 8px 26px #0009; pointer-events: none;
+    transition: transform .62s cubic-bezier(.4, .05, .2, 1), opacity .3s;
+  }
+
+  /* recurring-decimal strip */
+  .strip { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; max-width: 100%; padding: 6px 0; }
+  .dc {
+    width: 42px; height: 52px; border-radius: 9px; border: 1.5px solid #2e3947; background: #131b25;
+    display: grid; place-items: center; position: relative;
+    font-family: var(--mono); font-size: 21px; font-weight: 700; color: #39434f; transition: .3s;
+  }
+  .dc.done { border-color: #1d5c2c; color: var(--good); background: #0f1c14; }
+  .dc.active { border-color: var(--accent); background: #241c0f; color: var(--accent);
+    transform: translateY(-5px); box-shadow: 0 8px 20px #0007; }
+  .dc.seed { border-color: var(--accent2); color: var(--accent2); background: #0f2231; }
+  .dc .carry { position: absolute; top: -9px; right: -7px; font-size: 10px; color: var(--warn);
+    background: #2a1416; border: 1px solid #5c2b2b; border-radius: 5px; padding: 0 3px; font-weight: 800; }
+  .flow {
+    display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 19px;
+    color: var(--ink); background: #0e1620; border: 1px solid #23384a; border-radius: 10px;
+    padding: 9px 16px;
+  }
+  .flow .k { color: var(--accent); }
+  .flow .m { color: var(--good); }
+  .flow .c { color: var(--warn); }
+  .flow .o { color: var(--dim); }
+
+  /* chain view for lesson 4 */
+  .chain { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; }
+  .node {
+    font-family: var(--mono); font-size: 19px; font-weight: 700; padding: 7px 13px; border-radius: 9px;
+    border: 1.5px solid #2e3947; background: #131b25; color: var(--dim); transition: .3s;
+  }
+  .node.on { border-color: var(--accent); background: #241c0f; color: var(--accent); }
+  .node.fin { border-color: var(--good); background: #0f2318; color: var(--good); }
+  .node.bad { border-color: var(--warn); background: #2a1416; color: var(--warn); }
+  .harrow { color: var(--faint); font-size: 15px; }
+
+  /* --------- caption --------- */
+  .caption {
+    margin-top: 14px; color: var(--dim); font-size: 14.5px; line-height: 1.65; text-align: center;
+    min-height: 3.2em; display: flex; align-items: center; justify-content: center; padding: 0 8px;
+  }
+  .caption b { color: var(--ink); }
+  .caption .hl { color: var(--accent); font-weight: 700; }
+  .caption .hl2 { color: var(--good); font-weight: 700; }
+  .caption .hl3 { color: var(--accent2); font-weight: 700; }
+
+  /* --------- written log --------- */
+  .log {
+    background: #0e131a; border: 1px solid var(--line); border-radius: 14px; padding: 16px 16px 18px;
+    display: flex; flex-direction: column;
+  }
+  .log h3 { margin: 0 0 12px; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--faint); }
+  .logbody { font-family: var(--mono); font-size: 13.5px; line-height: 1.5; display: flex; flex-direction: column; gap: 2px; flex: 1; }
+  .lrow {
+    opacity: 0; transform: translateX(-6px); transition: .35s; color: #7d8b99;
+    padding: 3px 0; display: flex; gap: 8px;
+  }
+  .lrow.in { opacity: 1; transform: none; }
+  .lrow.new { color: var(--ink); }
+  .lrow .lk { color: var(--faint); min-width: 16px; }
+  .lrow .v { color: var(--accent2); }
+  .lrow.sum { border-top: 1px solid var(--line); margin-top: 8px; padding-top: 9px;
+    color: var(--good); font-weight: 800; font-size: 15px; }
+  .lrow.note { color: var(--faint); font-size: 12px; font-style: italic; font-family: inherit; }
+
+  /* --------- controls --------- */
+  .controls { display: flex; flex-wrap: wrap; gap: 9px; align-items: center; margin-top: 16px; }
+  button.btn { background: var(--panel2); border: 1px solid var(--line); color: var(--ink);
+    padding: 9px 15px; border-radius: 9px; cursor: pointer; font-size: 13px; font-weight: 600; transition: .16s; }
+  button.btn:hover:not(:disabled) { border-color: #46566b; background: #232c37; }
+  button.btn:disabled { opacity: .35; cursor: not-allowed; }
+  button.btn.primary { background: linear-gradient(180deg, #f0b429, #d99a12); border-color: #f0b429; color: #1a1206; }
+  button.btn.primary:hover:not(:disabled) { filter: brightness(1.08); }
+
+  .spacer { flex: 1; }
+  .inputs { display: flex; gap: 7px; align-items: center; color: var(--dim); font-size: 13px; flex-wrap: wrap; }
+  .inputs input, .inputs select { background: #0e141b; border: 1px solid var(--line); color: var(--ink);
+    padding: 8px 10px; border-radius: 8px; font-family: var(--mono); font-size: 14px; width: 86px; }
+  .inputs select { width: auto; }
+  .inputs input:focus, .inputs select:focus { outline: none; border-color: var(--accent2); }
+  .err { color: var(--warn); font-size: 12.5px; font-weight: 600; }
+  .pill { font-size: 11.5px; color: var(--faint); font-family: var(--mono);
+    border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; }
+
+  .progress { height: 3px; background: #1b222b; border-radius: 2px; margin-top: 14px; overflow: hidden; }
+  .progress i { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--good));
+    width: 0%; transition: width .35s; }
+
+  /* --------- voice bar --------- */
+  .voicebar {
+    margin-top: 11px; padding-top: 13px; border-top: 1px solid var(--line); gap: 12px;
+  }
+  .voicebar .vgroup { display: flex; align-items: center; gap: 7px; color: var(--faint); font-size: 12px; }
+  .voicebar label { letter-spacing: .1em; text-transform: uppercase; font-weight: 700; font-size: 10.5px; }
+  .voicebar select {
+    background: #0e141b; border: 1px solid var(--line); color: var(--ink);
+    padding: 7px 9px; border-radius: 8px; font-size: 12.5px; max-width: 190px;
+  }
+  .voicebar select:focus { outline: none; border-color: var(--accent2); }
+  .voicebar input[type=range] { width: 104px; accent-color: var(--accent); }
+  .btn.speak { display: flex; align-items: center; gap: 7px; }
+  .btn.speak.on {
+    background: linear-gradient(180deg, #123a20, #0f2a19); border-color: var(--good); color: var(--good);
+  }
+  .vnote { font-size: 11.5px; color: var(--faint); font-style: italic; }
+  /* the word currently being spoken */
+  .caption .say {
+    background: #f0b4291f; border-radius: 4px; box-shadow: 0 1px 0 var(--accent);
+    transition: background .15s;
+  }
+
+  @media(max-width:640px){
+    .voicebar .vgroup label { display: none; }
+    .voicebar select { max-width: 120px; }
+  }
+
+  footer { max-width: 1280px; margin: 24px auto 0; color: var(--faint); font-size: 12.5px; text-align: center; line-height: 1.7; }
+  footer b { color: var(--dim); }
+  kbd { background: #1b222b; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px;
+    padding: 1px 6px; font-family: var(--mono); font-size: 11px; color: var(--dim); }
+
+  @media(max-width: 640px) {
+    .cell { min-width: 38px; height: 48px; font-size: 24px; }
+    .dc { width: 34px; height: 44px; font-size: 17px; }
+    .line-label { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Vedic Mathematics · Sūtra 1 of 16</div>
+  <h1><span class="sk">Ekādhikena Pūrveṇa</span> – “By One More Than The Previous One”</h1>
+  <p class="sub">
+    One idea – take the <b>previous</b> digit and use <b>one more than it</b> – drives four different techniques.
+    Each step animates the digits into place and writes the working out on the right, so you can see
+    <b>where every number comes from</b>.
+  </p>
+  <nav class="tabs" id="tabs"></nav>
+</header>
+
+<div class="wrap">
+  <div class="card">
+    <h2 id="lTitle"></h2>
+    <p class="rule" id="lRule"></p>
+
+    <div class="split">
+      <div>
+        <div class="board" id="board">
+          <svg id="wires"></svg>
+          <div class="sheet" id="sheet"></div>
+        </div>
+        <div class="caption" id="caption"></div>
+      </div>
+
+      <div class="log">
+        <h3>Working out</h3>
+        <div class="logbody" id="logbody"></div>
+      </div>
+    </div>
+
+    <div class="progress"><i id="prog"></i></div>
+
+    <div class="controls">
+      <div class="inputs" id="inputs"></div>
+      <span class="err" id="err"></span>
+      <div class="spacer"></div>
+      <span class="pill" id="counter"></span>
+      <button class="btn" id="bPrev">◀ Back</button>
+      <button class="btn primary" id="bPlay">▶ Play</button>
+      <button class="btn" id="bNext">Step ▶</button>
+      <button class="btn" id="bReset">↺ Reset</button>
+    </div>
+
+    <div class="controls voicebar" id="voicebar">
+      <button class="btn speak" id="bVoice" aria-pressed="false">
+        <span id="voiceIcon">🔇</span> <span id="voiceLabel">Voiceover off</span>
+      </button>
+      <button class="btn" id="bRepeat" title="Read this step again">↺ Repeat step</button>
+      <div class="vgroup">
+        <label for="voiceSel">Voice</label>
+        <select id="voiceSel"></select>
+      </div>
+      <div class="vgroup">
+        <label for="rate">Speed</label>
+        <input type="range" id="rate" min="0.6" max="1.4" step="0.05" value="0.95">
+        <span class="pill" id="rateVal">0.95x</span>
+      </div>
+      <div class="spacer"></div>
+      <span class="vnote" id="vnote"></span>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <b>Ekādhikena Pūrveṇa</b> · एकाधिकेन पूर्वेण · Śaṅkarācārya Bhāratī Kṛṣṇa Tīrtha, <i>Vedic Mathematics</i> (1965)<br>
+  <kbd>←</kbd>/<kbd>→</kbd> step · <kbd>space</kbd> play/pause · <kbd>V</kbd> voiceover · <kbd>R</kbd> repeat step · single self-contained HTML file, works offline
+</footer>
+
+<script>
+/* =========================================================================
+   Helpers
+   ========================================================================= */
+const $ = id => document.getElementById(id);
+const board = $('board'), sheet = $('sheet'), wires = $('wires'),
+      caption = $('caption'), logbody = $('logbody'), errEl = $('err');
+
+function el(tag, cls, txt){
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (txt !== undefined) n.textContent = txt;
+  return n;
+}
+
+/* A worksheet line: label + contents */
+function line(label, nodes, opts = {}){
+  const l = el('div', 'line' + (opts.muted ? ' muted' : ''));
+  if (label !== null) l.appendChild(el('div', 'line-label', label));
+  nodes.forEach(n => l.appendChild(n));
+  return l;
+}
+
+/* A digit cell. id lets wires/flyers find it. */
+function cell(text, cls, opts = {}){
+  const c = el('div', 'cell' + (cls ? ' ' + cls : '') + (opts.sm ? ' sm' : '') + (opts.pop ? ' pop' : ''));
+  c.appendChild(document.createTextNode(text));
+  if (opts.tag) c.appendChild(el('span', 'tag', opts.tag));
+  if (opts.carry) c.appendChild(el('span', 'carry', '+' + opts.carry));
+  if (opts.id) c.dataset.k = opts.id;
+  return c;
+}
+
+function sym(t, big){ return el('span', 'sym' + (big ? ' big' : ''), t); }
+function divider(){ return el('div', 'divider'); }
+
+/* =========================================================================
+   Wire drawing - curved connectors between cells, drawn after layout
+   ========================================================================= */
+let pendingWires = [];
+function wire(fromKey, toKey, color){ pendingWires.push({ fromKey, toKey, color }); }
+
+function drawWires(){
+  wires.innerHTML = '';
+  if (!pendingWires.length) return;
+  const bb = board.getBoundingClientRect();
+  wires.setAttribute('viewBox', `0 0 ${bb.width} ${bb.height}`);
+
+  pendingWires.forEach((w, i) => {
+    const a = sheet.querySelector(`[data-k="${w.fromKey}"]`);
+    const b = sheet.querySelector(`[data-k="${w.toKey}"]`);
+    if (!a || !b) return;
+
+    const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
+    const x1 = ra.left - bb.left + ra.width / 2, y1 = ra.bottom - bb.top;
+    const x2 = rb.left - bb.left + rb.width / 2, y2 = rb.top - bb.top;
+    const dy = Math.max(26, (y2 - y1) * 0.55);
+    const d = `M ${x1} ${y1} C ${x1} ${y1 + dy}, ${x2} ${y2 - dy}, ${x2} ${y2}`;
+
+    const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    p.setAttribute('d', d);
+    p.setAttribute('fill', 'none');
+    p.setAttribute('stroke', w.color || '#4cc2ff');
+    p.setAttribute('stroke-width', '2');
+    p.setAttribute('stroke-linecap', 'round');
+    p.setAttribute('opacity', '.75');
+    p.setAttribute('stroke-dasharray', '5 5');
+    const len = 600;
+
+    p.style.strokeDasharray = len;
+    p.style.strokeDashoffset = len;
+    p.style.transition = `stroke-dashoffset .55s ease ${i * .1}s`;
+    wires.appendChild(p);
+    requestAnimationFrame(() => { p.style.strokeDashoffset = 0; });
+
+    // arrowhead
+    const head = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    head.setAttribute('cx', x2); head.setAttribute('cy', y2);
+    head.setAttribute('r', '3.5'); head.setAttribute('fill', w.color || '#4cc2ff');
+    head.style.opacity = 0;
+    head.style.transition = `opacity .3s ease ${i * .1 + .5}s`;
+    wires.appendChild(head);
+    requestAnimationFrame(() => { head.style.opacity = .9; });
+  });
+}
+
+/* =========================================================================
+   Flying digit - animates a value from one cell into another
+   ========================================================================= */
+function fly(fromKey, toKey, text){
+  const a = sheet.querySelector(`[data-k="${fromKey}"]`);
+  const b = sheet.querySelector(`[data-k="${toKey}"]`);
+  if (!a || !b) return;
+  const bb = board.getBoundingClientRect();
+  const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
+  const f = el('div', 'flyer', text);
+  f.style.left = (ra.left - bb.left) + 'px';
+  f.style.top = (ra.top - bb.top) + 'px';
+  f.style.minWidth = ra.width + 'px';
+  f.style.height = ra.height + 'px';
+  board.appendChild(f);
+  requestAnimationFrame(() => {
+    f.style.transform = `translate(${rb.left - ra.left}px, ${rb.top - ra.top}px)`;
+  });
+  setTimeout(() => { f.style.opacity = 0; }, 620);
+  setTimeout(() => { f.remove(); }, 940);
+}
+
+/* =========================================================================
+   LESSON 1 - Squaring numbers ending in 5
+   ========================================================================= */
+function lesson1(p){
+  const n = p.n, prev = Math.floor(n / 10), eka = prev + 1;
+  const left = prev * eka, ans = left * 100 + 25;
+  const P = String(prev), L = String(left);
+  const F = [];
+
+  const problem = (pc, tc) => line('problem', [
+    cell(P, pc, { id:'p', tag: pc === 'prev' ? 'previous' : '' }),
+    cell('5', tc, { id:'t', tag: tc === 'tail' ? 'last' : '' }),
+    sym('²', true)
+  ]);
+
+  F.push({
+    cap: `We want <b>${n}²</b>. The only thing that matters: it <b>ends in 5</b>.`,
+    log:[['', `${n}² → ends in 5`]],
+    build:s => s.appendChild(problem('', ''))
+  });
+
+  F.push({
+    cap: `Split it. Everything before the 5 is the <span class="hl">previous</span> part - here <span class="hl">${prev}</span>.`,
+    log:[['', `previous = <span class="v">${prev}</span>`], ['', `last digit = 5`]],
+    build:s => s.appendChild(problem('prev', 'tail'))
+  });
+
+  F.push({
+    cap: `The sutra: <span class="hl2">one more than the previous</span>. So ${prev} + 1 = <span class="hl2">${eka}</span>.`,
+    log:[['', `ekādhika = ${prev} + 1 = <span class="v">${eka}</span>`]],
+    build:s => {
+      s.appendChild(problem('prev', 'tail'));
+      s.appendChild(line('ekādhika', [
+        cell(P,'prev',{id:'p2'}), sym('+'), cell('1','',{sm:true}), sym('='),
+        cell(String(eka),'eka',{id:'e', pop:true, tag:'+1'})
+      ]));
+      wire('p','p2','#f0b429');
+    }
+  });
+
+  F.push({
+    cap: `Left half = previous × its ekādhika = <span class="hl">${prev}</span> × <span class="hl2">${eka}</span> = <b>${left}</b>.`,
+    log:[['1', `left = ${prev} × ${eka} = <span class="v">${left}</span>`]],
+    build:s => {
+      s.appendChild(problem('prev', 'tail'));
+      s.appendChild(line('ekādhika', [
+        cell(P,'prev',{id:'p2'}), sym('+'), cell('1','',{sm:true}), sym('='), cell(String(eka),'eka',{id:'e'})
+      ], {muted:true}));
+      s.appendChild(line('left half', [
+        cell(P,'prev',{id:'p3'}), sym('x'), cell(String(eka),'eka',{id:'e2'}), sym('='),
+        cell(L,'res',{id:'L', pop:true})
+      ]));
+      wire('p2','p3','#f0b429'); wire('e','e2','#3fb950');
+    }
+  });
+
+  F.push({
+    cap: `Right half is always <b>25</b> - because the last digits are 5 × 5.`,
+    log:[['2', `right = 5 × 5 = <span class="v">25</span>`]],
+    build:s => {
+      s.appendChild(problem('prev', 'tail'));
+      s.appendChild(line('left half', [
+        cell(P,'prev'), sym('x'), cell(String(eka),'eka'), sym('='), cell(L,'res',{id:'L'})
+      ], {muted:true}));
+      s.appendChild(line('right half', [
+        cell('5','tail',{id:'t2'}), sym('x'), cell('5','tail',{id:'t3'}), sym('='),
+        cell('25','res',{id:'R', pop:true})
+      ]));
+      wire('t','t2','#4cc2ff');
+    }
+  });
+
+  F.push({
+    cap: `Write them side by side - <b>concatenate</b>, don't add. <b>${n}² = ${ans}</b>.`,
+    log:[['', `answer = ${left} | 25`], ['sum', `${n}² = ${ans}`]],
+    build:s => {
+      s.appendChild(problem('prev', 'tail'));
+      s.appendChild(line('left half', [cell(L,'res',{id:'L'})], {muted:true}));
+      s.appendChild(line('right half', [cell('25','res',{id:'R'})], {muted:true}));
+      s.appendChild(divider());
+      const slots = [];
+      L.split('').forEach((ch,i) => slots.push(cell(ch,'res',{id:'ansL'+i})));
+      slots.push(cell('2','res',{id:'ansR0'}));
+      slots.push(cell('5','res',{id:'ansR1'}));
+      s.appendChild(line('answer', slots));
+      wire('L','ansL0','#bc8cff'); wire('R','ansR0','#bc8cff');
+    },
+    after:() => { fly('L','ansL0',L); fly('R','ansR0','25'); }
+  });
+
+  return { F, note:`Works for any number ending in 5 - 15² up to 995².` };
+}
+
+/* =========================================================================
+   LESSON 2 - Last digits sum to 10, same previous part
+   ========================================================================= */
+function lesson2(p){
+  const a = p.a, b = p.b;
+  const prev = Math.floor(a / 10), la = a % 10, lb = b % 10;
+  const eka = prev + 1, left = prev * eka, right = la * lb;
+  const R = String(right).padStart(2,'0'), L = String(left), P = String(prev);
+  const ans = a * b;
+  const F = [];
+
+  const problem = (pc,tc) => line('problem', [
+    cell(P,pc,{id:'p1'}), cell(String(la),tc,{id:'la'}), sym('x'),
+    cell(P,pc,{id:'p2'}), cell(String(lb),tc,{id:'lb'})
+  ]);
+
+  F.push({
+    cap:`Multiply <b>${a} × ${b}</b> - but check the shape of the numbers first.`,
+    log:[['', `${a} × ${b}`]],
+    build:s => s.appendChild(problem('',''))
+  });
+
+  F.push({
+    cap:`Two conditions: the leading parts <span class="hl">match</span> (${prev} and ${prev}), and the last digits <span class="hl3">add to 10</span> (${la} + ${lb} = 10).`,
+    log:[['', `previous: ${prev} = ${prev} ✓`], ['', `${la} + ${lb} = 10 ✓`]],
+    build:s => {
+      s.appendChild(problem('prev','tail'));
+      s.appendChild(line('check', [
+        cell(String(la),'tail',{id:'c1'}), sym('+'), cell(String(lb),'tail',{id:'c2'}),
+        sym('='), cell('10','eka',{pop:true})
+      ]));
+      wire('la','c1','#4cc2ff'); wire('lb','c2','#4cc2ff');
+    }
+  });
+
+  F.push({
+    cap:`Same sutra: <span class="hl2">one more than the previous</span> → ${prev} + 1 = <span class="hl2">${eka}</span>.`,
+    log:[['', `ekādhika = ${prev} + 1 = <span class="v">${eka}</span>`]],
+    build:s => {
+      s.appendChild(problem('prev','tail'));
+      s.appendChild(line('ekādhika', [
+        cell(P,'prev',{id:'p3'}), sym('+'), cell('1','',{sm:true}), sym('='),
+        cell(String(eka),'eka',{id:'e', pop:true, tag:'+1'})
+      ]));
+      wire('p1','p3','#f0b429');
+    }
+  });
+
+  F.push({
+    cap:`Left half = <span class="hl">${prev}</span> × <span class="hl2">${eka}</span> = <b>${left}</b>.`,
+    log:[['1', `left = ${prev} × ${eka} = <span class="v">${left}</span>`]],
+    build:s => {
+      s.appendChild(problem('prev','tail'));
+      s.appendChild(line('ekādhika', [
+        cell(P,'prev',{id:'p3'}), sym('+'), cell('1','',{sm:true}), sym('='), cell(String(eka),'eka',{id:'e'})
+      ], {muted:true}));
+      s.appendChild(line('left half', [
+        cell(P,'prev',{id:'p4'}), sym('x'), cell(String(eka),'eka',{id:'e2'}), sym('='),
+        cell(L,'res',{id:'L', pop:true})
+      ]));
+      wire('p3','p4','#f0b429'); wire('e','e2','#3fb950');
+    }
+  });
+
+  F.push({
+    cap:`Right half = the two last digits multiplied = <b>${la} × ${lb} = ${right}</b>${right<10 ? ` → padded to <b>${R}</b>` : ''}. Always two digits.`,
+    log:[['2', `right = ${la} × ${lb} = <span class="v">${R}</span>`]],
+    build:s => {
+      s.appendChild(problem('prev','tail'));
+      s.appendChild(line('left half', [cell(L,'res',{id:'L'})], {muted:true}));
+      s.appendChild(line('right half', [
+        cell(String(la),'tail',{id:'r1'}), sym('x'), cell(String(lb),'tail',{id:'r2'}), sym('='),
+        cell(R,'res',{id:'R', pop:true})
+      ]));
+      wire('la','r1','#4cc2ff'); wire('lb','r2','#4cc2ff');
+    }
+  });
+
+  F.push({
+    cap:`Join them: <b>${a} × ${b} = ${ans}</b>.`,
+    log:[['', `answer = ${left} | ${R}`], ['sum', `${a} × ${b} = ${ans}`]],
+    build:s => {
+      s.appendChild(problem('prev','tail'));
+      s.appendChild(line('left half', [cell(L,'res',{id:'L'})], {muted:true}));
+      s.appendChild(line('right half', [cell(R,'res',{id:'R'})], {muted:true}));
+      s.appendChild(divider());
+      const slots = [];
+      L.split('').forEach((ch,i) => slots.push(cell(ch,'res',{id:'aL'+i})));
+      R.split('').forEach((ch,i) => slots.push(cell(ch,'res',{id:'aR'+i})));
+      s.appendChild(line('answer', slots));
+      wire('L','aL0','#bc8cff'); wire('R','aR0','#bc8cff');
+    },
+    after:() => { fly('L','aL0',L); fly('R','aR0',R); }
+  });
+
+  return { F, note:`Also covers 25×25-style cases where both numbers are the same.` };
+}
+
+/* =========================================================================
+   LESSON 3 - Recurring decimal of 1/...9 by the ekadhika multiplier
+   ========================================================================= */
+function lesson3(p){
+  const den = p.den, prev = Math.floor(den / 10), eka = prev + 1;
+
+  // true cycle length = multiplicative order of 10 mod den (NOT always den-1)
+  let period = (() => { let r = 10 % den, k = 1; while (r !== 1 && k < den) { r = (r*10)%den; k++; } return k; })();
+
+  const digits = [], carriesAt = [];      // digits[0] = rightmost
+  let cur = 1, carry = 0;
+  for (let i = 0; i < period; i++){
+    digits.push(cur);
+    const t = cur*eka + carry;
+    carriesAt.push(carry);
+    cur = t % 10; carry = Math.floor(t/10);
+  }
+  const decimal = digits.slice().reverse().join('');
+  const F = [];
+
+  function strip(shown, activeRtl){
+    const g = el('div','strip');
+    for (let disp = 0; disp < period; disp++){
+      const rtl = period - 1 - disp;
+      const c = el('div','dc');
+      if (rtl < shown){
+        c.appendChild(document.createTextNode(String(digits[rtl])));
+        if (rtl === activeRtl) c.classList.add('active');
+        else if (rtl === 0) c.classList.add('seed');
+        else c.classList.add('done');
+        if (carriesAt[rtl]) c.appendChild(el('span','carry','+'+carriesAt[rtl]));
+      } else {
+        c.appendChild(document.createTextNode('·'));
+      }
+      g.appendChild(c);
+    }
+    return g;
+  }
+
+  F.push({
+    cap:`Turn <b>1/${den}</b> into a recurring decimal – with <b>no long division at all</b>.`,
+    log:[['', `1 / ${den}`]],
+    build:s => s.appendChild(line('problem',[
+      cell('1','',{id:'one'}), sym('÷'), cell(String(den),'',{id:'den'})
+    ]))
+  });
+
+  F.push({
+    cap:`The denominator ends in <b>9</b>. Its <span class="hl">previous</span> part is <span class="hl">${prev}</span>, so our multiplier is <span class="hl2">${eka}</span>.`,
+    log:[['', `previous = ${prev}`], ['', `multiplier = ${prev}+1 = ${eka}`]],
+    build:s => {
+      s.appendChild(line('problem',[
+        cell('1',''), sym('÷'), cell(String(prev),'prev',{id:'pv',tag:'previous'}), cell('9','tail')
+      ]));
+      s.appendChild(line('multiplier',[
+        cell(String(prev),'pv2'), sym('+'), cell('1','',{sm:true}), sym('='),
+        cell(String(eka),'eka',{id:'mul',pop:true,tag:'+1'})
+      ]));
+      wire('pv','pv2','#f0b429');
+    }
+  });
+
+  F.push({
+    cap:`Build the digits <b>right to left</b>. Seed the rightmost with <span class="hl3">1</span>, then repeat: <b>digit × ${eka} + carry</b>.`,
+    log:[['', `seed rightmost = <span class="v">1</span>`], ['note', `rule: digit × ${eka} + carry`]],
+    build:s => {
+      s.appendChild(line('digits', [strip(1, 0)]));
+      s.appendChild(line('rule', [flowBox('?', 0, eka, null, null)]));
+    }
+  });
+
+  function flowBox(dv, cy, mult, total, out){
+    const f = el('div','flow');
+    const add = (t,c) => f.appendChild(el('span', c ? c : '', t));
+    add(String(dv),'k'); add(' × ','o'); add(String(mult),'m');
+    if (cy){ add(' + ','o'); add(String(cy),'c'); }
+    if (total !== null && total !== undefined){
+      add(' = ','o'); add(String(total),'');
+      add(' → write ','o'); add(String(out.d),'m');
+      if (out.c){ add(', carry ','o'); add(String(out.c),'c'); }
+    }
+    return f;
+  }
+
+  let cv = 1, cy = 0;
+  for (let i = 1; i < period; i++){
+    const t = cv*eka + cy, nd = t % 10, nc = Math.floor(t/10);
+    const dv = cv, cyIn = cy, idx = i;
+    F.push({
+      cap:`<b>${dv}</b>×${eka}${cyIn ? ' + ' + cyIn : ''} = <b>${t}</b> → write <span class="hl2">${nd}</span>${nc ? `, carry <span style="color:var(--warn);font-weight:700">${nc}</span>` : ''}`,
+      log:[String(idx), `${dv} × ${eka}${cyIn ? ' + ' + cyIn : ''} = ${t} → write <span class="v">${nd}</span>${nc ? ` c${nc}` : ''}`],
+      build:s => {
+        s.appendChild(line('digits', [strip(idx+1, idx)]));
+        s.appendChild(line('working', [flowBox(dv, cyIn, eka, t, {d:nd, c:nc})]));
+      }
+    });
+    cv = nd; cy = nc;
+  }
+
+  F.push({
+    cap:`After <b>${period}</b> digits the pattern starts repeating – that's the full cycle. Read it <b>left to right</b>.`,
+    log:[['', `cycle length = ${period}`], ['sum', `1/${den} = 0.${decimal}…`]],
+    build:s => {
+      s.appendChild(line('digits', [strip(period, -1)]));
+      s.appendChild(line('answer', [ el('div','flow', `0.${decimal}`) ]));
+    }
+  });
+
+  return { F, note:`Cycle length is the order of 10 mod ${den} – ${period} digits here.` };
+}
+
+/* =========================================================================
+   LESSON 4 - Vestanam: divisibility by osculation
+   ========================================================================= */
+function lesson4(p){
+  const num = String(p.num), den = p.den;
+  const prev = Math.floor(den / 10), eka = prev + 1;
+  const F = [];
+
+  const chainVals = [num];
+  let cur = num, guard = 0;
+  const ops = [];
+  while (cur.length > 2 && guard++ < 14){
+    const last = Number(cur.slice(-1)), rest = Number(cur.slice(0,-1));
+    const nxt = rest + last*eka;
+    ops.push({ from:cur, last, rest, nxt });
+    cur = String(nxt);
+    chainVals.push(cur);
+  }
+  const finalN = Number(cur), divisible = finalN % den === 0;
+
+  function chainView(upto, badLast){
+    const c = el('div','chain');
+    chainVals.slice(0, upto+1).forEach((v,i) => {
+      if (i) c.appendChild(el('span','harrow','→'));
+      const isLast = i === upto;
+      let cls = 'node';
+      if (isLast && upto === chainVals.length-1) cls += badLast ? ' bad' : ' fin';
+      else if (isLast) cls += ' on';
+      c.appendChild(el('div', cls, v));
+    });
+    return c;
+  }
+
+  F.push({
+    cap: `Is <b>${num}</b> divisible by <b>${den}</b>? The sutra gives a test with no division.`,
+    log: [['', `${num} ÷ ${den} ?`]],
+    build: s => s.appendChild(line('problem', [
+      cell(num, '', {id:'n'}), sym('÷'), cell(String(den), '', {id:'d'})
+    ]))
+  });
+
+  F.push({
+    cap: `Divisor ends in 9, previous part <span class="hl">${prev}</span>. The <b>osculator</b> is one more: <span class="hl2">${eka}</span>.`,
+    log: [['', `previous = ${prev}`], ['', `osculator = <span class="v">${eka}</span>`]],
+    build: s => {
+      s.appendChild(line('divisor', [
+        cell(String(prev), 'prev', {id:'pv', tag:'previous'}), cell('9', 'tail')
+      ]));
+      s.appendChild(line('osculator', [
+        cell(String(prev), 'prev', {id:'pv2'}), sym('+'), cell('1', '', {sm:true}), sym('='),
+        cell(String(eka), 'eka', {id:'os', pop:true, tag:'+1'})
+      ]));
+      wire('pv', 'pv2', '#f0b429');
+    }
+  });
+
+  ops.forEach((o, i) => {
+    F.push({
+      cap: `Chop the last digit <span class="hl3">${o.last}</span> off <b>${o.from}</b>. Multiply it by the osculator (${o.last} × ${eka} = ${o.last*eka}) and add to what's left: <b>${o.rest} + ${o.last*eka} = <span class="v">${o.nxt}</span></b>.`,
+      log: [String(i+1), `${o.rest} + ${o.last}×${eka} = <span class="v">${o.nxt}</span>`],
+      build: s => {
+        s.appendChild(line('split', [
+          cell(String(o.rest), 'prev', {id:'rest', tag:'keep'}),
+          cell(String(o.last), 'tail', {id:'last', tag:'chop'})
+        ]));
+        s.appendChild(line('osculate', [
+          cell(String(o.rest), 'prev', {id:'r2'}), sym('+'),
+          cell(String(o.last), 'tail', {id:'l2'}), sym('x'), cell(String(eka), 'eka', {sm:true}),
+          sym('='), cell(String(o.nxt), 'res', {id:'nx', pop:true})
+        ]));
+        s.appendChild(divider());
+        s.appendChild(line('chain', [chainView(i+1, false)]));
+        wire('rest', 'r2', '#f0b429'); wire('last', 'l2', '#4cc2ff');
+      }
+    });
+  });
+
+  F.push({
+    cap: divisible
+      ? `We land on <b>${finalN}</b> – a multiple of ${den}. So <b>${num}</b> IS divisible by ${den}.`
+      : `We land on <b>${finalN}</b> – not a multiple of ${den}. So <b>${num}</b> is NOT divisible by ${den}.`,
+    log: divisible
+      ? [['', `${finalN} = ${den} × ${finalN/den} ✓`], ['sum', `${num} ÷ ${den} = ${Number(num)/den}`]]
+      : [['', `${finalN} is not a multiple of ${den} ✗`], ['sum', `${num} is not divisible by ${den}`]],
+    build: s => {
+      s.appendChild(line('chain', [chainView(chainVals.length-1, !divisible)]));
+      s.appendChild(line('verdict', [
+        el('div', 'flow', divisible ? `${finalN} = ${den} × ${finalN/den} ✓` : `${finalN} ÷ ${den} leaves ${finalN % den} ✗`)
+      ]));
+    },
+    bad: !divisible
+  });
+
+  return { F, note: `Keep osculating until the number is small enough to recognise.` };
+}
+
+/* =========================================================================
+   Registry
+   ========================================================================= */
+const LESSONS = [
+  { id:'sq5', tab:'Squaring numbers ending in 5',
+    title:'Lesson 1 – Squaring any number ending in 5',
+    rule:'Take the <code>previous</code> part, multiply by <code>one more than itself</code> for the left half, then append <code>25</code>.',
+    build:lesson1,
+    inputs:[{key:'n',label:'Square',value:75,min:15,max:995}],
+    validate:p => (Number.isInteger(p.n) && p.n % 10 === 5 && p.n >= 15) ? null : 'Number must end in 5 (e.g. 25, 65, 105).' },
+
+  { id:'sum10', tab:'Last digits summing to 10',
+    title:'Lesson 2 – Same leading part, last digits adding to 10',
+    rule:'Left = <code>prev × (prev+1)</code>. Right = <code>product of the last digits</code>, always two digits.',
+    build:lesson2,
+    inputs:[{key:'a',label:'First',value:43,min:11,max:99},{key:'b',label:'Second',value:47,min:11,max:99}],
+    validate:p => {
+      if (!Number.isInteger(p.a) || !Number.isInteger(p.b) || p.a < 11 || p.b < 11 || p.a > 99 || p.b > 99)
+        return 'Use two 2-digit numbers.';
+      if (Math.floor(p.a / 10) !== Math.floor(p.b / 10)) return 'Leading digits must match (e.g. 43 & 47).';
+      if ((p.a % 10) + (p.b % 10) !== 10) return 'Last digits must add up to 10.';
+      return null;
+    } },
+
+  { id:'recur', tab:'Recurring decimals (1/19)',
+    title:'Lesson 3 – Recurring decimals for denominators ending in 9',
+    rule:'Multiplier = <code>previous + 1</code>. Seed the rightmost digit with <code>1</code>, build right-left using <code>digit × multiplier + carry</code>.',
+    build:lesson3,
+    inputs:[{key:'den',label:'1 /',value:19,kind:'select',options:[19,29,39,49]}],
+    validate:() => null },
+
+  { id:'oscul', tab:'Divisibility by osculation',
+    title:'Lesson 4 – Vestanam: divisibility using the ekādhika osculator',
+    rule:'Osculator = <code>previous + 1</code>. Drop the last digit, multiply it by the osculator, add to the rest, repeat.',
+    build:lesson4,
+    inputs:[{key:'num',label:'Number',value:4275,min:100,max:9999999},{key:'den',label:'÷',value:19,kind:'select',options:[19,29,39,49]}],
+    validate:p => (Number.isInteger(p.num) && p.num >= 100) ? null : 'Enter a whole number of at least 3 digits.' }
+];
+
+/* =========================================================================
+   Player
+   ========================================================================= */
+let current = 0, params = {}, model = null, ix = 0, timer = null;
+
+function buildTabs(){
+  const t = $('tabs'); t.innerHTML = '';
+  LESSONS.forEach((L, i) => {
+    const b = el('button', 'tab' + (i === current ? ' on' : ''));
+    b.appendChild(el('span','n',String(i+1)));
+    b.appendChild(el('span','',L.tab));
+    b.onclick = () => selectLesson(i);
+    t.appendChild(b);
+  });
+}
+
+function buildInputs(){
+  const L = LESSONS[current], box = $('inputs');
+  box.innerHTML = '';
+  L.inputs.forEach(cfg => {
+    box.appendChild(el('span','',cfg.label));
+    let f;
+    if (cfg.kind === 'select'){
+      f = el('select');
+      cfg.options.forEach(o => {
+        const opt = el('option','',String(o));
+        opt.value = o;
+        if (o === params[cfg.key]) opt.selected = true;
+        f.appendChild(opt);
+      });
+    } else {
+      f = el('input'); f.type = 'number'; f.value = params[cfg.key];
+      if (cfg.min !== undefined) f.min = cfg.min;
+      if (cfg.max !== undefined) f.max = cfg.max;
+    }
+    const commit = () => {
+      const v = Number(f.value);
+      if (f.value === '' || Number.isNaN(v)) return;
+      params[cfg.key] = v; rebuild();
+    };
+    f.onchange = commit;
+    if (f.tagName === 'INPUT') f.oninput = commit;
+    box.appendChild(f);
+  });
+}
+
+function selectLesson(i){
+  stop(); current = i; params = {};
+  LESSONS[i].inputs.forEach(c => params[c.key] = c.value);
+  buildTabs(); buildInputs(); rebuild();
+}
+
+function rebuild(){
+  stop();
+  const L = LESSONS[current];
+  $('lTitle').textContent = L.title;
+  $('lRule').innerHTML = L.rule;
+
+  const bad = L.validate(params);
+  errEl.textContent = bad || '';
+  if (bad){
+    model = null; sheet.innerHTML = ''; wires.innerHTML = ''; logbody.innerHTML = '';
+    caption.innerHTML = '⚠ ' + bad;
+    $('prog').style.width = '0%'; $('counter').textContent = '';
+    setButtons(); return;
+  }
+  model = L.build(params);
+  ix = 0;
+  draw();
+}
+
+/* =========================================================================
+   Voiceover - Web Speech API, no dependencies
+   Narration is derived from each frame's caption, so the words you hear
+   always match the words on screen.
+   ========================================================================= */
+const speech = {
+  supported: typeof window !== 'undefined' && 'speechSynthesis' in window,
+  on: false,
+  voices: [],
+  voice: null,
+  rate: 0.95,
+  utter: null,
+  token: 0        // guards against stale callbacks after a step change
+};
+
+/* Turn caption HTML into words a synthesiser reads correctly. */
+function speakableText(html){
+  let t = html;
+
+  // strip tags but keep the text
+  t = t.replace(/<[^>]+>/g, '');
+
+  // decode the few entities we actually emit
+  t = t.replace(/&nbsp;/g, ' ').replace(/&amp;/g, 'and')
+    .replace(/&lt;/g, 'less than').replace(/&gt;/g, 'greater than');
+
+  // superscript two -> "squared" (must run before digit handling)
+  t = t.replace(/²/g, ' squared ');
+
+  // maths symbols -> words
+  t = t.replace(/×/g, ' times ')
+    .replace(/÷/g, ' divided by ')
+    .replace(/-/g, ' minus ')
+    .replace(/(\d)\s*[\/\\]\s*(\d)/g, '$1 over $2') // 1/19 -> "1 over 19"
+    .replace(/→\s*write/g, ', so write')       // reads better than "gives write"
+    .replace(/→/g, ' gives ')
+    .replace(/✓/g, ' yes ')
+    .replace(/✗/g, ' no ')
+    .replace(/△/g, ' ')
+    .replace(/…/g, ' and so on ')
+    .replace(/\/\\/g, ' next to ')
+    .replace(/=/g, ' equals ')
+    .replace(/\+/g, ' plus ');
+
+  // em/en dashes read as a pause
+  t = t.replace(/\s*[—]\s*/g, ', ');
+
+  // diacritics the engine mangles
+  t = t.replace(/ekādhika/gi, 'eka-dhika')
+    .replace(/Ekādhikena Pūrveṇa/gi, 'Eka-dhikena Poor-vena')
+    .replace(/Vestanam/gi, 'Ves-tanam');
+
+  // tidy spacing around punctuation
+  return t.replace(/\s{2,}/g, ' ')
+    .replace(/\s+([,.:!?])/g, '$1')
+    .trim();
+}
+
+function loadVoices(){
+  if (!speech.supported) return;
+  const all = speechSynthesis.getVoices();
+  if (!all.length) return;
+  // prefer natural-sounding English voices
+  const rank = v => {
+    let s = 0;
+    if (/^en/i.test(v.lang)) s += 10;
+    if (/^en-(GB|IN|US)/i.test(v.lang)) s += 3;
+    if (/samantha|daniel|karen|moira|rishi|veena|serena|google/i.test(v.name)) s += 5;
+    if (/premium|enhanced|natural/i.test(v.name)) s += 4;
+    if (v.localService) s += 1;
+    return s;
+  };
+  speech.voices = all.filter(v => /^en/i.test(v.lang)).sort((a,b) => rank(b) - rank(a));
+  if (!speech.voices.length) speech.voices = all.slice();
+
+  const sel = $('voiceSel');
+  sel.innerHTML = '';
+  speech.voices.forEach((v, i) => {
+    const o = el('option', '', `${v.name} (${v.lang})`);
+    o.value = i; sel.appendChild(o);
+  });
+  if (!speech.voice) speech.voice = speech.voices[0] || null;
+  const cur = speech.voices.indexOf(speech.voice);
+  if (cur >= 0) sel.value = cur;
+}
+
+/* Speak a frame's caption. onEnd fires only if this step is still current. */
+function say(html, onEnd){
+  if (!speech.supported || !speech.on){ if (onEnd) onEnd(); return; }
+  speechSynthesis.cancel();
+
+  const text = speakableText(html);
+  if (!text){ if (onEnd) onEnd(); return; }
+
+  const myToken = ++speech.token;
+  const u = new SpeechSynthesisUtterance(text);
+  if (speech.voice) u.voice = speech.voice;
+  u.rate = speech.rate;
+  u.pitch = 1;
+  u.lang = speech.voice ? speech.voice.lang : 'en-US';
+
+  u.onend = () => { if (myToken === speech.token && onEnd) onEnd(); };
+  u.onerror = e => {
+    // 'interrupted'/'canceled' are normal when the user steps early
+    if (e.error && !/interrupted|cancel/i.test(e.error)) console.warn('speech:', e.error);
+    if (myToken === speech.token && onEnd) onEnd();
+  };
+
+  speech.utter = u;
+  speechSynthesis.speak(u);
+}
+
+function shutUp(){
+  speech.token++;                      // invalidate any pending onend
+  if (speech.supported) speechSynthesis.cancel();
+}
+
+function setVoiceOn(on){
+  speech.on = on;
+  const b = $('bVoice');
+  b.classList.toggle('on', on);
+  b.setAttribute('aria-pressed', String(on));
+  $('voiceIcon').textContent = on ? '🔊' : '🔇';
+  $('voiceLabel').textContent = on ? 'Voiceover on' : 'Voiceover off';
+  if (!on) shutUp();
+  else if (model) say(model.F[ix].cap);
+}
+
+function initVoice(){
+  const bar = $('voicebar');
+  if (!speech.supported){
+    bar.querySelectorAll('button,select,input').forEach(n => n.disabled = true);
+    $('vnote').textContent = 'Voiceover needs a browser with the Web Speech API (Safari, Chrome, Edge).';
+    return;
+  }
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;  // Chrome populates async
+
+  $('bVoice').onclick = () => setVoiceOn(!speech.on);
+  $('bRepeat').onclick = () => {
+    if (!model) return;
+    if (!speech.on) setVoiceOn(true);
+    else say(model.F[ix].cap);
+  };
+  $('voiceSel').onchange = e => {
+    speech.voice = speech.voices[Number(e.target.value)] || null;
+    if (speech.on && model) say(model.F[ix].cap);
+  };
+  $('rate').oninput = e => {
+    speech.rate = Number(e.target.value);
+    $('rateVal').textContent = speech.rate.toFixed(2) + 'x';
+  };
+  $('vnote').textContent = 'Autoplay waits for each sentence to finish.';
+}
+
+function draw(){
+  if (!model) return;
+  const f = model.F[ix];
+
+  sheet.innerHTML = '';
+  wires.innerHTML = '';
+  pendingWires = [];
+  board.querySelectorAll('.flyer').forEach(n => n.remove());
+
+  f.build(sheet);
+  caption.innerHTML = f.cap;
+
+  // stagger the worksheet lines in
+  const lines = [...sheet.querySelectorAll('.line')];
+  lines.forEach((l,i) => setTimeout(() => l.classList.add('in'), i * 90));
+
+  // wires + flyers after layout settles
+  setTimeout(() => { drawWires(); if (f.after) f.after(); }, lines.length * 90 + 60);
+
+  renderLog();
+  $('prog').style.width = ((ix+1) / model.F.length * 100) + '%';
+  $('counter').textContent = `step ${ix+1} / ${model.F.length}`;
+  setButtons();
+}
+
+/* accumulate the written working out up to the current frame */
+function renderLog(){
+  logbody.innerHTML = '';
+  for (let i = 0; i <= ix; i++){
+    const f = model.F[i];
+    if (!f.log) continue;
+    f.log.forEach(([k, html]) => {
+      const r = el('div', 'lrow' + (k === 'sum' ? ' sum' : '') + (k === 'note' ? ' note' : '') + (i === ix ? ' new' : ''));
+      if (k && k !== 'sum' && k !== 'note') r.appendChild(el('span','lk', k+'.'));
+      const v = el('span'); v.innerHTML = html; r.appendChild(v);
+      logbody.appendChild(r);
+      requestAnimationFrame(() => r.classList.add('in'));
+    });
+  }
+  if (model.note && ix === model.F.length - 1){
+    const r = el('div', 'lrow note');
+    r.appendChild(el('span', '', model.note));
+    logbody.appendChild(r);
+    requestAnimationFrame(() => r.classList.add('in'));
+  }
+  logbody.scrollTop = logbody.scrollHeight;
+}
+
+function setButtons(){
+  $('bPrev').disabled = !model || ix === 0;
+  $('bNext').disabled = !model || ix >= model.F.length - 1;
+  $('bPlay').disabled = !model;
+}
+
+/* Manual stepping: narrate the new step if voice is on. */
+function next(){
+  if (!model || ix >= model.F.length-1) return false;
+  ix++; draw();
+  if (!playing && speech.on) say(model.F[ix].cap);
+  return true;
+}
+function prev(){
+  if (!model || ix === 0) return;
+  ix--; draw();
+  if (!playing && speech.on) say(model.F[ix].cap);
+}
+
+/* Autoplay: when voice is on, wait for the sentence to finish before
+   advancing; otherwise fall back to a fixed pace. */
+let playing = false;
+
+function advance(){
+  if (!playing) return;
+  if (ix >= model.F.length - 1){ stop(); return; }
+  ix++; draw();
+  narrateThenContinue();
+}
+
+function narrateThenContinue(){
+  if (!playing) return;
+  const gap = 550;                      // breathing room between steps
+  if (speech.on && speech.supported){
+    say(model.F[ix].cap, () => { timer = setTimeout(advance, gap); });
+  } else {
+    const pace = model.F.length > 14 ? 1500 : 2300;
+    timer = setTimeout(advance, pace);
+  }
+}
+
+function play(){
+  if (!model) return;
+  if (playing){ stop(); return; }
+  playing = true;
+  if (ix >= model.F.length-1){ ix = 0; draw(); }
+  $('bPlay').textContent = '⏸ Pause';
+  narrateThenContinue();
+}
+
+function stop(){
+  playing = false;
+  if (timer) clearTimeout(timer);
+  timer = null;
+  shutUp();
+  $('bPlay').textContent = '▶ Play';
+}
+
+$('bNext').onclick  = () => { stop(); next(); };
+$('bPrev').onclick  = () => { stop(); prev(); };
+$('bPlay').onclick  = play;
+$('bReset').onclick = () => { stop(); ix = 0; draw(); if (speech.on) say(model.F[ix].cap); };
+
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+  if (e.key === 'ArrowRight'){ stop(); next(); }
+  if (e.key === 'ArrowLeft'){ stop(); prev(); }
+  if (e.key === ' '){ e.preventDefault(); play(); }
+  if (e.key === 'v' || e.key === 'V'){ setVoiceOn(!speech.on); }
+  if (e.key === 'r' || e.key === 'R'){ $('bRepeat').onclick(); }
+});
+window.addEventListener('resize', () => { if (model) drawWires(); });
+// don't keep talking to an empty room
+document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); });
+window.addEventListener('beforeunload', shutUp);
+
+initVoice();
+selectLesson(0);
+</script>
+</body>
+</html>
