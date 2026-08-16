@@ -177,7 +177,7 @@ export function VisualizerTemplate({ model }: VisualizerProps) {
         <div className="vvm-split">
           <div>
             <div className="vvm-board" ref={boardRef}>
-              <WireSVG wires={frame.wires} containerRef={boardRef} />
+              <WireSVG wires={frame.wires || []} containerRef={boardRef} />
               
               <div className="vvm-sheet">
                 {frame.lines.map((l, i) => (
@@ -185,7 +185,7 @@ export function VisualizerTemplate({ model }: VisualizerProps) {
                 ))}
               </div>
 
-              {frame.flyers.map((f, i) => (
+              {(frame.flyers || []).map((f, i) => (
                 <Flyer key={i} def={f} containerRef={boardRef} />
               ))}
             </div>

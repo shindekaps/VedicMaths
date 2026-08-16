@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { VisualizerTemplate } from '../components/visualizer/VisualizerTemplate';
-import { buildLesson1 } from '../components/visualizer/lessons';
+import { buildLesson1 } from '../components/visualizer/sutra1';
 
 export function TutorialView() {
   const [n, setN] = useState(75);
