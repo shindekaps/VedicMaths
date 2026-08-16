@@ -195,16 +195,12 @@ export function VisualizerTemplate({ model }: VisualizerProps) {
 
           <div className="vvm-log">
             <h3 className="m-0 mb-3 text-[11px] tracking-widest uppercase text-[#5b6672]">Working out</h3>
-            <div className="vvm-logbody">
-              {model.frames.slice(0, ix + 1).map((f, i) => 
-                f.log.map(([k, html], j) => (
-                  <div key={`${i}-${j}`} className={`vvm-lrow in ${k === 'sum' ? 'sum' : ''} ${i === ix ? 'new' : ''}`}>
-                    {k && k !== 'sum' && <span className="vvm-lk">{k}.</span>}
-                    <span dangerouslySetInnerHTML={{__html: html}}></span>
-                  </div>
-                ))
-              )}
-            </div>
+              {frame.log.map(([k, html], j) => (
+                <div key={j} className={`vvm-lrow in ${k === 'sum' ? 'sum' : ''} ${j === frame.log.length - 1 ? 'new' : ''}`}>
+                  {k && k !== 'sum' && <span className="vvm-lk">{k}.</span>}
+                  <span dangerouslySetInnerHTML={{__html: html}}></span>
+                </div>
+              ))}
           </div>
         </div>
 
