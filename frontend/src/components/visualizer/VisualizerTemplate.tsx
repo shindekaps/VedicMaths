@@ -123,8 +123,10 @@ export function VisualizerTemplate({ model }: VisualizerProps) {
     else say(model.frames[ix].cap);
   };
 
-  if (!model || model.frames.length === 0) return null;
-  const frame = model.frames[ix];
+  if (!model || !model.frames || model.frames.length === 0) return null;
+  const safeIx = Math.min(ix, model.frames.length - 1);
+  const frame = model.frames[safeIx] || model.frames[0];
+  if (!frame) return null;
 
   return (
     <div className="vvm-wrap text-left">
@@ -189,7 +191,6 @@ export function VisualizerTemplate({ model }: VisualizerProps) {
                 <Flyer key={i} def={f} containerRef={boardRef} />
               ))}
             </div>
-            <div className="vvm-caption" dangerouslySetInnerHTML={{ __html: frame.cap }}></div>
           </div>
 
           <div className="vvm-log">

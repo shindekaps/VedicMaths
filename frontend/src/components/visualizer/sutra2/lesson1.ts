@@ -17,13 +17,18 @@ export function buildNikhilamSub(p: any): LessonModel {
   const frames: Frame[] = [];
   let lineIdSeq = 0;
 
+  // Frame 1: Setup problem
   frames.push({
     cap: `We want to compute <b>${base} - ${num}</b> using <i>All from 9 and Last from 10</i>.`,
     log: [['', `${base} - ${num}`]],
-    lines: [{ id: `prob_${++lineIdSeq}`, label: 'problem', nodes: [cell(baseStr, 'res'), sym('-'), cell(numStr, 'tail')] }],
+    lines: [
+      { id: `base_row_${++lineIdSeq}`, label: 'base', nodes: baseStr.split('').map((ch, i) => cell(ch, 'prev', { id: `b_${i}` })) },
+      { id: `prob_${++lineIdSeq}`, label: 'subtrahend', nodes: [sym('-'), ...digits.map((ch, i) => cell(ch, 'tail', { id: `num_${i}` }))] }
+    ],
     wires: [], flyers: []
   });
 
+  // Frame 2: Rule assignment
   const stepNodes: LineNode[] = [];
   const resultDigits: string[] = [];
 
@@ -34,16 +39,22 @@ export function buildNikhilamSub(p: any): LessonModel {
     const resDigit = isTrailingZero ? '0' : String(fromVal - parseInt(d, 10));
     resultDigits.push(resDigit);
 
-    stepNodes.push(cell(d, isTrailingZero ? 'muted' : isLast ? 'tail' : 'prev', { id: `d_${i}` }));
+    stepNodes.push(cell(d, isTrailingZero ? 'muted' : isLast ? 'tail' : 'prev', { id: `d_${i}`, tag: isTrailingZero ? undefined : (isLast ? 'from 10' : 'from 9') }));
   });
 
   frames.push({
     cap: `Identify the digits: apply <b>'All from 9'</b> to leading digits, and <b>'Last from 10'</b> to the last non-zero digit (${digits[lastNonZeroIdx]}).`,
     log: [['1', `Rule: Subtract non-last digits from 9, last active digit from 10`]],
     lines: [{ id: `step1_${++lineIdSeq}`, label: 'digits', nodes: stepNodes }],
-    wires: [], flyers: []
+    wires: digits.map((_, i) => ({
+      fromKey: `d_${i}`,
+      toKey: `d_${i}`,
+      color: i === lastNonZeroIdx ? '#ec4899' : '#6366f1'
+    })),
+    flyers: []
   });
 
+  // Frame 3: Step-by-step subtraction with visual wires
   const calcLines: LineNode[] = [];
   digits.forEach((d, i) => {
     const isTrailingZero = i > lastNonZeroIdx;
@@ -52,9 +63,9 @@ export function buildNikhilamSub(p: any): LessonModel {
     const resDigit = resultDigits[i];
     
     if (isTrailingZero) {
-      calcLines.push(cell(d, 'muted'));
+      calcLines.push(cell(d, 'muted', { id: `calc_${i}` }));
     } else {
-      calcLines.push(cell(`${fromVal}-${d}=${resDigit}`, 'res'));
+      calcLines.push(cell(`${fromVal}-${d}=${resDigit}`, 'res', { id: `calc_${i}`, pop: true }));
     }
   });
 
@@ -65,11 +76,17 @@ export function buildNikhilamSub(p: any): LessonModel {
       { id: `step2_${++lineIdSeq}`, label: 'digits', muted: true, nodes: stepNodes },
       { id: `step2_calc_${++lineIdSeq}`, label: 'subtraction', nodes: calcLines }
     ],
-    wires: [], flyers: []
+    wires: digits.map((_, i) => ({
+      fromKey: `d_${i}`,
+      toKey: `calc_${i}`,
+      color: i === lastNonZeroIdx ? '#ec4899' : '#6366f1'
+    })),
+    flyers: []
   });
 
+  // Frame 4: Final answer
   const finalAnswerStr = String(ans);
-  const ansNodes: LineNode[] = finalAnswerStr.split('').map((ch, i) => cell(ch, 'res', { id: `ans_${i}` }));
+  const ansNodes: LineNode[] = finalAnswerStr.split('').map((ch, i) => cell(ch, 'res', { id: `ans_${i}`, pop: true }));
 
   frames.push({
     cap: `Combine the digits to get the final answer: <b>${base} - ${num} = ${ans}</b>.`,
@@ -77,7 +94,12 @@ export function buildNikhilamSub(p: any): LessonModel {
     lines: [
       { id: `step3_${++lineIdSeq}`, label: 'result', nodes: ansNodes }
     ],
-    wires: [], flyers: []
+    wires: resultDigits.map((_, i) => ({
+      fromKey: `calc_${i}`,
+      toKey: `ans_${i}`,
+      color: '#10b981'
+    })),
+    flyers: []
   });
 
   return {
