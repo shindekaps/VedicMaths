@@ -68,9 +68,9 @@ const defaultParams: Record<number, Record<number, any>> = {
     4: { n: 23 },
   },
   4: {
-    1: { num: 256, den: 8 },
-    2: { num: 1234, den: 23 },
-    3: { num: 12345, den: 112 },
+    1: { num: 1352, den: 12 },
+    2: { coeffs: [1, 5, 6], divisorK: 2 },
+    3: { num: 1234, den: 121 },
     4: { a: 3, b: 5, c: 20 },
   },
   5: {
@@ -294,7 +294,27 @@ function getInputControls(
 
   // Sutra 4 — Paravartya Yojayet
   if (sutraNum === 4) {
-    if (lessonNum <= 3) return (
+    if (lessonNum === 2) {
+      const coeffs: number[] = params.coeffs || [1, 5, 6];
+      return (
+        <div className="flex items-center gap-3 flex-wrap">
+          <span className={labelCls}>Coefficients:</span>
+          {coeffs.map((c: number, i: number) => (
+            <NumberInput key={i} value={c} onChange={(v: number) => {
+              const newCoeffs = [...coeffs];
+              newCoeffs[i] = v;
+              setParams({ ...params, coeffs: newCoeffs });
+            }} />
+          ))}
+          <button className="text-xs bg-white/10 rounded px-2 py-1 text-white/60" onClick={() => setParams({ ...params, coeffs: [...coeffs, 0] })}>+term</button>
+          {coeffs.length > 2 && <button className="text-xs bg-white/10 rounded px-2 py-1 text-white/60" onClick={() => setParams({ ...params, coeffs: coeffs.slice(0, -1) })}>−term</button>}
+          <span className={opCls}>÷ (x +</span>
+          <NumberInput value={params.divisorK} onChange={set('divisorK')} />
+          <span className={opCls}>)</span>
+        </div>
+      );
+    }
+    if (lessonNum === 1 || lessonNum === 3) return (
       <div className="flex items-center gap-3">
         <span className={labelCls}>Try it with:</span>
         <NumberInput value={params.num} onChange={set('num')} wide />
