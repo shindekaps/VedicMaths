@@ -1395,6 +1395,55 @@ func genSutra14(difficulty int) domain.Problem {
 	}
 }
 
+// ---------- Helper for formatting polynomial signs in generators ----------
+func fmtFactorX(constant int) string {
+	if constant >= 0 {
+		return fmt.Sprintf("x + %d", constant)
+	}
+	return fmt.Sprintf("x - %d", -constant)
+}
+
+func fmtFactorLinear(coeff int, constant int) string {
+	if coeff == 1 {
+		return fmtFactorX(constant)
+	}
+	if constant >= 0 {
+		return fmt.Sprintf("%dx + %d", coeff, constant)
+	}
+	return fmt.Sprintf("%dx - %d", coeff, -constant)
+}
+
+func fmtQuadratic(coeff2, coeff1, constant int) string {
+	var part2 string
+	if coeff2 == 1 {
+		part2 = "x²"
+	} else if coeff2 == -1 {
+		part2 = "-x²"
+	} else {
+		part2 = fmt.Sprintf("%dx²", coeff2)
+	}
+
+	var part1 string
+	if coeff1 > 0 {
+		part1 = fmt.Sprintf(" + %dx", coeff1)
+	} else if coeff1 < 0 {
+		part1 = fmt.Sprintf(" - %dx", -coeff1)
+	} else {
+		part1 = ""
+	}
+
+	var part0 string
+	if constant > 0 {
+		part0 = fmt.Sprintf(" + %d", constant)
+	} else if constant < 0 {
+		part0 = fmt.Sprintf(" - %d", -constant)
+	} else {
+		part0 = ""
+	}
+
+	return part2 + part1 + part0
+}
+
 // ---------- Sutra 15: Gunitasamuccayah (verification) ----------
 func genSutra15(difficulty int) domain.Problem {
 	p, q := 0, 0
@@ -1407,9 +1456,14 @@ func genSutra15(difficulty int) domain.Problem {
 	b, c := p+q, p*q
 	lhs := (1 + p) * (1 + q)
 	rhs := 1 + b + c
+
+	factor1 := fmtFactorX(p)
+	factor2 := fmtFactorX(q)
+	expanded := fmtQuadratic(1, b, c)
+
 	return domain.Problem{
 		SutraID:      15,
-		QuestionText: fmt.Sprintf("Does (x+%d)(x+%d) expand to x^2 + %dx + %d?", p, q, b, c),
+		QuestionText: fmt.Sprintf("Does (%s)(%s) expand to %s?", factor1, factor2, expanded),
 		Difficulty:   3,
 		DedupKey:     fmt.Sprintf("s15:%d:%d", p, q),
 		Answer:       lhs == rhs,
@@ -1421,8 +1475,125 @@ func genSutra15(difficulty int) domain.Problem {
 	}
 }
 
-// ---------- Sutra 16: Gunakasamuccyah (verification, leading coefficient) ----------
-func genSutra16(difficulty int) domain.Problem {
+// ---------- Sutra 16 Lesson 1: Finding Polynomial Values at x=1 ----------
+func genSutra16Lesson1(difficulty int) domain.Problem {
+	a := -9 + rand.Intn(19)
+	b := -9 + rand.Intn(19)
+	c := -9 + rand.Intn(19)
+	d := -9 + rand.Intn(19)
+	for a == 0 {
+		a = -9 + rand.Intn(19)
+	}
+
+	sum := a + b + c + d
+
+	// Format cubic: ax³ + bx² + cx + d
+	var polyStr string
+	if a == 1 {
+		polyStr = "x³"
+	} else if a == -1 {
+		polyStr = "-x³"
+	} else {
+		polyStr = fmt.Sprintf("%dx³", a)
+	}
+
+	if b > 0 {
+		polyStr += fmt.Sprintf(" + %dx²", b)
+	} else if b < 0 {
+		polyStr += fmt.Sprintf(" - %dx²", -b)
+	}
+
+	if c > 0 {
+		polyStr += fmt.Sprintf(" + %dx", c)
+	} else if c < 0 {
+		polyStr += fmt.Sprintf(" - %dx", -c)
+	}
+
+	if d > 0 {
+		polyStr += fmt.Sprintf(" + %d", d)
+	} else if d < 0 {
+		polyStr += fmt.Sprintf(" - %d", -d)
+	}
+
+	return domain.Problem{
+		SutraID:      16,
+		QuestionText: fmt.Sprintf("What is the sum of coefficients (value at x=1) for P(x) = %s?", polyStr),
+		Difficulty:   2,
+		DedupKey:     fmt.Sprintf("s16:L1:%d:%d:%d:%d", a, b, c, d),
+		Answer:       sum,
+		SolutionSteps: []string{
+			fmt.Sprintf("To evaluate P(1), substitute x = 1 into the polynomial: P(1) = %d(1)³ + %d(1)² + %d(1) + %d", a, b, c, d),
+			fmt.Sprintf("This simplifies to summing all the coefficients: %d + %d + %d + %d = %d", a, b, c, d, sum),
+			fmt.Sprintf("Answer: %d", sum),
+		},
+	}
+}
+
+// ---------- Sutra 16 Lesson 2: Root Finding (x=1 check) ----------
+func genSutra16Lesson2(difficulty int) domain.Problem {
+	// Generate coefficients that sum to 0 (root) or not 0 (not root)
+	isRoot := rand.Intn(2) == 0
+	a := 1 + rand.Intn(6)
+	b := -10 + rand.Intn(21)
+	c := -10 + rand.Intn(21)
+	var d int
+	if isRoot {
+		d = -(a + b + c)
+	} else {
+		d = -(a + b + c) + 1 + rand.Intn(4)
+		if rand.Intn(2) == 0 {
+			d = -(a + b + c) - 1 - rand.Intn(4)
+		}
+	}
+
+	sum := a + b + c + d
+	ans := "No"
+	if isRoot {
+		ans = "Yes"
+	}
+
+	var polyStr string
+	if a == 1 {
+		polyStr = "x³"
+	} else {
+		polyStr = fmt.Sprintf("%dx³", a)
+	}
+
+	if b > 0 {
+		polyStr += fmt.Sprintf(" + %dx²", b)
+	} else if b < 0 {
+		polyStr += fmt.Sprintf(" - %dx²", -b)
+	}
+
+	if c > 0 {
+		polyStr += fmt.Sprintf(" + %dx", c)
+	} else if c < 0 {
+		polyStr += fmt.Sprintf(" - %dx", -c)
+	}
+
+	if d > 0 {
+		polyStr += fmt.Sprintf(" + %d", d)
+	} else if d < 0 {
+		polyStr += fmt.Sprintf(" - %d", -d)
+	}
+
+	return domain.Problem{
+		SutraID:      16,
+		QuestionText: fmt.Sprintf("Is x = 1 a root of the polynomial P(x) = %s?", polyStr),
+		Difficulty:   3,
+		DedupKey:     fmt.Sprintf("s16:L2:%d:%d:%d:%d", a, b, c, d),
+		Answer:       ans,
+		Options:      []string{"Yes", "No"},
+		SolutionSteps: []string{
+			fmt.Sprintf("Check the sum of the coefficients: %d + %d + %d + %d = %d", a, b, c, d, sum),
+			fmt.Sprintf("If the coefficient sum is 0, then x = 1 is a root (by Factor Theorem)."),
+			fmt.Sprintf("The sum is %d, so the answer is %s.", sum, ans),
+		},
+	}
+}
+
+// ---------- Sutra 16 Lesson 3: Verification of Solutions (factorization check) ----------
+func genSutra16Lesson3(difficulty int) domain.Problem {
 	a1, a2 := 1+rand.Intn(6), 1+rand.Intn(6)
 	p, q := 0, 0
 	for p == 0 {
@@ -1434,22 +1605,126 @@ func genSutra16(difficulty int) domain.Problem {
 	A := a1 * a2
 	B := a1*q + a2*p
 	C := p * q
+
+	// Introduce potential error on purpose for false statements
+	isCorrect := rand.Intn(2) == 0
+	if !isCorrect {
+		C = C + 1 + rand.Intn(5)
+		if rand.Intn(2) == 0 {
+			C = C - 1 - rand.Intn(5)
+		}
+	}
+
 	lhs := (a1 + p) * (a2 + q)
 	rhs := A + B + C
+
+	factor1 := fmtFactorLinear(a1, p)
+	factor2 := fmtFactorLinear(a2, q)
+	expanded := fmtQuadratic(A, B, C)
+
 	return domain.Problem{
 		SutraID:      16,
-		QuestionText: fmt.Sprintf("Does (%dx+%d)(%dx+%d) expand to %dx^2 + %dx + %d?", a1, p, a2, q, A, B, C),
+		QuestionText: fmt.Sprintf("Does (%s)(%s) expand to %s?", factor1, factor2, expanded),
 		Difficulty:   4,
-		DedupKey:     fmt.Sprintf("s16:%d:%d:%d:%d", a1, p, a2, q),
+		DedupKey:     fmt.Sprintf("s16:L3:%d:%d:%d:%d:%t", a1, p, a2, q, isCorrect),
 		Answer:       lhs == rhs,
 		SolutionSteps: []string{
-			fmt.Sprintf("Sum of coefficients of factor 1: %d+%d = %d", a1, p, a1+p),
-			fmt.Sprintf("Sum of coefficients of factor 2: %d+%d = %d", a2, q, a2+q),
-			fmt.Sprintf("Product of the two sums: %d", lhs),
-			fmt.Sprintf("Sum of coefficients of expanded product: %d+%d+%d = %d", A, B, C, rhs),
-			"Gunakasamuccyah check: verified",
+			fmt.Sprintf("Sum of coefficients of factors: (%d+%d) x (%d+%d) = %d x %d = %d", a1, p, a2, q, a1+p, a2+q, lhs),
+			fmt.Sprintf("Sum of coefficients of expanded expression: %d + %d + %d = %d", A, B, C, rhs),
+			fmt.Sprintf("Since LHS sum (%d) %s RHS sum (%d), the expansion is %s.", lhs, map[bool]string{true: "equals", false: "does not equal"}[lhs == rhs], rhs, map[bool]string{true: "correct", false: "incorrect"}[lhs == rhs]),
 		},
 	}
+}
+
+// ---------- Sutra 16 Lesson 4: Advanced Applications (cubic factorization check) ----------
+func genSutra16Lesson4(difficulty int) domain.Problem {
+	// (x + a)(x + b)(x + c) = x³ + (a+b+c)x² + (ab+bc+ca)x + abc
+	a := 1 + rand.Intn(5)
+	b := 1 + rand.Intn(5)
+	c := 1 + rand.Intn(5)
+	if rand.Intn(2) == 0 { a = -a }
+	if rand.Intn(2) == 0 { b = -b }
+	if rand.Intn(2) == 0 { c = -c }
+
+	coeff2 := a + b + c
+	coeff1 := a*b + b*c + c*a
+	coeff0 := a * b * c
+
+	isCorrect := rand.Intn(2) == 0
+	if !isCorrect {
+		coeff0 = coeff0 + 1 + rand.Intn(4)
+	}
+
+	lhs := (1 + a) * (1 + b) * (1 + c)
+	rhs := 1 + coeff2 + coeff1 + coeff0
+
+	factor1 := fmtFactorX(a)
+	factor2 := fmtFactorX(b)
+	factor3 := fmtFactorX(c)
+
+	// Format expanded cubic
+	var expStr string
+	if coeff2 > 0 {
+		expStr = fmt.Sprintf("x³ + %dx²", coeff2)
+	} else if coeff2 < 0 {
+		expStr = fmt.Sprintf("x³ - %dx²", -coeff2)
+	} else {
+		expStr = "x³"
+	}
+
+	if coeff1 > 0 {
+		expStr += fmt.Sprintf(" + %dx", coeff1)
+	} else if coeff1 < 0 {
+		expStr += fmt.Sprintf(" - %dx", -coeff1)
+	}
+
+	if coeff0 > 0 {
+		expStr += fmt.Sprintf(" + %d", coeff0)
+	} else if coeff0 < 0 {
+		expStr += fmt.Sprintf(" - %d", -coeff0)
+	}
+
+	return domain.Problem{
+		SutraID:      16,
+		QuestionText: fmt.Sprintf("Does (%s)(%s)(%s) expand to %s?", factor1, factor2, factor3, expStr),
+		Difficulty:   4,
+		DedupKey:     fmt.Sprintf("s16:L4:%d:%d:%d:%t", a, b, c, isCorrect),
+		Answer:       lhs == rhs,
+		SolutionSteps: []string{
+			fmt.Sprintf("Sum of coefficients of factors: (1+%d)(1+%d)(1+%d) = %d", a, b, c, lhs),
+			fmt.Sprintf("Sum of coefficients of expanded expression: 1 + %d + %d + %d = %d", coeff2, coeff1, coeff0, rhs),
+			fmt.Sprintf("Since LHS sum (%d) %s RHS sum (%d), the expansion is %s.", lhs, map[bool]string{true: "equals", false: "does not equal"}[lhs == rhs], rhs, map[bool]string{true: "correct", false: "incorrect"}[lhs == rhs]),
+		},
+	}
+}
+
+func genSutra16WithLesson(difficulty int, lessonID string) domain.Problem {
+	if lessonID == "SUTRA_16_LESSON_1" {
+		return genSutra16Lesson1(difficulty)
+	}
+	if lessonID == "SUTRA_16_LESSON_2" {
+		return genSutra16Lesson2(difficulty)
+	}
+	if lessonID == "SUTRA_16_LESSON_3" {
+		return genSutra16Lesson3(difficulty)
+	}
+	if lessonID == "SUTRA_16_LESSON_4" {
+		return genSutra16Lesson4(difficulty)
+	}
+	switch rand.Intn(4) {
+	case 0:
+		return genSutra16Lesson1(difficulty)
+	case 1:
+		return genSutra16Lesson2(difficulty)
+	case 2:
+		return genSutra16Lesson3(difficulty)
+	default:
+		return genSutra16Lesson4(difficulty)
+	}
+}
+
+func genSutra16(difficulty int) domain.Problem {
+	return genSutra16WithLesson(difficulty, "")
 }
 
 func pow10(n int) int {
@@ -1466,3 +1741,4 @@ func min(a, b int) int {
 	}
 	return b
 }
+

@@ -53,6 +53,8 @@ func (s *Service) NextProblem(ctx context.Context, userID string, sutraID, diffi
 			candidate = genSutra4WithLesson(difficulty, lessonID)
 		} else if sutraID == 5 {
 			candidate = genSutra5WithLesson(difficulty, lessonID)
+		} else if sutraID == 16 {
+			candidate = genSutra16WithLesson(difficulty, lessonID)
 		} else {
 			candidate = gen(difficulty)
 		}
@@ -85,6 +87,8 @@ func (s *Service) NextProblem(ctx context.Context, userID string, sutraID, diffi
 			p = genSutra4WithLesson(difficulty, lessonID)
 		} else if sutraID == 5 {
 			p = genSutra5WithLesson(difficulty, lessonID)
+		} else if sutraID == 16 {
+			p = genSutra16WithLesson(difficulty, lessonID)
 		} else {
 			p = gen(difficulty)
 		}
@@ -127,6 +131,8 @@ func (s *Service) GetQuestions(ctx context.Context, userID string, sutraID, diff
 				candidate = genSutra4WithLesson(difficulty, "")
 			} else if sutraID == 5 {
 				candidate = genSutra5WithLesson(difficulty, "")
+			} else if sutraID == 16 {
+				candidate = genSutra16WithLesson(difficulty, "")
 			} else {
 				candidate = gen(difficulty)
 			}
@@ -152,6 +158,8 @@ func (s *Service) GetQuestions(ctx context.Context, userID string, sutraID, diff
 				p = genSutra4WithLesson(difficulty, "")
 			} else if sutraID == 5 {
 				p = genSutra5WithLesson(difficulty, "")
+			} else if sutraID == 16 {
+				p = genSutra16WithLesson(difficulty, "")
 			} else {
 				p = gen(difficulty)
 			}
@@ -239,6 +247,23 @@ func normalizeValue(v interface{}) string {
 }
 
 func generateMCQOptionsForProblem(answer interface{}) []string {
+	// 1. Check if the answer is a boolean or a boolean string
+	if valBool, ok := answer.(bool); ok {
+		if valBool {
+			return []string{"true", "false"}
+		}
+		return []string{"false", "true"}
+	}
+	if valStr, ok := answer.(string); ok {
+		lowerStr := strings.ToLower(strings.TrimSpace(valStr))
+		if lowerStr == "true" {
+			return []string{"true", "false"}
+		}
+		if lowerStr == "false" {
+			return []string{"false", "true"}
+		}
+	}
+
 	var ansVal int
 	var isNumeric bool
 
