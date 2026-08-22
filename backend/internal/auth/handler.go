@@ -24,26 +24,43 @@ func NewHandler(service Service) Handler {
 // Register handles the user registration POST request
 func (h *handler) Register(c *gin.Context) {
 	var req struct {
+		Name     string `json:"name" binding:"required"`
 		Email    string `json:"email" binding:"required,email"`
 		Password string `json:"password" binding:"required,min=6"`
-		Username string `json:"username" binding:"required"`
-		Grade    int    `json:"grade" binding:"required"`
 	}
 
 	// Validate JSON request body
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err.Error()})
 		return
 	}
 
 	// Invoke the service layer to register the user
-	err := h.service.Register(c.Request.Context(), req.Email, req.Password, req.Username, req.Grade)
+	err := h.service.Register(c.Request.Context(), req.Email, req.Password, req.Name, 6)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to register user"})
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "Failed to register user: " + err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "User registered successfully"})
+	// Auto-login the user after registration
+	user, token, err := h.service.Login(c.Request.Context(), req.Email, req.Password)
+	if err != nil {
+		c.JSON(http.StatusCreated, gin.H{"success": true, "message": "User registered successfully, but failed to auto-login: " + err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"success": true,
+		"data": gin.H{
+			"userId":       user.ID.Hex(),
+			"email":        user.Email,
+			"firstName":    user.FirstName,
+			"lastName":     "",
+			"profilePhoto": "https://avatar.vercel.sh/" + user.NickName,
+			"accessToken":  token,
+			"refreshToken": "ref-mock-token-" + user.ID.Hex(),
+		},
+	})
 }
 
 // Login handles the user login POST request
@@ -55,16 +72,27 @@ func (h *handler) Login(c *gin.Context) {
 
 	// Validate JSON request body
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err.Error()})
 		return
 	}
 
 	// Invoke service to verify credentials and get token
-	token, err := h.service.Login(c.Request.Context(), req.Email, req.Password)
+	user, token, err := h.service.Login(c.Request.Context(), req.Email, req.Password)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+		c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "Invalid credentials: " + err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"token": token})
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data": gin.H{
+			"userId":       user.ID.Hex(),
+			"email":        user.Email,
+			"firstName":    user.FirstName,
+			"lastName":     "",
+			"profilePhoto": "https://avatar.vercel.sh/" + user.NickName,
+			"accessToken":  token,
+			"refreshToken": "ref-mock-token-" + user.ID.Hex(),
+		},
+	})
 }

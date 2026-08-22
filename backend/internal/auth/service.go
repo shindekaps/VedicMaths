@@ -13,7 +13,7 @@ import (
 // Service defines the interface for authentication operations
 type Service interface {
 	Register(ctx context.Context, email, password, username string, grade int) error
-	Login(ctx context.Context, email, password string) (string, error)
+	Login(ctx context.Context, email, password string) (*domain.User, string, error)
 }
 
 type service struct {
@@ -41,6 +41,8 @@ func (s *service) Register(ctx context.Context, email, password, username string
 		Password:  string(hashedPassword),
 		FirstName: username,
 		NickName:  username,
+		Username:  username,
+		Role:      "student",
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 		IsActive:  true,
@@ -50,23 +52,28 @@ func (s *service) Register(ctx context.Context, email, password, username string
 }
 
 // Login verifies credentials and generates a JWT
-func (s *service) Login(ctx context.Context, email, password string) (string, error) {
+func (s *service) Login(ctx context.Context, email, password string) (*domain.User, string, error) {
 	user, err := s.repo.GetByEmail(ctx, email)
 	if err != nil {
-		return "", errors.New("invalid credentials")
+		return nil, "", errors.New("invalid credentials")
 	}
 
 	// Compare provided password with hashed password
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
-		return "", errors.New("invalid credentials")
+		return nil, "", errors.New("invalid credentials")
 	}
 
 	// Create JWT token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_id": user.ID,
+		"user_id": user.ID.Hex(),
 		"exp":     time.Now().Add(time.Hour * 24).Unix(),
 	})
 
-	return token.SignedString(s.jwtSecret)
+	tokenStr, err := token.SignedString(s.jwtSecret)
+	if err != nil {
+		return nil, "", err
+	}
+
+	return user, tokenStr, nil
 }

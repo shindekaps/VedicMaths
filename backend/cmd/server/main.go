@@ -63,7 +63,7 @@ func main() {
     practiceService := practice.NewService(practiceRepo, genService)
     practiceHandler := practice.NewHandler(practiceService)
 
-    extraHandler := extra.NewHandler(db.Database("vedicpath"), genService)
+    extraHandler := extra.NewHandler(db.Database("vedicpath"), genService, cfg.JWTSecret)
 
     // Register routes
     v1 := r.Group("/v1")

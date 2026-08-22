@@ -20,7 +20,7 @@ interface AuthState {
 
   login: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
-  googleLogin: () => Promise<void>;
+  googleLogin: (idToken: string) => Promise<void>;
   logout: () => void;
   clearError: () => void;
   setUser: (user: User | null) => void;
@@ -91,10 +91,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
-  googleLogin: async () => {
+  googleLogin: async (idToken: string) => {
     set({ isLoading: true, error: null });
     try {
-      const res = await authApi.googleLogin({ googleIdToken: 'google-mock-token' });
+      const res = await authApi.googleLogin({ googleIdToken: idToken });
       if (res.success && res.data) {
         const token = res.data.accessToken || res.data.token || '';
         const refreshToken = res.data.refreshToken || '';

@@ -2,29 +2,37 @@ package extra
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"math/rand"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"golang.org/x/crypto/bcrypt"
 
+	"vedicpath/internal/domain"
 	"vedicpath/internal/generator"
 )
 
 type Handler struct {
-	db  *mongo.Database
-	gen *generator.Service
+	db        *mongo.Database
+	gen       *generator.Service
+	jwtSecret []byte
 }
 
-func NewHandler(db *mongo.Database, gen *generator.Service) *Handler {
+func NewHandler(db *mongo.Database, gen *generator.Service, jwtSecret string) *Handler {
 	return &Handler{
-		db:  db,
-		gen: gen,
+		db:        db,
+		gen:       gen,
+		jwtSecret: []byte(jwtSecret),
 	}
 }
 
@@ -90,7 +98,7 @@ func generateOptions(correctAnswer string) []gin.H {
 	return optionsList
 }
 
-// 3. Google OAuth Login stub
+// 3. Google OAuth Login
 func (h *Handler) GoogleLogin(c *gin.Context) {
 	var req struct {
 		GoogleIdToken     string `json:"googleIdToken" binding:"required"`
@@ -101,16 +109,113 @@ func (h *Handler) GoogleLogin(c *gin.Context) {
 		return
 	}
 
+	var googleEmail string
+	var googleID string
+	var firstName string
+	var lastName string
+	var profilePhoto string
+
+	// Support both development mock token and actual Google verification
+	if req.GoogleIdToken == "google-mock-token" {
+		googleEmail = "google.student@gmail.com"
+		googleID = "google-oauth-mock-id"
+		firstName = "Student"
+		lastName = "Vedic"
+		profilePhoto = "https://avatar.vercel.sh/student"
+	} else {
+		// Verify real Google token by calling Google TokenInfo API
+		resp, err := http.Get("https://oauth2.googleapis.com/tokeninfo?id_token=" + req.GoogleIdToken)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "Failed to connect to Google verification API: " + err.Error()})
+			return
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode != http.StatusOK {
+			c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "Invalid Google ID token"})
+			return
+		}
+
+		var claims struct {
+			Sub        string `json:"sub"`
+			Email      string `json:"email"`
+			Name       string `json:"name"`
+			Picture    string `json:"picture"`
+			GivenName  string `json:"given_name"`
+			FamilyName string `json:"family_name"`
+		}
+		if err := json.NewDecoder(resp.Body).Decode(&claims); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "Failed to decode Google token claims: " + err.Error()})
+			return
+		}
+
+		googleEmail = claims.Email
+		googleID = claims.Sub
+		firstName = claims.GivenName
+		lastName = claims.FamilyName
+		profilePhoto = claims.Picture
+		if firstName == "" {
+			firstName = claims.Name
+		}
+	}
+
+	// 1. Find or create the user in MongoDB
+	usersCol := h.db.Collection("users")
+	var user domain.User
+	ctx := c.Request.Context()
+
+	err := usersCol.FindOne(ctx, bson.M{"googleId": googleID}).Decode(&user)
+	if err != nil {
+		// Not found, let's insert a new Google user
+		user = domain.User{
+			ID:           primitive.NewObjectID(),
+			GoogleID:     googleID,
+			Email:        googleEmail,
+			FirstName:    firstName,
+			LastName:     lastName,
+			NickName:     firstName,
+			Username:     googleEmail,
+			Role:         "student",
+			ProfilePhoto: profilePhoto,
+			CreatedAt:    time.Now(),
+			UpdatedAt:    time.Now(),
+			IsActive:     true,
+			Preferences: domain.UserPreferences{
+				DailyGoal:     60,
+				Notifications: true,
+				DarkMode:      false,
+				Language:      "en",
+			},
+		}
+		_, insertErr := usersCol.InsertOne(ctx, user)
+		if insertErr != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "Failed to create user: " + insertErr.Error()})
+			return
+		}
+	}
+
+	// 2. Generate a real JWT access token
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"user_id": user.ID.Hex(),
+		"exp":     time.Now().Add(time.Hour * 24).Unix(),
+	})
+
+	tokenStr, err := token.SignedString(h.jwtSecret)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "Failed to sign token: " + err.Error()})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"data": gin.H{
-			"userId":       "google-oauth-mock-id",
-			"email":        "user@gmail.com",
-			"firstName":    "John",
-			"lastName":     "Doe",
-			"profilePhoto": "https://lh3.googleusercontent.com/a/mock",
-			"accessToken":  "google-oauth-mock-access-token",
-			"refreshToken": "google-oauth-mock-refresh-token",
+			"userId":       user.ID.Hex(),
+			"email":        user.Email,
+			"firstName":    user.FirstName,
+			"lastName":     user.LastName,
+			"profilePhoto": user.ProfilePhoto,
+			"accessToken":  tokenStr,
+			"refreshToken": "ref-mock-token-" + user.ID.Hex(),
 			"expiresIn":    3600,
 			"isNewUser":    false,
 		},
@@ -136,23 +241,92 @@ func (h *Handler) Logout(c *gin.Context) {
 	})
 }
 
+// Helper to parse user ID from token
+func (h *Handler) getUserIDFromAuth(c *gin.Context) (primitive.ObjectID, error) {
+	authHeader := c.GetHeader("Authorization")
+	if authHeader == "" {
+		return primitive.NilObjectID, fmt.Errorf("no authorization header")
+	}
+
+	parts := strings.Split(authHeader, " ")
+	if len(parts) < 2 {
+		return primitive.NilObjectID, fmt.Errorf("invalid authorization header format")
+	}
+	tokenStr := parts[len(parts)-1]
+
+	token, err := jwt.Parse(tokenStr, func(t *jwt.Token) (interface{}, error) {
+		return h.jwtSecret, nil
+	})
+	if err != nil || !token.Valid {
+		return primitive.NilObjectID, fmt.Errorf("invalid token")
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return primitive.NilObjectID, fmt.Errorf("invalid claims")
+	}
+
+	userIDStr, ok := claims["user_id"].(string)
+	if !ok {
+		return primitive.NilObjectID, fmt.Errorf("user_id not found in claims")
+	}
+
+	objID, err := primitive.ObjectIDFromHex(userIDStr)
+	if err != nil {
+		return primitive.NilObjectID, fmt.Errorf("invalid user ID hex")
+	}
+
+	return objID, nil
+}
+
 // 6. Get User Profile
 func (h *Handler) GetProfile(c *gin.Context) {
+	userID, err := h.getUserIDFromAuth(c)
+	if err != nil {
+		// Graceful fallback to mock user Kapil if not logged in
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"data": gin.H{
+				"userId":       "mock-user-id-kapil",
+				"email":        "kapil@example.com",
+				"firstName":    "Kapil",
+				"lastName":     "Shinde",
+				"nickName":     "Kaps",
+				"profilePhoto": "https://avatar.vercel.sh/kapil",
+				"createdAt":    time.Now().Add(-30 * 24 * time.Hour),
+				"preferences": gin.H{
+					"dailyGoal":     60,
+					"notifications": true,
+					"darkMode":      false,
+					"language":      "en",
+				},
+			},
+		})
+		return
+	}
+
+	var user domain.User
+	err = h.db.Collection("users").FindOne(c.Request.Context(), bson.M{"_id": userID}).Decode(&user)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"success": false, "error": "User not found"})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"data": gin.H{
-			"userId":       "mock-user-id-kapil",
-			"email":        "kapil@example.com",
-			"firstName":    "Kapil",
-			"lastName":     "Shinde",
-			"nickName":     "Kaps",
-			"profilePhoto": "https://avatar.vercel.sh/kapil",
-			"createdAt":    time.Now().Add(-30 * 24 * time.Hour),
+			"userId":       user.ID.Hex(),
+			"email":        user.Email,
+			"firstName":    user.FirstName,
+			"lastName":     user.LastName,
+			"nickName":     user.NickName,
+			"profilePhoto": "https://avatar.vercel.sh/" + user.NickName,
+			"createdAt":    user.CreatedAt,
 			"preferences": gin.H{
-				"dailyGoal":     60,
-				"notifications": true,
-				"darkMode":      false,
-				"language":      "en",
+				"dailyGoal":     user.Preferences.DailyGoal,
+				"notifications": user.Preferences.Notifications,
+				"darkMode":      user.Preferences.DarkMode,
+				"language":      user.Preferences.Language,
 			},
 		},
 	})
@@ -160,18 +334,44 @@ func (h *Handler) GetProfile(c *gin.Context) {
 
 // 7. Update User Profile
 func (h *Handler) UpdateProfile(c *gin.Context) {
+	userID, err := h.getUserIDFromAuth(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "Unauthorized"})
+		return
+	}
+
 	var req struct {
 		FirstName   string `json:"firstName"`
 		LastName    string `json:"lastName"`
 		NickName    string `json:"nickName"`
 		Preferences struct {
-			DailyGoal     int  `json:"dailyGoal"`
-			Notifications bool `json:"notifications"`
-			DarkMode      bool `json:"darkMode"`
+			DailyGoal     int    `json:"dailyGoal"`
+			Notifications bool   `json:"notifications"`
+			DarkMode      bool   `json:"darkMode"`
+			Language      string `json:"language"`
 		} `json:"preferences"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err.Error()})
+		return
+	}
+
+	update := bson.M{
+		"$set": bson.M{
+			"firstName": req.FirstName,
+			"lastName":  req.LastName,
+			"nickName":  req.NickName,
+			"preferences.dailyGoal":     req.Preferences.DailyGoal,
+			"preferences.notifications": req.Preferences.Notifications,
+			"preferences.darkMode":      req.Preferences.DarkMode,
+			"preferences.language":      req.Preferences.Language,
+			"updatedAt":                 time.Now(),
+		},
+	}
+
+	_, err = h.db.Collection("users").UpdateOne(c.Request.Context(), bson.M{"_id": userID}, update)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "Failed to update profile"})
 		return
 	}
 
@@ -184,12 +384,47 @@ func (h *Handler) UpdateProfile(c *gin.Context) {
 
 // 8. Update Password
 func (h *Handler) UpdatePassword(c *gin.Context) {
+	userID, err := h.getUserIDFromAuth(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "Unauthorized"})
+		return
+	}
+
 	var req struct {
 		OldPassword string `json:"oldPassword" binding:"required"`
 		NewPassword string `json:"newPassword" binding:"required"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err.Error()})
+		return
+	}
+
+	var user domain.User
+	err = h.db.Collection("users").FindOne(c.Request.Context(), bson.M{"_id": userID}).Decode(&user)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"success": false, "error": "User not found"})
+		return
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.OldPassword))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "Incorrect old password"})
+		return
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "Failed to hash new password"})
+		return
+	}
+
+	_, err = h.db.Collection("users").UpdateOne(
+		c.Request.Context(),
+		bson.M{"_id": userID},
+		bson.M{"$set": bson.M{"password": string(hashedPassword), "updatedAt": time.Now()}},
+	)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "Failed to update password"})
 		return
 	}
 
@@ -468,27 +703,162 @@ func (h *Handler) SubmitAssessment(c *gin.Context) {
 
 // 18. Get User Progress
 func (h *Handler) GetProgress(c *gin.Context) {
+	userID, err := h.getUserIDFromAuth(c)
+	if err != nil {
+		// Mock progress stats fallback for guest users
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"data": gin.H{
+				"overallProgress": gin.H{
+					"totalSutras":      16,
+					"sutrasCompleted":  3,
+					"totalLessons":     64,
+					"lessonsCompleted": 12,
+					"totalTimeSpent":   8.5,
+					"averageScore":     88.2,
+				},
+				"sutraProgress": []gin.H{
+					{
+						"sutraId":              1,
+						"name":                 "Ekadhikena Purvena",
+						"status":               "in_progress",
+						"lessonsCompleted":     3,
+						"totalLessons":         4,
+						"completionPercentage": 75,
+					},
+				},
+			},
+		})
+		return
+	}
+
+	ctx := c.Request.Context()
+
+	// 1. Fetch all active sutras
+	var dbSutras []domain.Sutra
+	cursor, err := h.db.Collection("sutras").Find(ctx, bson.M{})
+	if err == nil {
+		_ = cursor.All(ctx, &dbSutras)
+	}
+
+	// 2. Fetch all active lessons
+	var dbLessons []domain.Lesson
+	cursor, err = h.db.Collection("lessons").Find(ctx, bson.M{"isActive": true})
+	if err == nil {
+		_ = cursor.All(ctx, &dbLessons)
+	}
+
+	// 3. Fetch user progress documents
+	var progressList []domain.UserProgress
+	cursor, err = h.db.Collection("userProgress").Find(ctx, bson.M{"userId": userID})
+	if err == nil {
+		_ = cursor.All(ctx, &progressList)
+	}
+
+	// Make a map of progress by SutraNumber and LessonNumber
+	progressMap := make(map[string]domain.UserProgress)
+	for _, p := range progressList {
+		key := fmt.Sprintf("%d_%d", p.SutraNumber, p.LessonNumber)
+		progressMap[key] = p
+	}
+
+	// Map of total lessons per sutra ID
+	sutraTotalLessons := make(map[int]int)
+	sutraCompletedLessons := make(map[int]int)
+	for _, l := range dbLessons {
+		sutraTotalLessons[l.SutraNumber]++
+		key := fmt.Sprintf("%d_%d", l.SutraNumber, l.LessonNumber)
+		if p, ok := progressMap[key]; ok && p.Status == "completed" {
+			sutraCompletedLessons[l.SutraNumber]++
+		}
+	}
+
+	// Calculate overall stats
+	var lessonsCompleted int
+	var totalTimeSpent float64
+	var scoreSum float64
+	var scoreCount int
+
+	for _, p := range progressList {
+		if p.LessonNumber > 0 { // It is a lesson progress
+			if p.Status == "completed" {
+				lessonsCompleted++
+			}
+			totalTimeSpent += float64(p.TimeSpent)
+			if p.BestScore > 0 {
+				scoreSum += p.BestScore
+				scoreCount++
+			}
+		}
+	}
+
+	averageScore := 0.0
+	if scoreCount > 0 {
+		averageScore = scoreSum / float64(scoreCount)
+	}
+
+	totalSutras := len(dbSutras)
+	if totalSutras == 0 {
+		totalSutras = 16
+	}
+	totalLessons := len(dbLessons)
+	if totalLessons == 0 {
+		totalLessons = 64
+	}
+
+	// Calculate completed sutras (a sutra is completed if all its lessons are completed, and total lessons > 0)
+	var sutrasCompleted int
+	var sutraProgress []gin.H
+
+	for _, s := range dbSutras {
+		tot := sutraTotalLessons[s.SutraId]
+		comp := sutraCompletedLessons[s.SutraId]
+
+		// default fallback if no lessons in database
+		if tot == 0 {
+			tot = 4
+		}
+
+		completionPercentage := 0
+		if tot > 0 {
+			completionPercentage = int((float64(comp) / float64(tot)) * 100.0)
+		}
+
+		status := "not_started"
+		if comp == tot && tot > 0 {
+			status = "completed"
+			sutrasCompleted++
+		} else if comp > 0 {
+			status = "in_progress"
+		}
+
+		sutraProgress = append(sutraProgress, gin.H{
+			"sutraId":              s.SutraId,
+			"name":                 s.Name,
+			"status":               status,
+			"lessonsCompleted":     comp,
+			"totalLessons":         tot,
+			"completionPercentage": completionPercentage,
+		})
+	}
+
+	// If sutraProgress is empty, let's return an empty array instead of null
+	if sutraProgress == nil {
+		sutraProgress = []gin.H{}
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"data": gin.H{
 			"overallProgress": gin.H{
-				"totalSutras":      16,
-				"sutrasCompleted":  3,
-				"totalLessons":     64,
-				"lessonsCompleted": 12,
-				"totalTimeSpent":   8.5,
-				"averageScore":     88.2,
+				"totalSutras":      totalSutras,
+				"sutrasCompleted":  sutrasCompleted,
+				"totalLessons":     totalLessons,
+				"lessonsCompleted": lessonsCompleted,
+				"totalTimeSpent":   totalTimeSpent / 3600.0, // Convert seconds to hours
+				"averageScore":     averageScore,
 			},
-			"sutraProgress": []gin.H{
-				{
-					"sutraId":              1,
-					"name":                 "Ekadhikena Purvena",
-					"status":               "in_progress",
-					"lessonsCompleted":     3,
-					"totalLessons":         4,
-					"completionPercentage": 75,
-				},
-			},
+			"sutraProgress": sutraProgress,
 		},
 	})
 }

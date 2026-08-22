@@ -22,6 +22,8 @@ type User struct {
 	NickName     string             `bson:"nickName" json:"nickName"`
 	ProfilePhoto string             `bson:"profilePhoto" json:"profilePhoto"`
 	Password     string             `bson:"password" json:"password"`
+	Username     string             `bson:"username" json:"username"`
+	Role         string             `bson:"role" json:"role"`
 	CreatedAt    time.Time          `bson:"createdAt" json:"createdAt"`
 	UpdatedAt    time.Time          `bson:"updatedAt" json:"updatedAt"`
 	LastLogin    time.Time          `bson:"lastLogin" json:"lastLogin"`
